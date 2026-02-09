@@ -18,10 +18,13 @@
         "node": ">=24.0.0"
     },
     "devDependencies": {
+        "prettier": "3.8.1",
         "tsdown": "^0.20.3"
     },
     "scripts": {
         "build": "tsdown",
-        "dev": "tsdown --watch"
+        "dev": "tsdown --watch",
+        "format": "bunx --bun prettier . --write",
+        "test:format": "bunx --bun prettier --check ."
     }
 }
