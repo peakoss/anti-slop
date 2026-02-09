@@ -16,5 +16,12 @@
     "license": "AGPL-3.0-only",
     "engines": {
         "node": ">=24.0.0"
+    },
+    "devDependencies": {
+        "tsdown": "^0.20.3"
+    },
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --watch"
     }
 }
