@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@github/local-action": "^7.0.0",
         "eslint": "^9.0.0",
         "eslint-config-prettier": "^10.1.8",
         "globals": "^17.3.0",
@@ -53,6 +54,7 @@
         "format": "bunx --bun prettier . --write",
         "lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --fix --color .",
         "test:format": "bunx --bun prettier --check .",
-        "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --max-warnings 1 --color ."
+        "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --max-warnings 1 --color .",
+        "test": "local-action . src/main.ts .env"
     }
 }
