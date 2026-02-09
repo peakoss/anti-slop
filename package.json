@@ -4,6 +4,7 @@
     "version": "0.1.0",
     "author": "peaklabs-dev",
     "type": "module",
+    "private": true,
     "homepage": "https://github.com/peakoss/anti-slop",
     "repository": {
         "type": "git",
@@ -12,7 +13,22 @@
     "bugs": {
         "url": "https://github.com/peakoss/anti-slop/issues"
     },
-    "private": true,
+    "keywords": [
+        "ai",
+        "ai-slop",
+        "ai-slop-detection",
+        "anti-slop",
+        "anti-spam",
+        "github",
+        "pull-request",
+        "pull-requests",
+        "quality",
+        "quality-check",
+        "quality-checker",
+        "quality-checks",
+        "quality-control",
+        "typescript"
+    ],
     "license": "AGPL-3.0-only",
     "engines": {
         "node": ">=24.0.0"

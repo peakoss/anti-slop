@@ -3,7 +3,7 @@ description: A GitHub action that detects and automatically closes low-quality a
 author: peaklabs-dev
 
 branding:
-  icon: shield
+  icon: slash
   color: orange
 
 runs:
