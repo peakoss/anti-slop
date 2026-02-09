@@ -1,0 +1,20 @@
+{
+    "name": "anti-slop",
+    "description": "A GitHub action that detects and automatically closes low-quality and AI slop PRs.",
+    "version": "0.1.0",
+    "author": "peaklabs-dev",
+    "type": "module",
+    "homepage": "https://github.com/peakoss/anti-slop",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/peakoss/anti-slop.git"
+    },
+    "bugs": {
+        "url": "https://github.com/peakoss/anti-slop/issues"
+    },
+    "private": true,
+    "license": "AGPL-3.0-only",
+    "engines": {
+        "node": ">=24.0.0"
+    }
+}

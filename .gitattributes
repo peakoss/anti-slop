@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+*.md diff=markdown
+
+dist/** -diff linguist-generated=true
+
+/.github export-ignore
+*.md export-ignore
+LICENSE export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
