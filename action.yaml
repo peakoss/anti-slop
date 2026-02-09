@@ -13,6 +13,278 @@ inputs:
     required: false
     default: ${{ github.token }}
 
+  # General Settings
+  max-failures:
+    description: Number of check failures needed before failure actions are triggered (between 1 and 30).
+    required: false
+    default: "3"
+  actions-step-debug:
+    description: Enable step debug logging.
+    required: false
+    default: "false"
+
+  # PR Branch Checks
+  allowed-target-branches:
+    description: Newline-separated target branch patterns to allow. Empty allows all branches.
+    required: false
+    default: ""
+  blocked-target-branches:
+    description: Newline-separated target branch patterns to block.
+    required: false
+    default: ""
+  allowed-source-branches:
+    description: Newline-separated source branch patterns to allow. Empty allows all branches.
+    required: false
+    default: ""
+  blocked-source-branches:
+    description: Newline-separated source branch patterns to block.
+    required: false
+    default: |
+      main
+      master
+
+  # PR Title Checks
+  require-conventional-title:
+    description: 'Require PR titles to follow Conventional Commits format (e.g. "feat:", "fix:", "feat(scope):").'
+    required: false
+    default: "false"
+
+  # PR Description Checks
+  require-description:
+    description: Require a non-empty PR description.
+    required: false
+    default: "true"
+  max-description-length:
+    description: Maximum allowed character length for the PR description. 0 disables this check.
+    required: false
+    default: "0"
+  max-emoji-count:
+    description: Maximum number of emojis allowed in the PR title and description. 0 disables this check.
+    required: false
+    default: "2"
+  require-pr-template:
+    description: Require the PR description to match the repository PR template.
+    required: false
+    default: "false"
+  require-linked-issue:
+    description: Require the PR to reference at least one issue.
+    required: false
+    default: "false"
+  blocked-terms:
+    description: Newline-separated list of terms blocked from appearing in the PR description.
+    required: false
+    default: ""
+  blocked-issue-numbers:
+    description: Comma-separated list of issue numbers blocked from being referenced.
+    required: false
+    default: ""
+
+  # Commit Message Checks
+  require-conventional-commits:
+    description: Require all commit messages to follow Conventional Commits format.
+    required: false
+    default: "false"
+  blocked-commit-authors:
+    description: Comma-separated list of blocked commit author usernames.
+    required: false
+    default: ""
+
+  # File Checks
+  allowed-file-extensions:
+    description: 'Comma-separated list of allowed file extensions (e.g. ".ts,.js") for changed files. Empty allows all.'
+    required: false
+    default: ""
+  allowed-paths:
+    description: Newline-separated file or folder paths to allow for changed files. Entries ending with "/" match folders. Empty allows all.
+    required: false
+    default: ""
+  blocked-paths:
+    description: Newline-separated file or folder paths to block for changed files. Entries ending with "/" match folders.
+    required: false
+    default: |
+      README.md
+      SECURITY.md
+      LICENSE
+      CODE_OF_CONDUCT.md
+  require-final-newline:
+    description: Require all changed files to end with a newline character.
+    required: false
+    default: "true"
+
+  # User Health Checks
+  min-repo-merged-prs:
+    description: Minimum number of merged PRs in this repository required from the author. 0 disables this check.
+    required: false
+    default: "0"
+  min-repo-merge-ratio:
+    description: Minimum merged/closed PR ratio in this repository (1-100%). 0 disables this check.
+    required: false
+    default: "0"
+  min-global-merge-ratio:
+    description: Minimum merged/closed PR ratio across all GitHub repositories (1-100%). 0 disables this check.
+    required: false
+    default: "30"
+  min-account-age:
+    description: Minimum GitHub account age in days (1-365). 0 disables this check.
+    required: false
+    default: "7"
+
+  # Filters
+  # only-issue-types:
+  #   description: Comma-separated list of issue types. Checks only run on issues with one of these types.
+  #   required: false
+  #   default: ""
+  # only-labels:
+  #   description: Comma-separated list of labels. Checks only run when ALL listed labels are present.
+  #   required: false
+  #   default: ""
+  # only-pr-labels:
+  #   description: Comma-separated list of labels on PRs. Checks only run when ALL listed labels are present.
+  #   required: false
+  #   default: ""
+  # only-issue-labels:
+  #   description: Comma-separated list of labels on Issues. Checks only run when ALL listed labels are present.
+  #   required: false
+  #   default: ""
+  # any-of-labels:
+  #   description: Comma-separated list of labels. Checks run when any listed label is present.
+  #   required: false
+  #   default: ""
+  # any-of-pr-labels:
+  #   description: Comma-separated list of labels on PRs. Checks run when any listed label is present.
+  #   required: false
+  #   default: ""
+  # any-of-issue-labels:
+  #   description: Comma-separated list of labels on Issues. Checks run when any listed label is present.
+  #   required: false
+  #   default: ""
+
+  # Exemptions
+  exempt-draft-prs:
+    description: Exempt draft PRs from all checks.
+    required: false
+    default: "false"
+  exempt-bots:
+    description: Newline-separated list of bot usernames exempt from all checks.
+    required: false
+    default: |
+      actions-user
+      dependabot[bot]
+      renovate[bot]
+      github-actions[bot]
+  exempt-users:
+    description: Comma-separated list of GitHub usernames exempt from all checks.
+    required: false
+    default: ""
+  exempt-author-association:
+    description: "Comma-separated list of GitHub author associations exempt from all checks."
+    required: false
+    default: "OWNER,MEMBER,COLLABORATOR"
+  # exempt-teams:
+  #   description: Comma-separated list of GitHub team slugs whose members are exempt from all checks.
+  #   required: false
+  #   default: ""
+  exempt-label:
+    description: Label name that exempts PRs and Issues from all checks when it is present.
+    required: false
+    default: "exempt"
+  exempt-pr-label:
+    description: Label name that exempts PRs from all checks when it is present.
+    required: false
+    default: ""
+  # exempt-issue-label:
+  #   description: Label name that exempts Issues from all checks when it is present.
+  #   required: false
+  #   default: ""
+  exempt-all-milestones:
+    description: Exempt all PRs and Issues that are assigned to any milestone.
+    required: false
+    default: "false"
+  exempt-all-pr-milestones:
+    description: Exempt all PRs that are assigned to any milestone.
+    required: false
+    default: "false"
+  # exempt-all-issue-milestones:
+  #   description: Exempt all Issues that are assigned to any milestone.
+  #   required: false
+  #   default: "false"
+  exempt-milestones:
+    description: Comma-separated list of milestone titles. PRs and Issues assigned to any listed milestone are exempt.
+    required: false
+    default: ""
+  exempt-pr-milestones:
+    description: Comma-separated list of milestone titles. PRs assigned to any listed milestone are exempt.
+    required: false
+    default: ""
+  # exempt-issue-milestones:
+  #   description: Comma-separated list of milestone titles. Issues assigned to any listed milestone are exempt.
+  #   required: false
+  #   default: ""
+
+  # PR Close Actions
+  close-pr:
+    description: Close the PR when the maximum number of failures is reached.
+    required: false
+    default: "true"
+  lock-pr:
+    description: Lock the PR conversation after closing.
+    required: false
+    default: "false"
+  delete-branch:
+    description: Delete the source branch after closing the PR.
+    required: false
+    default: "false"
+
+  # PR Failure Actions
+  failure-pr-message:
+    description: Comment posted on the PR when the maximum number of failures is reached. Empty posts no comment.
+    required: false
+    default: ""
+  failure-remove-pr-labels:
+    description: Comma-separated list of labels to remove from the PR on failure.
+    required: false
+    default: ""
+  failure-remove-all-pr-labels:
+    description: Remove all labels from the PR on failure.
+    required: false
+    default: "false"
+  failure-add-pr-labels:
+    description: Comma-separated list of labels to add to the PR on failure.
+    required: false
+    default: ""
+
+  # Issue Close Actions
+  # close-issue:
+  #   description: Close the issue when the maximum number of failures is reached.
+  #   required: false
+  #   default: "true"
+  # close-issue-reason:
+  #   description: 'Reason used when closing the issue (e.g. "not_planned", "completed").'
+  #   required: false
+  #   default: "not_planned"
+  # lock-issue:
+  #   description: Lock the issue conversation after closing.
+  #   required: false
+  #   default: "false"
+
+  # Issue Failure Actions
+  # failure-issue-message:
+  #   description: Comment posted on the issue when the maximum number of failures is reached. Empty posts no comment.
+  #   required: false
+  #   default: ""
+  # failure-remove-issue-labels:
+  #   description: Comma-separated list of labels to remove from the issue on failure.
+  #   required: false
+  #   default: ""
+  # failure-remove-all-issue-labels:
+  #   description: Remove all labels from the issue on failure.
+  #   required: false
+  #   default: "false"
+  # failure-add-issue-labels:
+  #   description: Comma-separated list of labels to add to the issue on failure.
+  #   required: false
+  #   default: ""
+
 runs:
   using: node24
   main: dist/index.mjs
