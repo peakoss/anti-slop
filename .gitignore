@@ -10,6 +10,9 @@ node_modules
 # Log files
 *.log*
 
+# Cache files
+.eslintcache
+
 # OS files
 .DS_Store
 Thumbs.db

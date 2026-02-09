@@ -18,13 +18,21 @@
         "node": ">=24.0.0"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "eslint": "^9.0.0",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^17.3.0",
         "prettier": "3.8.1",
-        "tsdown": "^0.20.3"
+        "tsdown": "^0.20.3",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.54.0"
     },
     "scripts": {
         "build": "tsdown",
         "dev": "tsdown --watch",
         "format": "bunx --bun prettier . --write",
-        "test:format": "bunx --bun prettier --check ."
+        "lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --fix --color .",
+        "test:format": "bunx --bun prettier --check .",
+        "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --max-warnings 1 --color ."
     }
 }
