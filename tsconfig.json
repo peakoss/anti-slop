@@ -1,0 +1,33 @@
+{
+    "$schema": "https://www.schemastore.org/tsconfig",
+    "include": ["src", "tsdown.config.ts", "eslint.config.ts", "prettier.config.ts"],
+    "exclude": ["tests", "dist", "node_modules"],
+    "compilerOptions": {
+        "lib": ["ES2024"],
+        "target": "ES2024",
+        "module": "Preserve",
+        "moduleDetection": "force",
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "verbatimModuleSyntax": true,
+        "noEmit": true,
+        "declaration": true,
+        "strict": true,
+        "allowUnusedLabels": false,
+        "allowUnreachableCode": false,
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "isolatedModules": true,
+        "isolatedDeclarations": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "newLine": "lf"
+    }
+}
