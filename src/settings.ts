@@ -44,7 +44,7 @@ export function getSettings(): Settings {
         maxEmojiCount: parseInt(core.getInput(Input.MaxEmojiCount)),
         requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
         requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
-        blockedKeywords: parseList(core.getInput(Input.BlockedKeywords)),
+        blockedTerms: core.getMultilineInput(Input.BlockedTerms),
         blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
 
         // Commit Message Checks

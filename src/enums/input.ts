@@ -22,7 +22,7 @@ export enum Input {
     MaxEmojiCount = "max-emoji-count",
     RequirePrTemplate = "require-pr-template",
     RequireLinkedIssue = "require-linked-issue",
-    BlockedKeywords = "blocked-keywords",
+    BlockedTerms = "blocked-terms",
     BlockedIssueNumbers = "blocked-issue-numbers",
 
     // Commit Message Checks

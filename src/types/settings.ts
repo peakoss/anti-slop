@@ -21,7 +21,7 @@ export interface Settings {
     maxEmojiCount: number;
     requirePrTemplate: boolean;
     requireLinkedIssue: boolean;
-    blockedKeywords: string[];
+    blockedTerms: string[];
     blockedIssueNumbers: string[];
 
     // Commit Message Checks
