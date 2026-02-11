@@ -34,7 +34,6 @@ export enum Input {
     AllowedPaths = "allowed-paths",
     BlockedPaths = "blocked-paths",
     RequireFinalNewline = "require-final-newline",
-    AllowedLineEnding = "allowed-line-ending",
 
     // User Health Checks
     MinRepoMergedPrs = "min-repo-merged-prs",

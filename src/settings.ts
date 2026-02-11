@@ -12,7 +12,6 @@ const VALID_AUTHOR_ASSOCIATIONS = [
     "NONE",
     "OWNER",
 ];
-const VALID_LINE_ENDINGS = ["lf", "crlf", "cr"];
 
 function parseList(raw: string): string[] {
     return raw
@@ -57,7 +56,6 @@ export function getSettings(): Settings {
         allowedPaths: core.getMultilineInput(Input.AllowedPaths),
         blockedPaths: core.getMultilineInput(Input.BlockedPaths),
         requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
-        allowedLineEnding: core.getInput(Input.AllowedLineEnding),
 
         // User Health Checks
         minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
@@ -145,15 +143,5 @@ function validateSettings(settings: Settings): void {
                     `The valid values are: ${VALID_AUTHOR_ASSOCIATIONS.join(", ")}`,
             );
         }
-    }
-
-    if (
-        settings.allowedLineEnding !== "" &&
-        !VALID_LINE_ENDINGS.includes(settings.allowedLineEnding)
-    ) {
-        throw new Error(
-            `"allowed-line-ending" must be one of ${VALID_LINE_ENDINGS.join(", ")} or empty, ` +
-                `got "${settings.allowedLineEnding}"`,
-        );
     }
 }

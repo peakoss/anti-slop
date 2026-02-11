@@ -33,7 +33,6 @@ export interface Settings {
     allowedPaths: string[];
     blockedPaths: string[];
     requireFinalNewline: boolean;
-    allowedLineEnding: string;
 
     // User Health Checks
     minRepoMergedPrs: number;
