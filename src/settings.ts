@@ -2,6 +2,18 @@ import { Input } from "./enums/input.ts";
 import type { Settings } from "./types/index.ts";
 import * as core from "@actions/core";
 
+const VALID_AUTHOR_ASSOCIATIONS = [
+    "COLLABORATOR",
+    "CONTRIBUTOR",
+    "FIRST_TIMER",
+    "FIRST_TIME_CONTRIBUTOR",
+    "MANNEQUIN",
+    "MEMBER",
+    "NONE",
+    "OWNER",
+];
+const VALID_LINE_ENDINGS = ["lf", "crlf", "cr"];
+
 function parseList(raw: string): string[] {
     return raw
         .split(",")
@@ -117,4 +129,31 @@ function validateNumber(value: number, name: string, min: number, max: number): 
     }
 }
 
-function validateSettings(settings: Settings): void {}
+function validateSettings(settings: Settings): void {
+    validateNumber(settings.maxFailures, "max-failures", 1, 30);
+    validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
+    validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
+    validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
+    validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
+    validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);
+    validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
+
+    for (const association of settings.exemptAuthorAssociation) {
+        if (!VALID_AUTHOR_ASSOCIATIONS.includes(association)) {
+            throw new Error(
+                `"exempt-author-association" contains invalid value "${association}". ` +
+                    `The valid values are: ${VALID_AUTHOR_ASSOCIATIONS.join(", ")}`,
+            );
+        }
+    }
+
+    if (
+        settings.allowedLineEnding !== "" &&
+        !VALID_LINE_ENDINGS.includes(settings.allowedLineEnding)
+    ) {
+        throw new Error(
+            `"allowed-line-ending" must be one of ${VALID_LINE_ENDINGS.join(", ")} or empty, ` +
+                `got "${settings.allowedLineEnding}"`,
+        );
+    }
+}
