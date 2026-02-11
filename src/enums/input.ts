@@ -1,1 +1,4 @@
-export enum Input {}
+export enum Input {
+    // Repo Auth Token
+    GithubToken = "github-token",
+}
