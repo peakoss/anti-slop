@@ -6,6 +6,13 @@ branding:
   icon: slash
   color: orange
 
+inputs:
+  # Repo Auth Token
+  github-token:
+    description: GitHub token used to authenticate API requests.
+    required: false
+    default: ${{ github.token }}
+
 runs:
   using: node24
   main: dist/index.mjs
