@@ -58,11 +58,11 @@ export interface Settings {
     exemptLabel: string;
     exemptPrLabel: string;
     // exemptIssueLabel: string;
-    // exemptMilestones: string[];
-    // exemptPrMilestones: string[];
+    exemptMilestones: string[];
+    exemptPrMilestones: string[];
     // exemptIssueMilestones: string[];
-    // exemptAllMilestones: boolean;
-    // exemptAllPrMilestones: boolean;
+    exemptAllMilestones: boolean;
+    exemptAllPrMilestones: boolean;
     // exemptAllIssueMilestones: boolean;
 
     // PR Close Actions

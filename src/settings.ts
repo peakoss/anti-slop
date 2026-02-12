@@ -81,11 +81,11 @@ export function getSettings(): Settings {
         exemptLabel: core.getInput(Input.ExemptLabel),
         exemptPrLabel: core.getInput(Input.ExemptPrLabel),
         // exemptIssueLabel: core.getInput(Input.ExemptIssueLabel),
-        // exemptMilestones: parseList(core.getInput(Input.ExemptMilestones)),
-        // exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
+        exemptMilestones: parseList(core.getInput(Input.ExemptMilestones)),
+        exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
         // exemptIssueMilestones: parseList(core.getInput(Input.ExemptIssueMilestones)),
-        // exemptAllMilestones: core.getBooleanInput(Input.ExemptAllMilestones),
-        // exemptAllPrMilestones: core.getBooleanInput(Input.ExemptAllPrMilestones),
+        exemptAllMilestones: core.getBooleanInput(Input.ExemptAllMilestones),
+        exemptAllPrMilestones: core.getBooleanInput(Input.ExemptAllPrMilestones),
         // exemptAllIssueMilestones: core.getBooleanInput(Input.ExemptAllIssueMilestones),
 
         // PR Close Actions

@@ -59,11 +59,11 @@ export enum Input {
     ExemptLabel = "exempt-label",
     ExemptPrLabel = "exempt-pr-label",
     // ExemptIssueLabel = "exempt-issue-label",
-    // ExemptMilestones = "exempt-milestones",
-    // ExemptPrMilestones = "exempt-pr-milestones",
+    ExemptMilestones = "exempt-milestones",
+    ExemptPrMilestones = "exempt-pr-milestones",
     // ExemptIssueMilestones = "exempt-issue-milestones",
-    // ExemptAllMilestones = "exempt-all-milestones",
-    // ExemptAllPrMilestones = "exempt-all-pr-milestones",
+    ExemptAllMilestones = "exempt-all-milestones",
+    ExemptAllPrMilestones = "exempt-all-pr-milestones",
     // ExemptAllIssueMilestones = "exempt-all-issue-milestones",
 
     // PR Close Actions

@@ -160,22 +160,6 @@ inputs:
   #   default: ""
 
   # Exemptions
-  exempt-draft-prs:
-    description: Exempt draft PRs from all checks.
-    required: false
-    default: "false"
-  exempt-bots:
-    description: Newline-separated list of bot usernames exempt from all checks.
-    required: false
-    default: |
-      actions-user
-      dependabot[bot]
-      renovate[bot]
-      github-actions[bot]
-  exempt-users:
-    description: Comma-separated list of GitHub usernames exempt from all checks.
-    required: false
-    default: ""
   exempt-author-association:
     description: "Comma-separated list of GitHub author associations exempt from all checks."
     required: false
@@ -184,6 +168,22 @@ inputs:
   #   description: Comma-separated list of GitHub team slugs whose members are exempt from all checks.
   #   required: false
   #   default: ""
+  exempt-users:
+    description: Comma-separated list of GitHub usernames exempt from all checks.
+    required: false
+    default: ""
+  exempt-bots:
+    description: Newline-separated list of bot usernames exempt from all checks.
+    required: false
+    default: |
+      actions-user
+      dependabot[bot]
+      renovate[bot]
+      github-actions[bot]
+  exempt-draft-prs:
+    description: Exempt draft PRs from all checks.
+    required: false
+    default: "false"
   exempt-label:
     description: Label name that exempts PRs and Issues from all checks when it is present.
     required: false
@@ -194,6 +194,18 @@ inputs:
     default: ""
   # exempt-issue-label:
   #   description: Label name that exempts Issues from all checks when it is present.
+  #   required: false
+  #   default: ""
+  exempt-milestones:
+    description: Comma-separated list of milestone titles. PRs and Issues assigned to any listed milestone are exempt.
+    required: false
+    default: ""
+  exempt-pr-milestones:
+    description: Comma-separated list of milestone titles. PRs assigned to any listed milestone are exempt.
+    required: false
+    default: ""
+  # exempt-issue-milestones:
+  #   description: Comma-separated list of milestone titles. Issues assigned to any listed milestone are exempt.
   #   required: false
   #   default: ""
   exempt-all-milestones:
@@ -208,18 +220,6 @@ inputs:
   #   description: Exempt all Issues that are assigned to any milestone.
   #   required: false
   #   default: "false"
-  exempt-milestones:
-    description: Comma-separated list of milestone titles. PRs and Issues assigned to any listed milestone are exempt.
-    required: false
-    default: ""
-  exempt-pr-milestones:
-    description: Comma-separated list of milestone titles. PRs assigned to any listed milestone are exempt.
-    required: false
-    default: ""
-  # exempt-issue-milestones:
-  #   description: Comma-separated list of milestone titles. Issues assigned to any listed milestone are exempt.
-  #   required: false
-  #   default: ""
 
   # PR Close Actions
   close-pr:
