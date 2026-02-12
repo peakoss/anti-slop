@@ -12,7 +12,7 @@ function parseList(raw: string): string[] {
 export function getSettings(): Settings {
     const settings = {
         // Repo Auth Token
-        githubToken: core.getInput(Input.GithubToken),
+        githubToken: core.getInput(Input.GithubToken, { required: true }),
     };
 
     core.setSecret(settings.githubToken);
