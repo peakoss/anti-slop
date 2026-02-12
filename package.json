@@ -19,7 +19,9 @@
         "ai-slop-detection",
         "anti-slop",
         "anti-spam",
+        "contributor-metrics",
         "github",
+        "github-action",
         "pull-request",
         "pull-requests",
         "quality",
@@ -27,7 +29,10 @@
         "quality-checker",
         "quality-checks",
         "quality-control",
-        "typescript"
+        "slop-detector",
+        "spam-detection",
+        "spam-filtering",
+        "spam-prevention"
     ],
     "license": "AGPL-3.0-only",
     "engines": {
