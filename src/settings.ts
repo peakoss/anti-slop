@@ -1,5 +1,5 @@
 import { Input } from "./enums/input.ts";
-import type { Settings } from "./types/index.ts";
+import type { Settings } from "./types";
 import * as core from "@actions/core";
 
 const VALID_AUTHOR_ASSOCIATIONS = [
@@ -114,6 +114,8 @@ export function getSettings(): Settings {
     core.setSecret(settings.githubToken);
 
     validateSettings(settings);
+
+    core.debug(`Settings:\n${JSON.stringify(settings, null, 2)}`);
 
     return settings;
 }
