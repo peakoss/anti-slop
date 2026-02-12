@@ -10,7 +10,7 @@ inputs:
   # Repo Auth Token
   github-token:
     description: GitHub token used to authenticate API requests.
-    required: false
+    required: true
     default: ${{ github.token }}
 
   # General Settings
