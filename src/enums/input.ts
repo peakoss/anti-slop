@@ -51,20 +51,20 @@ export enum Input {
     // AnyOfIssueLabels = "any-of-issue-labels",
 
     // Exemptions
+    ExemptDraftPrs = "exempt-draft-prs",
+    ExemptBots = "exempt-bots",
+    ExemptUsers = "exempt-users",
     ExemptAuthorAssociation = "exempt-author-association", // Uses author association instead of repository permission roles (e.g. "admin", "write", "triage") because author association does not require an additional API call per user.
     // ExemptTeams = "exempt-teams",
-    ExemptUsers = "exempt-users",
-    ExemptBots = "exempt-bots",
-    ExemptDraftPrs = "exempt-draft-prs",
     ExemptLabel = "exempt-label",
     ExemptPrLabel = "exempt-pr-label",
     // ExemptIssueLabel = "exempt-issue-label",
-    ExemptMilestones = "exempt-milestones",
-    ExemptPrMilestones = "exempt-pr-milestones",
-    // ExemptIssueMilestones = "exempt-issue-milestones",
     ExemptAllMilestones = "exempt-all-milestones",
     ExemptAllPrMilestones = "exempt-all-pr-milestones",
     // ExemptAllIssueMilestones = "exempt-all-issue-milestones",
+    ExemptMilestones = "exempt-milestones",
+    ExemptPrMilestones = "exempt-pr-milestones",
+    // ExemptIssueMilestones = "exempt-issue-milestones",
 
     // PR Close Actions
     ClosePr = "close-pr",

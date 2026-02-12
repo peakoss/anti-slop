@@ -50,20 +50,20 @@ export interface Settings {
     // anyOfIssueLabels: string[];
 
     // Exemptions
+    exemptDraftPrs: boolean;
+    exemptBots: string[];
+    exemptUsers: string[];
     exemptAuthorAssociation: string[];
     // exemptTeams: string[];
-    exemptUsers: string[];
-    exemptBots: string[];
-    exemptDraftPrs: boolean;
     exemptLabel: string;
     exemptPrLabel: string;
     // exemptIssueLabel: string;
-    exemptMilestones: string[];
-    exemptPrMilestones: string[];
-    // exemptIssueMilestones: string[];
     exemptAllMilestones: boolean;
     exemptAllPrMilestones: boolean;
     // exemptAllIssueMilestones: boolean;
+    exemptMilestones: string[];
+    exemptPrMilestones: string[];
+    // exemptIssueMilestones: string[];
 
     // PR Close Actions
     closePr: boolean;

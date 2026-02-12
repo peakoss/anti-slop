@@ -73,20 +73,20 @@ export function getSettings(): Settings {
         // anyOfIssueLabels: parseList(core.getInput(Input.AnyOfIssueLabels)),
 
         // Exemptions
+        exemptDraftPrs: core.getBooleanInput(Input.ExemptDraftPrs),
+        exemptBots: core.getMultilineInput(Input.ExemptBots),
+        exemptUsers: parseList(core.getInput(Input.ExemptUsers)),
         exemptAuthorAssociation: parseList(core.getInput(Input.ExemptAuthorAssociation)),
         // exemptTeams: parseList(core.getInput(Input.ExemptTeams)),
-        exemptUsers: parseList(core.getInput(Input.ExemptUsers)),
-        exemptBots: core.getMultilineInput(Input.ExemptBots),
-        exemptDraftPrs: core.getBooleanInput(Input.ExemptDraftPrs),
         exemptLabel: core.getInput(Input.ExemptLabel),
         exemptPrLabel: core.getInput(Input.ExemptPrLabel),
         // exemptIssueLabel: core.getInput(Input.ExemptIssueLabel),
-        exemptMilestones: parseList(core.getInput(Input.ExemptMilestones)),
-        exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
-        // exemptIssueMilestones: parseList(core.getInput(Input.ExemptIssueMilestones)),
         exemptAllMilestones: core.getBooleanInput(Input.ExemptAllMilestones),
         exemptAllPrMilestones: core.getBooleanInput(Input.ExemptAllPrMilestones),
         // exemptAllIssueMilestones: core.getBooleanInput(Input.ExemptAllIssueMilestones),
+        exemptMilestones: parseList(core.getInput(Input.ExemptMilestones)),
+        exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
+        // exemptIssueMilestones: parseList(core.getInput(Input.ExemptIssueMilestones)),
 
         // PR Close Actions
         closePr: core.getBooleanInput(Input.ClosePr),
