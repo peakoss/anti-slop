@@ -8,22 +8,22 @@ export async function handleSuccess(
 ): Promise<void> {
     core.info("Executing success actions...");
     if (settings.successAddPrLabels.length === 0) {
-        core.info("No labels to add on success");
+        core.info("No label(s) to add on success");
         return;
     }
 
     try {
-        core.info("Adding labels to the PR...");
+        core.info("Adding label(s) to the PR...");
         await client.rest.issues.addLabels({
             owner: context.owner,
             repo: context.repo,
             issue_number: context.number,
             labels: settings.successAddPrLabels,
         });
-        core.info(`Added labels: ${settings.successAddPrLabels.join(", ")} to the PR.`);
+        core.info(`Added label(s): ${settings.successAddPrLabels.join(", ")} to the PR.`);
     } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : "Unknown error";
-        core.warning(`Failed to add labels to the PR: ${msg}`);
+        core.warning(`Failed to add label(s) to the PR: ${msg}`);
     }
 }
 
@@ -54,7 +54,9 @@ export async function handleFailure(
                     );
                 }
             }
-            core.info(`Removed labels: ${settings.failureRemovePrLabels.join(", ")} from the PR.`);
+            core.info(
+                `Removed label(s): ${settings.failureRemovePrLabels.join(", ")} from the PR.`,
+            );
         }
 
         if (settings.failureRemoveAllPrLabels) {
@@ -73,7 +75,7 @@ export async function handleFailure(
                 issue_number: number,
                 labels: settings.failureAddPrLabels,
             });
-            core.info(`Added labels: ${settings.failureAddPrLabels.join(", ")} to the PR.`);
+            core.info(`Added label(s): ${settings.failureAddPrLabels.join(", ")} to the PR.`);
         }
 
         if (settings.failurePrMessage !== "") {
