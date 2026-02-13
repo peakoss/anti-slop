@@ -305,6 +305,16 @@ inputs:
   #   required: false
   #   default: ""
 
+outputs:
+  total-checks:
+    description: Total number of checks that were run.
+  failed-checks:
+    description: Number of checks that failed.
+  passed-checks:
+    description: Number of checks that passed.
+  result:
+    description: "Overall result: 'passed' or 'failed'."
+
 runs:
   using: node24
   main: dist/index.mjs
