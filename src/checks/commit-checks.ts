@@ -1,0 +1,65 @@
+import type { CheckResult, Context, Settings, Octokit } from "../types";
+import { recordCheck } from "../report.ts";
+
+// Matches: type: description, type(scope): description, type(scope)!: description...
+// @TODO: Maybe add a setting to restrict allowed conventional commit types or restrict them by default as for now it accepts any type (\w+).
+const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
+
+// Squash-merged PR commit messages end with "(#123)" and might use the PR title as the commit message which might not follow conventional commits format.
+const SQUASH_MERGE_PATTERN = /\(#\d+\)$/;
+
+export async function runCommitChecks(
+    settings: Settings,
+    context: Context,
+    client: Octokit,
+): Promise<CheckResult[]> {
+    const results: CheckResult[] = [];
+
+    if (!settings.requireConventionalCommits && settings.blockedCommitAuthors.length === 0) {
+        return results;
+    }
+
+    const commits = await client.paginate(client.rest.pulls.listCommits, {
+        owner: context.owner,
+        repo: context.repo,
+        pull_number: context.number,
+        per_page: 100,
+    });
+
+    if (settings.requireConventionalCommits) {
+        const subjects = commits
+            .map((commit) => commit.commit.message.split("\n")[0] ?? "")
+            .filter(
+                (subject) => !subject.startsWith("Merge ") && !SQUASH_MERGE_PATTERN.test(subject),
+            );
+
+        const passed = subjects.every((subject) => CONVENTIONAL_PATTERN.test(subject));
+        recordCheck(results, {
+            name: "conventional-commits",
+            passed,
+            message: passed
+                ? "All commit messages follow conventional commits format"
+                : "Not all commit messages follow conventional commits format",
+        });
+    }
+
+    if (settings.blockedCommitAuthors.length > 0) {
+        const blockedAuthors = settings.blockedCommitAuthors.map((author) => author.toLowerCase());
+        const blocked = new Set(
+            commits
+                .map((commit) => (commit.author?.login ?? "").toLowerCase())
+                .filter((login) => blockedAuthors.includes(login)),
+        );
+
+        recordCheck(results, {
+            name: "blocked-commit-authors",
+            passed: blocked.size === 0,
+            message:
+                blocked.size > 0
+                    ? `Blocked commit author(s) found: ${[...blocked].join(", ")}`
+                    : "No blocked commit authors found",
+        });
+    }
+
+    return results;
+}
