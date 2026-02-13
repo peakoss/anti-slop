@@ -12,6 +12,10 @@ export interface Settings {
     allowedSourceBranches: string[];
     blockedSourceBranches: string[];
 
+    // PR Quality Checks
+    maxNegativeReactions: number;
+    requireMaintainerCanModify: boolean;
+
     // PR Title Checks
     requireConventionalTitle: boolean;
 
@@ -38,6 +42,7 @@ export interface Settings {
     minRepoMergedPrs: number;
     minRepoMergeRatio: number;
     minGlobalMergeRatio: number;
+    globalMergeRatioExcludeOwn: boolean;
     minAccountAge: number;
 
     // Filters
@@ -69,6 +74,9 @@ export interface Settings {
     closePr: boolean;
     lockPr: boolean;
     deleteBranch: boolean;
+
+    // PR Success Actions
+    successAddPrLabels: string[];
 
     // PR Failure Actions
     failurePrMessage: string;

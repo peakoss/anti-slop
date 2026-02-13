@@ -43,6 +43,16 @@ inputs:
       main
       master
 
+  # PR Quality Checks
+  max-negative-reactions:
+    description: Maximum number of negative reactions (thumbs down + confused) allowed on the PR. 0 disables this check.
+    required: false
+    default: "0"
+  require-maintainer-can-modify:
+    description: Require the PR to allow maintainers to push to the source branch.
+    required: false
+    default: "true"
+
   # PR Title Checks
   require-conventional-title:
     description: 'Require PR titles to follow Conventional Commits format (e.g. "feat:", "fix:", "feat(scope):").'
@@ -124,6 +134,10 @@ inputs:
     description: Minimum merged/closed PR ratio across all GitHub repositories (1-100%). 0 disables this check.
     required: false
     default: "30"
+  global-merge-ratio-exclude-own:
+    description: Exclude PRs to the author's own repositories from the global merge ratio calculation.
+    required: false
+    default: "false"
   min-account-age:
     description: Minimum GitHub account age in days (1-365). 0 disables this check.
     required: false
@@ -234,6 +248,12 @@ inputs:
     description: Delete the source branch after closing the PR.
     required: false
     default: "false"
+
+  # PR Success Actions
+  success-add-pr-labels:
+    description: Comma-separated list of labels to add to the PR on success.
+    required: false
+    default: ""
 
   # PR Failure Actions
   failure-pr-message:

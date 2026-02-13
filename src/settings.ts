@@ -35,6 +35,10 @@ export function getSettings(): Settings {
         allowedSourceBranches: core.getMultilineInput(Input.AllowedSourceBranches),
         blockedSourceBranches: core.getMultilineInput(Input.BlockedSourceBranches),
 
+        // PR Quality Checks
+        maxNegativeReactions: parseInt(core.getInput(Input.MaxNegativeReactions)),
+        requireMaintainerCanModify: core.getBooleanInput(Input.RequireMaintainerCanModify),
+
         // PR Title Checks
         requireConventionalTitle: core.getBooleanInput(Input.RequireConventionalTitle),
 
@@ -61,6 +65,7 @@ export function getSettings(): Settings {
         minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
         minRepoMergeRatio: parseInt(core.getInput(Input.MinRepoMergeRatio)),
         minGlobalMergeRatio: parseInt(core.getInput(Input.MinGlobalMergeRatio)),
+        globalMergeRatioExcludeOwn: core.getBooleanInput(Input.GlobalMergeRatioExcludeOwn),
         minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
 
         // Filters
@@ -92,6 +97,9 @@ export function getSettings(): Settings {
         closePr: core.getBooleanInput(Input.ClosePr),
         lockPr: core.getBooleanInput(Input.LockPr),
         deleteBranch: core.getBooleanInput(Input.DeleteBranch),
+
+        // PR Success Actions
+        successAddPrLabels: parseList(core.getInput(Input.SuccessAddPrLabels)),
 
         // PR Failure Actions
         failurePrMessage: core.getInput(Input.FailurePrMessage),
@@ -131,6 +139,7 @@ function validateNumber(value: number, name: string, min: number, max: number): 
 
 function validateSettings(settings: Settings): void {
     validateNumber(settings.maxFailures, "max-failures", 1, 30);
+    validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
     validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
     validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);

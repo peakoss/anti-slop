@@ -13,6 +13,10 @@ export enum Input {
     AllowedSourceBranches = "allowed-source-branches",
     BlockedSourceBranches = "blocked-source-branches",
 
+    // PR Quality Checks
+    MaxNegativeReactions = "max-negative-reactions",
+    RequireMaintainerCanModify = "require-maintainer-can-modify",
+
     // PR Title Checks
     RequireConventionalTitle = "require-conventional-title",
 
@@ -39,6 +43,7 @@ export enum Input {
     MinRepoMergedPrs = "min-repo-merged-prs",
     MinRepoMergeRatio = "min-repo-merge-ratio",
     MinGlobalMergeRatio = "min-global-merge-ratio",
+    GlobalMergeRatioExcludeOwn = "global-merge-ratio-exclude-own",
     MinAccountAge = "min-account-age",
 
     // Filters
@@ -70,6 +75,9 @@ export enum Input {
     ClosePr = "close-pr",
     LockPr = "lock-pr",
     DeleteBranch = "delete-branch",
+
+    // PR Success Actions
+    SuccessAddPrLabels = "success-add-pr-labels",
 
     // PR Failure Actions
     FailurePrMessage = "failure-pr-message",
