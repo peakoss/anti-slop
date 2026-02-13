@@ -70,19 +70,17 @@ export interface Settings {
     exemptPrMilestones: string[];
     // exemptIssueMilestones: string[];
 
-    // PR Close Actions
-    closePr: boolean;
-    lockPr: boolean;
-    deleteBranch: boolean;
-
     // PR Success Actions
     successAddPrLabels: string[];
 
     // PR Failure Actions
-    failurePrMessage: string;
     failureRemovePrLabels: string[];
     failureRemoveAllPrLabels: boolean;
     failureAddPrLabels: string[];
+    failurePrMessage: string;
+    closePr: boolean;
+    lockPr: boolean;
+    deleteBranch: boolean;
 
     // Issue Close Actions
     // closeIssue: boolean;

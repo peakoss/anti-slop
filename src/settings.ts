@@ -93,19 +93,17 @@ export function getSettings(): Settings {
         exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
         // exemptIssueMilestones: parseList(core.getInput(Input.ExemptIssueMilestones)),
 
-        // PR Close Actions
-        closePr: core.getBooleanInput(Input.ClosePr),
-        lockPr: core.getBooleanInput(Input.LockPr),
-        deleteBranch: core.getBooleanInput(Input.DeleteBranch),
-
         // PR Success Actions
         successAddPrLabels: parseList(core.getInput(Input.SuccessAddPrLabels)),
 
         // PR Failure Actions
-        failurePrMessage: core.getInput(Input.FailurePrMessage),
         failureRemovePrLabels: parseList(core.getInput(Input.FailureRemovePrLabels)),
         failureRemoveAllPrLabels: core.getBooleanInput(Input.FailureRemoveAllPrLabels),
         failureAddPrLabels: parseList(core.getInput(Input.FailureAddPrLabels)),
+        failurePrMessage: core.getInput(Input.FailurePrMessage),
+        closePr: core.getBooleanInput(Input.ClosePr),
+        lockPr: core.getBooleanInput(Input.LockPr),
+        deleteBranch: core.getBooleanInput(Input.DeleteBranch),
 
         // Issue Close Actions
         // closeIssue: core.getBooleanInput(Input.CloseIssue),

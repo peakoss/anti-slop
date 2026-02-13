@@ -235,20 +235,6 @@ inputs:
   #   required: false
   #   default: ""
 
-  # PR Close Actions
-  close-pr:
-    description: Close the PR when the maximum number of failures is reached.
-    required: false
-    default: "true"
-  lock-pr:
-    description: Lock the PR conversation after closing.
-    required: false
-    default: "false"
-  delete-branch:
-    description: Delete the source branch after closing the PR.
-    required: false
-    default: "false"
-
   # PR Success Actions
   success-add-pr-labels:
     description: Comma-separated list of labels to add to the PR on success.
@@ -256,10 +242,6 @@ inputs:
     default: ""
 
   # PR Failure Actions
-  failure-pr-message:
-    description: Comment posted on the PR when the maximum number of failures is reached. Empty posts no comment.
-    required: false
-    default: ""
   failure-remove-pr-labels:
     description: Comma-separated list of labels to remove from the PR on failure.
     required: false
@@ -272,6 +254,22 @@ inputs:
     description: Comma-separated list of labels to add to the PR on failure.
     required: false
     default: ""
+  failure-pr-message:
+    description: Comment posted on the PR when the maximum number of failures is reached. Empty posts no comment.
+    required: false
+    default: ""
+  close-pr:
+    description: Close the PR when the maximum number of failures is reached.
+    required: false
+    default: "true"
+  lock-pr:
+    description: Lock the PR conversation after closing.
+    required: false
+    default: "false"
+  delete-branch:
+    description: Delete the source branch after closing the PR.
+    required: false
+    default: "false"
 
   # Issue Close Actions
   # close-issue:

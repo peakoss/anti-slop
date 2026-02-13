@@ -71,19 +71,17 @@ export enum Input {
     ExemptPrMilestones = "exempt-pr-milestones",
     // ExemptIssueMilestones = "exempt-issue-milestones",
 
-    // PR Close Actions
-    ClosePr = "close-pr",
-    LockPr = "lock-pr",
-    DeleteBranch = "delete-branch",
-
     // PR Success Actions
     SuccessAddPrLabels = "success-add-pr-labels",
 
     // PR Failure Actions
-    FailurePrMessage = "failure-pr-message",
     FailureRemovePrLabels = "failure-remove-pr-labels",
     FailureRemoveAllPrLabels = "failure-remove-all-pr-labels",
     FailureAddPrLabels = "failure-add-pr-labels",
+    FailurePrMessage = "failure-pr-message",
+    ClosePr = "close-pr",
+    LockPr = "lock-pr",
+    DeleteBranch = "delete-branch",
 
     // Issue Close Actions
     // CloseIssue = "close-issue",
