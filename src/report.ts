@@ -1,6 +1,5 @@
 import * as core from "@actions/core";
-import type { CheckResult } from "./types";
-import type { Settings } from "./types";
+import type { CheckResult, Settings } from "./types";
 
 export function recordCheck(results: CheckResult[], result: CheckResult): void {
     const prefix = result.passed ? "PASS" : "FAIL";

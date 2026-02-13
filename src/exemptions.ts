@@ -1,6 +1,5 @@
 import * as core from "@actions/core";
-import type { Settings } from "./types";
-import type { Context } from "./types";
+import type { Settings, Context } from "./types";
 
 export function checkExemptions(settings: Settings, context: Context): boolean {
     core.info("Checking exemptions...");
