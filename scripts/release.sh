@@ -88,6 +88,26 @@ select_version() {
     fi
 }
 
+build_action() {
+    echo ""
+    command -v bun > /dev/null 2>&1 || die "bun is not installed. Install it from https://bun.sh"
+
+    local bun_version
+    bun_version=$(bun --version)
+    info "Using bun ${BOLD}v${bun_version}${OFF}"
+
+    info "Building action..."
+    bun run build --silent > /dev/null 2>&1 || die "Build failed. Fix errors before releasing."
+    success "Built dist/index.mjs"
+
+    if git diff --quiet -- "$REPO_ROOT/dist/"; then
+        info "dist/ is already up to date"
+    else
+        git add "$REPO_ROOT/dist/" > /dev/null
+        info "Staged dist/ changes"
+    fi
+}
+
 bump_version() {
     echo ""
     info "Bumping ${BOLD}v${CURRENT_VERSION}${OFF} → ${BOLD}${NEW_TAG}${OFF}"
@@ -102,7 +122,7 @@ bump_version() {
 
     git add "$PACKAGE_JSON" > /dev/null
     local short_hash
-    short_hash=$(git commit -m "chore(release): bump version to $NEW_TAG" --quiet && git rev-parse --short HEAD)
+    short_hash=$(git commit -m "chore(release): $NEW_TAG" --quiet && git rev-parse --short HEAD)
     FULL_COMMIT_HASH=$(git rev-parse HEAD)
     success "Created commit ${DIM}(${short_hash})${OFF}"
 }
@@ -162,6 +182,7 @@ push_release() {
 main() {
     check_prerequisites
     select_version
+    build_action
     bump_version
     create_tags
     push_release
