@@ -5,7 +5,6 @@ export interface Context {
     repo: string;
 
     repoUrl: string;
-    issueUrl: string;
 
     number: number;
 
@@ -22,7 +21,7 @@ export interface Context {
     milestone: string | null;
 
     isDraft: boolean;
-    // maintainerCanModify: boolean;
+    maintainerCanModify: boolean;
     // changedFiles: number;
     // additions: number;
     // deletions: number;

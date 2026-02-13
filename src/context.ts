@@ -16,7 +16,6 @@ export function buildContext(): Context {
         repo: github.context.repo.repo,
 
         repoUrl: pr.base.repo.html_url,
-        issueUrl: pr.issue_url,
 
         number: pr.number,
 
@@ -33,7 +32,7 @@ export function buildContext(): Context {
         milestone: pr.milestone?.title ?? null,
 
         isDraft: pr.draft,
-        // maintainerCanModify: pr.maintainer_can_modify,
+        maintainerCanModify: pr.maintainer_can_modify,
         // changedFiles: pr.changed_files,
         // additions: pr.additions,
         // deletions: pr.deletions,
