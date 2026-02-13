@@ -8,6 +8,7 @@ info()    { echo -e "  ${BLUE}info:${OFF}  $1"; }
 die()     { echo -e "  ${RED}error:${OFF} $1" >&2; exit 1; }
 
 check_prerequisites() {
+    command -v git > /dev/null 2>&1 || die "git is not installed. Install it from https://git-scm.com"
     git rev-parse --is-inside-work-tree > /dev/null 2>&1 || die "Not a git repository"
 
     REPO_ROOT="$(git rev-parse --show-toplevel)"
