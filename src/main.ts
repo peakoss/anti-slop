@@ -2,9 +2,10 @@ import * as core from "@actions/core";
 import { getSettings } from "./settings.ts";
 import { buildContext } from "./context.ts";
 import { checkExemptions } from "./exemptions.ts";
-
 export async function run(): Promise<void> {
     try {
+        const isLocal = !process.env["GITHUB_ACTIONS"];
+
         const settings = getSettings();
 
         const context = buildContext();
