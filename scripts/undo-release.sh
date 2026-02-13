@@ -33,7 +33,7 @@ confirm_undo() {
     echo -e "  This will:"
     echo -e "  ${DIM}- Delete local tag ${CURRENT_TAG}${OFF}"
     echo -e "  ${DIM}- Delete local major tag ${MAJOR_TAG} (if present)${OFF}"
-    echo -e "  ${DIM}- Reset the release commit${OFF}"
+    echo -e "  ${DIM}- Reset the release commit and restore dist/${OFF}"
     echo ""
     echo -e -n "  Continue? [y/N] "
     read -r confirm
@@ -53,7 +53,7 @@ delete_local_tags() {
 reset_local_commit() {
     git reset --soft HEAD~1 > /dev/null
     git restore --staged . > /dev/null
-    git checkout -- "$PACKAGE_JSON" > /dev/null
+    git checkout -- "$PACKAGE_JSON" "$REPO_ROOT/dist/" > /dev/null 2>&1
     success "Reset release commit"
 }
 
