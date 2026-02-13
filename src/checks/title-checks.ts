@@ -2,7 +2,7 @@ import type { CheckResult, Context, Settings } from "../types";
 import { recordCheck } from "../report.ts";
 
 // Matches: type: description, type(scope): description, type(scope)!: description...
-// @TODO: Maybe add a setting to restrict allowed types or restrict them by default as for now it accepts any type (\w+).
+// @TODO: Maybe add a setting to restrict allowed conventional commit types or restrict them by default as for now it accepts any type (\w+).
 const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 
 export function runTitleChecks(settings: Settings, context: Context): CheckResult[] {
