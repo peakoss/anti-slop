@@ -50403,6 +50403,7 @@ function setOutputs(results, settings) {
 async function writeJobSummary(results, settings) {
 	if (results.length === 0) {
 		summary.addHeading("PR Quality Checks - Skipped", "3");
+		summary.addBreak();
 		summary.addRaw("No checks were enabled or applicable for this PR.", true);
 		await summary.write({ overwrite: true });
 		return;
@@ -50411,7 +50412,9 @@ async function writeJobSummary(results, settings) {
 	const passed = results.filter((r) => r.passed);
 	const statusText = failed.length >= settings.maxFailures ? "Failed" : "Passed";
 	summary.addHeading(`PR Quality Checks - ${statusText}`, "3");
+	summary.addBreak();
 	summary.addRaw(`${String(failed.length)}/${String(results.length)} checks failed · ${String(passed.length)} checks passed`, true);
+	summary.addBreak();
 	const sorted = [...failed, ...passed];
 	summary.addTable([[
 		{
@@ -50589,6 +50592,7 @@ async function runDescriptionChecks(settings, context, client) {
 				});
 			} else {
 				const missing = templateHeadings.filter((heading) => !body.includes(heading));
+				debug(`Missing template headings: ${missing.join(", ")}`);
 				recordCheck(results, {
 					name: "pr-template",
 					passed: missing.length === 0,
