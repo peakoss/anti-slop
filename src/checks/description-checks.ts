@@ -125,6 +125,7 @@ export async function runDescriptionChecks(
                 });
             } else {
                 const missing = templateHeadings.filter((heading) => !body.includes(heading));
+                core.debug(`Missing template headings: ${missing.join(", ")}`);
                 recordCheck(results, {
                     name: "pr-template",
                     passed: missing.length === 0,
