@@ -18,10 +18,6 @@ inputs:
     description: Number of check failures needed before failure actions are triggered (between 1 and 30).
     required: false
     default: "3"
-  actions-step-debug:
-    description: Enable step debug logging.
-    required: false
-    default: "false"
 
   # PR Branch Checks
   allowed-target-branches:

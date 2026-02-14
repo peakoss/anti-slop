@@ -4,7 +4,6 @@ export enum Input {
 
     // General Settings
     MaxFailures = "max-failures",
-    ActionsStepDebug = "actions-step-debug",
 
     // PR Branch Checks
     // Branches can contain "," so we use newline-separated (multiline) values to configure these.

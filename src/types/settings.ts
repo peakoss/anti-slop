@@ -4,7 +4,6 @@ export interface Settings {
 
     // General Settings
     maxFailures: number;
-    actionsStepDebug: boolean;
 
     // PR Branch Checks
     allowedTargetBranches: string[];

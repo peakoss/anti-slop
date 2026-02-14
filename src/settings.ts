@@ -27,7 +27,6 @@ export function getSettings(): Settings {
 
         // General Settings
         maxFailures: parseInt(core.getInput(Input.MaxFailures)),
-        actionsStepDebug: core.getBooleanInput(Input.ActionsStepDebug),
 
         // PR Branch Checks
         allowedTargetBranches: core.getMultilineInput(Input.AllowedTargetBranches),
