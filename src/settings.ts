@@ -130,7 +130,9 @@ function validateNumber(value: number, name: string, min: number, max: number): 
         throw new Error(`"${name}" must be a valid number`);
     }
     if (value < min || value > max) {
-        throw new Error(`"${name}" must be between ${min} and ${max}, got ${value}`);
+        throw new Error(
+            `"${name}" must be between ${String(min)} and ${String(max)}, got ${String(value)}`,
+        );
     }
 }
 
