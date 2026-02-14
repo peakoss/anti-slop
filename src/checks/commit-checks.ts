@@ -5,8 +5,8 @@ import { recordCheck } from "../report.ts";
 // @TODO: Maybe add a setting to restrict allowed conventional commit types or restrict them by default as for now it accepts any type (\w+).
 const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 
-// Squash-merged PR commit messages end with "(#123)" and might use the PR title as the commit message which might not follow conventional commits format.
-const SQUASH_MERGE_PATTERN = /\(#\d+\)$/;
+// When integrating PRs on GitHub, the PR title can be used as the commit message with the PR number appended in parentheses "(#123)" but the PR title might not follow the conventional commits format.
+const TITLE_PATTERN = /\(#\d+\)$/;
 
 export async function runCommitChecks(
     settings: Settings,
@@ -29,9 +29,7 @@ export async function runCommitChecks(
     if (settings.requireConventionalCommits) {
         const subjects = commits
             .map((commit) => commit.commit.message.split("\n")[0] ?? "")
-            .filter(
-                (subject) => !subject.startsWith("Merge ") && !SQUASH_MERGE_PATTERN.test(subject),
-            );
+            .filter((subject) => !subject.startsWith("Merge ") && !TITLE_PATTERN.test(subject));
 
         const passed = subjects.every((subject) => CONVENTIONAL_PATTERN.test(subject));
         recordCheck(results, {
