@@ -33,6 +33,7 @@ export function setOutputs(results: CheckResult[], settings: Settings): boolean 
 export async function writeJobSummary(results: CheckResult[], settings: Settings): Promise<void> {
     if (results.length === 0) {
         core.summary.addHeading("PR Quality Checks - Skipped", "3");
+        core.summary.addBreak();
         core.summary.addRaw("No checks were enabled or applicable for this PR.", true);
 
         await core.summary.write({ overwrite: true });
@@ -44,12 +45,15 @@ export async function writeJobSummary(results: CheckResult[], settings: Settings
 
     const statusText = failed.length >= settings.maxFailures ? "Failed" : "Passed";
     core.summary.addHeading(`PR Quality Checks - ${statusText}`, "3");
+    core.summary.addBreak();
 
     core.summary.addRaw(
         `${String(failed.length)}/${String(results.length)} checks failed` +
             ` · ${String(passed.length)} checks passed`,
         true,
     );
+
+    core.summary.addBreak();
 
     const sorted = [...failed, ...passed];
 
