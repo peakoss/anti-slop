@@ -311,7 +311,7 @@ outputs:
   passed-checks:
     description: Number of checks that passed.
   result:
-    description: "Overall result: 'passed' or 'failed'."
+    description: "Overall result: 'passed', 'failed', or 'skipped'."
 
 runs:
   using: node24
