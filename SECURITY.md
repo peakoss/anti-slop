@@ -18,7 +18,7 @@ If you find a security vulnerability in a currently supported version, please fo
 1. **DO NOT** disclose the vulnerability publicly.
 2. Report it via [GitHub Security Advisories](https://github.com/peakoss/anti-slop/security/advisories/new).
 3. Include in your report:
-    - **Explanation:** Detailed explanation of the vulnerability.
-    - **Affected Versions:** Which anti-slop versions are affected.
-    - **Reproduction:** Clear steps to reproduce the vulnerability.
-    - **Impact:** Assessment of the potential impact of the vulnerability.
+   - **Explanation:** Detailed explanation of the vulnerability.
+   - **Affected Versions:** Which anti-slop versions are affected.
+   - **Reproduction:** Clear steps to reproduce the vulnerability.
+   - **Impact:** Assessment of the potential impact of the vulnerability.
