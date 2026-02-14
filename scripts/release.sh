@@ -129,14 +129,14 @@ bump_version() {
 }
 
 create_tags() {
-    git tag "$NEW_TAG" --annotate --message "Release $NEW_TAG"
+    git tag "$NEW_TAG" --annotate --sign --message "Release $NEW_TAG"
     success "Created tag ${BOLD}$NEW_TAG${OFF}"
 
     if [ "$SELECTED" -eq 2 ]; then
-        git tag "$MAJOR_TAG" --annotate --message "Release $MAJOR_TAG"
+        git tag "$MAJOR_TAG" --annotate --sign --message "Release $MAJOR_TAG"
         success "Created major tag ${BOLD}$MAJOR_TAG${OFF}"
     else
-        git tag "$MAJOR_TAG" --force --annotate --message "Update $MAJOR_TAG to $NEW_TAG"
+        git tag "$MAJOR_TAG" --force --annotate --sign --message "Update $MAJOR_TAG to $NEW_TAG"
         success "Updated major tag ${BOLD}$MAJOR_TAG${OFF} → ${BOLD}$NEW_TAG${OFF}"
     fi
 }
