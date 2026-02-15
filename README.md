@@ -15,7 +15,7 @@ Open-source maintainers are drowning in low-quality and AI-generated slop PRs. T
 - **Battle-tested rules:** All 22 checks are derived from patterns identified across 100+ manually reviewed AI slop PRs submitted to different large open-source projects.
 - **Thoughtful defaults:** Defaults are created and adjusted based on hands-on experience maintaining [Coolify](https://github.com/coollabsio/coolify) (50K+ stars, 120+ slop PRs per month).
 - **Configurable sensitivity:** The [`max-failures`](#max-failures) threshold controls how many checks must fail before any actions are taken. The higher the number, the less likely a legitimate contributor is flagged.
-- **Zero-configuration exemptions:** Owners, Members and Collaborators are automatically exempt by default for zero configuration needed.
+- **Zero-configuration exemptions:** Owners, Members and Collaborators are automatically exempt by default with zero configuration needed.
 - **Keep open source open:** The beauty of open source is that anyone can contribute. Anti Slop blocks low-quality and AI-generated PRs without forcing you to restrict contributions to Members and Collaborators only.
 - **No inline scripts:** No ugly, unmaintainable and unreadable inline GitHub Action scripts. Just clean, well-named configuration options that are easy to understand and maintain.
 
