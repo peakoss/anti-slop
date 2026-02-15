@@ -67,7 +67,8 @@ export async function runDescriptionChecks(
     }
 
     if (settings.blockedTerms.length > 0) {
-        const found = settings.blockedTerms.filter((term) => body.includes(term));
+        const visibleBody = body.replace(/<!--[\s\S]*?-->/g, "");
+        const found = settings.blockedTerms.filter((term) => visibleBody.includes(term));
         recordCheck(results, {
             name: "blocked-terms",
             passed: found.length === 0,
