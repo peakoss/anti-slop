@@ -123,7 +123,7 @@ bump_version() {
 
     git add "$PACKAGE_JSON" > /dev/null
     local short_hash
-    short_hash=$(git commit -m "chore(release): $NEW_TAG" --quiet && git rev-parse --short HEAD)
+    short_hash=$(git commit -S -m "chore(release): $NEW_TAG" --quiet && git rev-parse --short HEAD)
     FULL_COMMIT_HASH=$(git rev-parse HEAD)
     success "Created commit ${DIM}(${short_hash})${OFF}"
 }
