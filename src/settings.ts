@@ -52,6 +52,7 @@ export function getSettings(): Settings {
 
         // Commit Message Checks
         requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
+        requireCommitAuthorMatch: core.getBooleanInput(Input.RequireCommitAuthorMatch),
         blockedCommitAuthors: parseList(core.getInput(Input.BlockedCommitAuthors)),
 
         // File Checks

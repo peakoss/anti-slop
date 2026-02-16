@@ -15,7 +15,11 @@ export async function runCommitChecks(
 ): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
-    if (!settings.requireConventionalCommits && settings.blockedCommitAuthors.length === 0) {
+    if (
+        !settings.requireConventionalCommits &&
+        !settings.requireCommitAuthorMatch &&
+        settings.blockedCommitAuthors.length === 0
+    ) {
         return results;
     }
 
@@ -38,6 +42,24 @@ export async function runCommitChecks(
             message: passed
                 ? "All commit messages follow conventional commits format"
                 : "Not all commit messages follow conventional commits format",
+        });
+    }
+
+    if (settings.requireCommitAuthorMatch) {
+        const prAuthor = context.userLogin.toLowerCase();
+        const mismatchedAuthors = new Set(
+            commits
+                .map((commit) => commit.author?.login ?? "")
+                .filter((login) => login !== "" && login.toLowerCase() !== prAuthor),
+        );
+
+        recordCheck(results, {
+            name: "commit-author-match",
+            passed: mismatchedAuthors.size === 0,
+            message:
+                mismatchedAuthors.size > 0
+                    ? `Commit author(s) do not match PR author "${context.userLogin}": ${[...mismatchedAuthors].join(", ")}`
+                    : "All commit authors match the PR author",
         });
     }
 

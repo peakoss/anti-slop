@@ -16474,6 +16474,7 @@ let Input = /* @__PURE__ */ function(Input) {
 	Input["BlockedTerms"] = "blocked-terms";
 	Input["BlockedIssueNumbers"] = "blocked-issue-numbers";
 	Input["RequireConventionalCommits"] = "require-conventional-commits";
+	Input["RequireCommitAuthorMatch"] = "require-commit-author-match";
 	Input["BlockedCommitAuthors"] = "blocked-commit-authors";
 	Input["AllowedFileExtensions"] = "allowed-file-extensions";
 	Input["AllowedPaths"] = "allowed-paths";
@@ -16539,6 +16540,7 @@ function getSettings() {
 		blockedTerms: getMultilineInput(Input.BlockedTerms),
 		blockedIssueNumbers: parseList(getInput(Input.BlockedIssueNumbers)),
 		requireConventionalCommits: getBooleanInput(Input.RequireConventionalCommits),
+		requireCommitAuthorMatch: getBooleanInput(Input.RequireCommitAuthorMatch),
 		blockedCommitAuthors: parseList(getInput(Input.BlockedCommitAuthors)),
 		allowedFileExtensions: parseList(getInput(Input.AllowedFileExtensions)),
 		allowedPaths: getMultilineInput(Input.AllowedPaths),
@@ -50707,7 +50709,7 @@ const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 const TITLE_PATTERN = /\(#\d+\)$/;
 async function runCommitChecks(settings, context, client) {
 	const results = [];
-	if (!settings.requireConventionalCommits && settings.blockedCommitAuthors.length === 0) return results;
+	if (!settings.requireConventionalCommits && !settings.requireCommitAuthorMatch && settings.blockedCommitAuthors.length === 0) return results;
 	const commits = await client.paginate(client.rest.pulls.listCommits, {
 		owner: context.owner,
 		repo: context.repo,
@@ -50720,6 +50722,15 @@ async function runCommitChecks(settings, context, client) {
 			name: "conventional-commits",
 			passed,
 			message: passed ? "All commit messages follow conventional commits format" : "Not all commit messages follow conventional commits format"
+		});
+	}
+	if (settings.requireCommitAuthorMatch) {
+		const prAuthor = context.userLogin.toLowerCase();
+		const mismatchedAuthors = new Set(commits.map((commit) => commit.author?.login ?? "").filter((login) => login !== "" && login.toLowerCase() !== prAuthor));
+		recordCheck(results, {
+			name: "commit-author-match",
+			passed: mismatchedAuthors.size === 0,
+			message: mismatchedAuthors.size > 0 ? `Commit author(s) do not match PR author "${context.userLogin}": ${[...mismatchedAuthors].join(", ")}` : "All commit authors match the PR author"
 		});
 	}
 	if (settings.blockedCommitAuthors.length > 0) {

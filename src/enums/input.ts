@@ -30,6 +30,7 @@ export enum Input {
 
     // Commit Message Checks
     RequireConventionalCommits = "require-conventional-commits",
+    RequireCommitAuthorMatch = "require-commit-author-match",
     BlockedCommitAuthors = "blocked-commit-authors",
 
     // File Checks

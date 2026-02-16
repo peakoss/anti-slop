@@ -29,6 +29,7 @@ export interface Settings {
 
     // Commit Message Checks
     requireConventionalCommits: boolean;
+    requireCommitAuthorMatch: boolean;
     blockedCommitAuthors: string[];
 
     // File Checks
