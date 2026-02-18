@@ -104,7 +104,7 @@ export async function runFileChecks(
                             owner: context.owner,
                             repo: context.repo,
                             path: file.name,
-                            ref: context.headBranch,
+                            ref: context.headSha, // Use headSha instead of headBranch because if the PR is from a fork, the head branch name only exists in the fork repo and causes a 404 error when trying to get file content against the base repo.
                         });
                         if ("content" in data && typeof data.content === "string") {
                             const content = Buffer.from(data.content, "base64").toString("utf-8");
