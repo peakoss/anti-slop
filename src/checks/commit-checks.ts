@@ -17,6 +17,7 @@ export async function runCommitChecks(
     const results: CheckResult[] = [];
 
     if (
+        settings.maxCommitMessageLength === 0 &&
         !settings.requireConventionalCommits &&
         !settings.requireCommitAuthorMatch &&
         settings.blockedCommitAuthors.length === 0
@@ -42,10 +43,25 @@ export async function runCommitChecks(
         const excluded = commits.filter((commit) => inheritedShas.has(commit.sha));
         for (const commit of excluded) {
             core.debug(
-                `Excluding inherited commit ${commit.sha}: ${commit.commit.message.split("\n")[0]}`,
+                `Excluding inherited commit ${commit.sha}: ${commit.commit.message.split("\n")[0] ?? ""}`,
             );
         }
         commits = commits.filter((commit) => !inheritedShas.has(commit.sha));
+    }
+
+    if (settings.maxCommitMessageLength > 0) {
+        const oversizedCommits = commits.filter(
+            (commit) => commit.commit.message.length > settings.maxCommitMessageLength,
+        );
+
+        const passed = oversizedCommits.length === 0;
+        recordCheck(results, {
+            name: "max-commit-message-length",
+            passed,
+            message: passed
+                ? `All commit messages are within the ${String(settings.maxCommitMessageLength)} character limit`
+                : `${String(oversizedCommits.length)} commit message(s) exceed the ${String(settings.maxCommitMessageLength)} character limit`,
+        });
     }
 
     if (settings.requireConventionalCommits) {
