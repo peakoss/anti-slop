@@ -22,7 +22,7 @@ export async function runUserChecks(
     const globalScope = settings.globalMergeRatioExcludeOwn ? `-user:${user}` : "";
 
     const [repoMerged, repoClosed, globalMerged, globalClosed, createdAt] = await Promise.all([
-        settings.minRepoMergedPrs > 0 || settings.minRepoMergeRatio > 0
+        settings.minRepoMergedPrs > 1 || settings.minRepoMergeRatio > 0
             ? searchPrCount(client, `is:pr is:merged author:${user} repo:${repoFull}`)
             : Promise.resolve(0),
         settings.minRepoMergeRatio > 0
@@ -41,14 +41,26 @@ export async function runUserChecks(
     ]);
 
     if (settings.minRepoMergedPrs > 0) {
-        const passed = repoMerged >= settings.minRepoMergedPrs;
-        recordCheck(results, {
-            name: "min-merged-prs",
-            passed,
-            message: passed
-                ? `User has ${String(repoMerged)} merged PR(s), meets minimum of ${String(settings.minRepoMergedPrs)}`
-                : `User has ${String(repoMerged)} merged PR(s), below minimum of ${String(settings.minRepoMergedPrs)}`,
-        });
+        if (settings.minRepoMergedPrs === 1) {
+            // CONTRIBUTOR means the user has had at least one PR merged.
+            const passed = context.authorAssociation === "CONTRIBUTOR";
+            recordCheck(results, {
+                name: "min-merged-prs",
+                passed,
+                message: passed
+                    ? `User has author association "${context.authorAssociation}", meets minimum of ${String(settings.minRepoMergedPrs)} merged PR(s)`
+                    : `User has author association "${context.authorAssociation}", below minimum of ${String(settings.minRepoMergedPrs)} merged PR(s)`,
+            });
+        } else {
+            const passed = repoMerged >= settings.minRepoMergedPrs;
+            recordCheck(results, {
+                name: "min-merged-prs",
+                passed,
+                message: passed
+                    ? `User has ${String(repoMerged)} merged PR(s), meets minimum of ${String(settings.minRepoMergedPrs)}`
+                    : `User has ${String(repoMerged)} merged PR(s), below minimum of ${String(settings.minRepoMergedPrs)}`,
+            });
+        }
     }
 
     if (settings.minRepoMergeRatio > 0) {
