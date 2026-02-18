@@ -98,6 +98,10 @@ inputs:
     default: "0"
 
   # Commit Message Checks
+  max-commit-message-length:
+    description: Maximum allowed character length for individual commit messages. 0 disables this check.
+    required: false
+    default: "500"
   require-conventional-commits:
     description: Require all commit messages to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').
     required: false

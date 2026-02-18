@@ -56,6 +56,7 @@ export function getSettings(): Settings {
         ),
 
         // Commit Message Checks
+        maxCommitMessageLength: parseInt(core.getInput(Input.MaxCommitMessageLength)),
         requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
         requireCommitAuthorMatch: core.getBooleanInput(Input.RequireCommitAuthorMatch),
         blockedCommitAuthors: parseList(core.getInput(Input.BlockedCommitAuthors)),
@@ -153,6 +154,7 @@ function validateSettings(settings: Settings): void {
         0,
         50,
     );
+    validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 10000);
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
     validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
     validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);

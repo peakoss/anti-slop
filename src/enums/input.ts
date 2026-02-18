@@ -32,6 +32,7 @@ export enum Input {
     MaxAdditionalPrTemplateSections = "max-additional-pr-template-sections",
 
     // Commit Message Checks
+    MaxCommitMessageLength = "max-commit-message-length",
     RequireConventionalCommits = "require-conventional-commits",
     RequireCommitAuthorMatch = "require-commit-author-match",
     BlockedCommitAuthors = "blocked-commit-authors",

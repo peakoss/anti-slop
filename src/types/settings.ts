@@ -31,6 +31,7 @@ export interface Settings {
     maxAdditionalPrTemplateSections: number;
 
     // Commit Message Checks
+    maxCommitMessageLength: number;
     requireConventionalCommits: boolean;
     requireCommitAuthorMatch: boolean;
     blockedCommitAuthors: string[];
