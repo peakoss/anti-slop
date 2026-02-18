@@ -278,10 +278,6 @@ inputs:
     description: Lock the PR conversation after closing.
     required: false
     default: "false"
-  delete-branch:
-    description: Delete the source branch after closing the PR.
-    required: false
-    default: "false"
 
   # Issue Close Actions
   # close-issue:

@@ -108,7 +108,6 @@ export function getSettings(): Settings {
         failurePrMessage: core.getInput(Input.FailurePrMessage),
         closePr: core.getBooleanInput(Input.ClosePr),
         lockPr: core.getBooleanInput(Input.LockPr),
-        deleteBranch: core.getBooleanInput(Input.DeleteBranch),
 
         // Issue Close Actions
         // closeIssue: core.getBooleanInput(Input.CloseIssue),

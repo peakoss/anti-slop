@@ -83,7 +83,6 @@ export interface Settings {
     failurePrMessage: string;
     closePr: boolean;
     lockPr: boolean;
-    deleteBranch: boolean;
 
     // Issue Close Actions
     // closeIssue: boolean;

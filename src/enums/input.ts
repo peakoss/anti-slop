@@ -84,7 +84,6 @@ export enum Input {
     FailurePrMessage = "failure-pr-message",
     ClosePr = "close-pr",
     LockPr = "lock-pr",
-    DeleteBranch = "delete-branch",
 
     // Issue Close Actions
     // CloseIssue = "close-issue",
