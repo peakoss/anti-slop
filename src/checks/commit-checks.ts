@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import type { CheckResult, Context, Settings, Octokit } from "../types";
 import { recordCheck } from "../report.ts";
 
@@ -38,6 +39,12 @@ export async function runCommitChecks(
             basehead: `${context.baseBranch}...${context.defaultBranch}`,
         });
         const inheritedShas = new Set(comparison.commits.map((commit) => commit.sha));
+        const excluded = commits.filter((commit) => inheritedShas.has(commit.sha));
+        for (const commit of excluded) {
+            core.debug(
+                `Excluding inherited commit ${commit.sha}: ${commit.commit.message.split("\n")[0]}`,
+            );
+        }
         commits = commits.filter((commit) => !inheritedShas.has(commit.sha));
     }
 
