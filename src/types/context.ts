@@ -13,6 +13,7 @@ export interface Context {
 
     baseBranch: string;
     headBranch: string;
+    defaultBranch: string;
 
     userLogin: string;
     authorAssociation: AuthorAssociation;

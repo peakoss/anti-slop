@@ -24,6 +24,7 @@ export function buildContext(): Context {
 
         baseBranch: pr.base.ref,
         headBranch: pr.head.ref,
+        defaultBranch: pr.base.repo.default_branch,
 
         userLogin: pr.user.login,
         authorAssociation: pr.author_association,

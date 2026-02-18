@@ -23,12 +23,23 @@ export async function runCommitChecks(
         return results;
     }
 
-    const commits = await client.paginate(client.rest.pulls.listCommits, {
+    let commits = await client.paginate(client.rest.pulls.listCommits, {
         owner: context.owner,
         repo: context.repo,
         pull_number: context.number,
         per_page: 100,
     });
+
+    // Exclude inherited commits from the repos default branch that the base (target) branch of the PR hasn't caught up to yet.
+    if (context.baseBranch !== context.defaultBranch) {
+        const { data: comparison } = await client.rest.repos.compareCommitsWithBasehead({
+            owner: context.owner,
+            repo: context.repo,
+            basehead: `${context.baseBranch}...${context.defaultBranch}`,
+        });
+        const inheritedShas = new Set(comparison.commits.map((commit) => commit.sha));
+        commits = commits.filter((commit) => !inheritedShas.has(commit.sha));
+    }
 
     if (settings.requireConventionalCommits) {
         const subjects = commits
