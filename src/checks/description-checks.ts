@@ -1,6 +1,6 @@
-import * as core from "@actions/core";
 import type { CheckResult, Context, Settings, Octokit } from "../types";
 import { recordCheck } from "../report.ts";
+import { runTemplateChecks } from "./template-checks.ts";
 
 /**
  * @see https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls#issues-and-pull-requests
@@ -10,18 +10,6 @@ const ISSUE_REF_PATTERNS = [
     /(?:[\w.-]+\/[\w.-]+)#(\d+)/g, // matches owner/repo#123
     /GH-(\d+)/gi, // matches GH-123
     /(?:^|[\s(])#(\d+)/gm, // matches #123
-];
-
-/**
- * @see https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository#adding-a-pull-request-template
- */
-const PR_TEMPLATE_PATHS = [
-    ".github/pull_request_template.md",
-    "docs/pull_request_template.md",
-    "pull_request_template.md",
-    ".github/PULL_REQUEST_TEMPLATE/pull_request_template.md",
-    "docs/PULL_REQUEST_TEMPLATE/pull_request_template.md",
-    "PULL_REQUEST_TEMPLATE/pull_request_template.md",
 ];
 
 export async function runDescriptionChecks(
@@ -107,40 +95,7 @@ export async function runDescriptionChecks(
         });
     }
 
-    if (settings.requirePrTemplate) {
-        const template = await fetchPrTemplate(client, context.owner, context.repo);
-
-        if (template === null) {
-            core.info(
-                "[SKIP] require-pr-template — No repository PR template found so this check is not applicable",
-            );
-        } else {
-            const templateHeadings = template.match(/^#{1,6}\s+.+$/gm);
-
-            if (!templateHeadings || templateHeadings.length === 0) {
-                const identical = body.trim() === template.trim();
-                const passed = !identical;
-                recordCheck(results, {
-                    name: "pr-template",
-                    passed,
-                    message: passed
-                        ? "PR description follows the repository PR template structure"
-                        : "PR description is identical to the template (not filled in)",
-                });
-            } else {
-                const missing = templateHeadings.filter((heading) => !body.includes(heading));
-                core.debug(`Missing template headings: ${missing.join(", ")}`);
-                const passed = missing.length === 0;
-                recordCheck(results, {
-                    name: "pr-template",
-                    passed,
-                    message: passed
-                        ? "PR description follows the repository PR template structure"
-                        : `PR description is missing ${String(missing.length)} repository PR template section(s)`,
-                });
-            }
-        }
-    }
+    results.push(...(await runTemplateChecks(settings, context, client)));
 
     return results;
 }
@@ -156,22 +111,4 @@ function extractIssueNumbers(text: string): number[] {
         }
     }
     return [...numbers];
-}
-
-async function fetchPrTemplate(
-    client: Octokit,
-    owner: string,
-    repo: string,
-): Promise<string | null> {
-    for (const path of PR_TEMPLATE_PATHS) {
-        try {
-            const { data } = await client.rest.repos.getContent({ owner, repo, path, ref: "HEAD" });
-            if ("content" in data && typeof data.content === "string") {
-                return Buffer.from(data.content, "base64").toString("utf-8");
-            }
-        } catch {
-            continue;
-        }
-    }
-    return null;
 }
