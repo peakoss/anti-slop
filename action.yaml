@@ -110,10 +110,6 @@ inputs:
     description: Require every commit in the PR to be authored by the same GitHub user who opened the PR.
     required: false
     default: "true"
-  blocked-commit-authors:
-    description: Comma-separated list of blocked commit author usernames.
-    required: false
-    default: ""
 
   # File Checks
   allowed-file-extensions:

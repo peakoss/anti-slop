@@ -59,7 +59,6 @@ export function getSettings(): Settings {
         maxCommitMessageLength: parseInt(core.getInput(Input.MaxCommitMessageLength)),
         requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
         requireCommitAuthorMatch: core.getBooleanInput(Input.RequireCommitAuthorMatch),
-        blockedCommitAuthors: parseList(core.getInput(Input.BlockedCommitAuthors)),
 
         // File Checks
         allowedFileExtensions: parseList(core.getInput(Input.AllowedFileExtensions)),
