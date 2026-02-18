@@ -68,10 +68,6 @@ inputs:
     description: Maximum number of emojis allowed in the PR title and description. 0 disables this check.
     required: false
     default: "2"
-  require-pr-template:
-    description: Require the PR description to match the repository PR template.
-    required: false
-    default: "false"
   require-linked-issue:
     description: Require the PR to reference at least one issue in the PR description.
     required: false
@@ -84,6 +80,22 @@ inputs:
     description: Comma-separated list of issue numbers blocked from being referenced in the PR description.
     required: false
     default: ""
+  require-pr-template:
+    description: Require the PR description to follow the repository PR template structure.
+    required: false
+    default: "false"
+  strict-pr-template-sections:
+    description: Comma-separated list of PR template section headings (without the '#' prefix) classified as strict. All checkboxes in strict sections must be present and checked. Only applies when require-pr-template is enabled.
+    required: false
+    default: ""
+  optional-pr-template-sections:
+    description: Comma-separated list of PR template section headings (without the '#' prefix) classified as optional. Optional sections can be entirely removed from the PR description without failing the check. Only applies when require-pr-template is enabled.
+    required: false
+    default: ""
+  max-additional-pr-template-sections:
+    description: Maximum number of additional sections not in the template that are allowed in the PR description. 0 disables this check.
+    required: false
+    default: "0"
 
   # Commit Message Checks
   require-conventional-commits:

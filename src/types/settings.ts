@@ -22,10 +22,13 @@ export interface Settings {
     requireDescription: boolean;
     maxDescriptionLength: number;
     maxEmojiCount: number;
-    requirePrTemplate: boolean;
     requireLinkedIssue: boolean;
     blockedTerms: string[];
     blockedIssueNumbers: string[];
+    requirePrTemplate: boolean;
+    strictPrTemplateSections: string[];
+    optionalPrTemplateSections: string[];
+    maxAdditionalPrTemplateSections: number;
 
     // Commit Message Checks
     requireConventionalCommits: boolean;

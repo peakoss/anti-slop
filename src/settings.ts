@@ -45,10 +45,15 @@ export function getSettings(): Settings {
         requireDescription: core.getBooleanInput(Input.RequireDescription),
         maxDescriptionLength: parseInt(core.getInput(Input.MaxDescriptionLength)),
         maxEmojiCount: parseInt(core.getInput(Input.MaxEmojiCount)),
-        requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
         requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
         blockedTerms: core.getMultilineInput(Input.BlockedTerms),
         blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
+        requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
+        strictPrTemplateSections: parseList(core.getInput(Input.StrictPrTemplateSections)),
+        optionalPrTemplateSections: parseList(core.getInput(Input.OptionalPrTemplateSections)),
+        maxAdditionalPrTemplateSections: parseInt(
+            core.getInput(Input.MaxAdditionalPrTemplateSections),
+        ),
 
         // Commit Message Checks
         requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
@@ -142,6 +147,12 @@ function validateSettings(settings: Settings): void {
     validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
     validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
     validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
+    validateNumber(
+        settings.maxAdditionalPrTemplateSections,
+        "max-additional-pr-template-sections",
+        0,
+        50,
+    );
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
     validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
     validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);

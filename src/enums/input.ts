@@ -23,10 +23,13 @@ export enum Input {
     RequireDescription = "require-description",
     MaxDescriptionLength = "max-description-length",
     MaxEmojiCount = "max-emoji-count",
-    RequirePrTemplate = "require-pr-template",
     RequireLinkedIssue = "require-linked-issue",
     BlockedTerms = "blocked-terms",
     BlockedIssueNumbers = "blocked-issue-numbers",
+    RequirePrTemplate = "require-pr-template",
+    StrictPrTemplateSections = "strict-pr-template-sections",
+    OptionalPrTemplateSections = "optional-pr-template-sections",
+    MaxAdditionalPrTemplateSections = "max-additional-pr-template-sections",
 
     // Commit Message Checks
     RequireConventionalCommits = "require-conventional-commits",
