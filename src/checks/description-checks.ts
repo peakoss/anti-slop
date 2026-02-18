@@ -35,21 +35,23 @@ export async function runDescriptionChecks(
 
     if (settings.requireDescription) {
         const empty = body.replace(/\s/g, "").length === 0;
+        const passed = !empty;
         recordCheck(results, {
             name: "description-empty",
-            passed: !empty,
-            message: empty ? "PR description is empty" : "PR description is present",
+            passed,
+            message: passed ? "PR description is present" : "PR description is empty",
         });
     }
 
     if (settings.maxDescriptionLength > 0) {
         const over = body.length > settings.maxDescriptionLength;
+        const passed = !over;
         recordCheck(results, {
             name: "description-max-length",
-            passed: !over,
-            message: over
-                ? `Description is ${String(body.length)} chars, exceeds allowed maximum of ${String(settings.maxDescriptionLength)}`
-                : `Description is ${String(body.length)} chars, within allowed maximum of ${String(settings.maxDescriptionLength)}`,
+            passed,
+            message: passed
+                ? `Description is ${String(body.length)} chars, within maximum of ${String(settings.maxDescriptionLength)}`
+                : `Description is ${String(body.length)} chars, exceeds maximum of ${String(settings.maxDescriptionLength)}`,
         });
     }
 
@@ -61,47 +63,47 @@ export async function runDescriptionChecks(
             name: "emoji-count",
             passed,
             message: passed
-                ? `Found ${String(count)} emoji(s), within allowed maximum of ${String(settings.maxEmojiCount)}`
-                : `Found ${String(count)} emoji(s), exceeds allowed maximum of ${String(settings.maxEmojiCount)}`,
+                ? `Found ${String(count)} emoji(s), within maximum of ${String(settings.maxEmojiCount)}`
+                : `Found ${String(count)} emoji(s), exceeds maximum of ${String(settings.maxEmojiCount)}`,
         });
     }
 
     if (settings.blockedTerms.length > 0) {
         const visibleBody = body.replace(/<!--[\s\S]*?-->/g, "");
         const found = settings.blockedTerms.filter((term) => visibleBody.includes(term));
+        const passed = found.length === 0;
         recordCheck(results, {
             name: "blocked-terms",
-            passed: found.length === 0,
-            message:
-                found.length > 0
-                    ? `Blocked term(s) found: ${found.join(", ")}`
-                    : "No blocked terms found",
+            passed,
+            message: passed
+                ? "No blocked terms found in the description"
+                : `Found ${String(found.length)} blocked term(s) in the description: "${found.join('", "')}"`,
         });
     }
 
     const issueNumbers = extractIssueNumbers(body);
 
     if (settings.requireLinkedIssue) {
+        const passed = issueNumbers.length > 0;
         recordCheck(results, {
             name: "linked-issue",
-            passed: issueNumbers.length > 0,
-            message:
-                issueNumbers.length > 0
-                    ? `Found ${String(issueNumbers.length)} linked issue(s) in the PR description`
-                    : "No linked issues found in the PR description",
+            passed,
+            message: passed
+                ? `Found ${String(issueNumbers.length)} linked issue(s) in the PR description`
+                : "No linked issues found in the PR description",
         });
     }
 
     if (settings.blockedIssueNumbers.length > 0) {
         const blockedNumbers = settings.blockedIssueNumbers.map((raw) => parseInt(raw));
         const found = issueNumbers.filter((issueNumber) => blockedNumbers.includes(issueNumber));
+        const passed = found.length === 0;
         recordCheck(results, {
             name: "blocked-issue-numbers",
-            passed: found.length === 0,
-            message:
-                found.length > 0
-                    ? `Found blocked issue number(s) in the PR description: ${found.map((issueNumber) => `#${String(issueNumber)}`).join(", ")}`
-                    : "No blocked issue numbers found in the PR description",
+            passed,
+            message: passed
+                ? "No blocked issue numbers found in the description"
+                : `Found ${String(found.length)} blocked issue number(s) in the description: "${found.join(", ")}"`,
         });
     }
 
@@ -117,23 +119,24 @@ export async function runDescriptionChecks(
 
             if (!templateHeadings || templateHeadings.length === 0) {
                 const identical = body.trim() === template.trim();
+                const passed = !identical;
                 recordCheck(results, {
                     name: "pr-template",
-                    passed: !identical,
-                    message: identical
-                        ? "PR description is identical to the template (not filled in)"
-                        : "PR description follows the repository PR template structure",
+                    passed,
+                    message: passed
+                        ? "PR description follows the repository PR template structure"
+                        : "PR description is identical to the template (not filled in)",
                 });
             } else {
                 const missing = templateHeadings.filter((heading) => !body.includes(heading));
                 core.debug(`Missing template headings: ${missing.join(", ")}`);
+                const passed = missing.length === 0;
                 recordCheck(results, {
                     name: "pr-template",
-                    passed: missing.length === 0,
-                    message:
-                        missing.length > 0
-                            ? `PR description is missing repository PR template section(s)`
-                            : "PR description follows the repository PR template structure",
+                    passed,
+                    message: passed
+                        ? "PR description follows the repository PR template structure"
+                        : `PR description is missing ${String(missing.length)} repository PR template section(s)`,
                 });
             }
         }

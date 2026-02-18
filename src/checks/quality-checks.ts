@@ -14,8 +14,8 @@ export async function runQualityChecks(
             name: "require-maintainer-can-modify",
             passed,
             message: passed
-                ? "PR allows maintainers to push to the source (head) branch"
-                : "PR does not allow maintainers to push to the source (head) branch",
+                ? "PR allows maintainers to push to the source branch"
+                : "PR does not allow maintainers to push to the source branch",
         });
     }
 
@@ -33,8 +33,8 @@ export async function runQualityChecks(
             name: "max-negative-reactions",
             passed,
             message: passed
-                ? `PR has ${String(negativeCount)} negative reaction(s), within allowed maximum of ${String(settings.maxNegativeReactions)}`
-                : `PR has ${String(negativeCount)} negative reaction(s), exceeds allowed maximum of ${String(settings.maxNegativeReactions)}`,
+                ? `PR has ${String(negativeCount)} negative reaction(s), within maximum of ${String(settings.maxNegativeReactions)}`
+                : `PR has ${String(negativeCount)} negative reaction(s), exceeds maximum of ${String(settings.maxNegativeReactions)}`,
         });
     }
 

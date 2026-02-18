@@ -66,7 +66,9 @@ export async function runUserChecks(
             recordCheck(results, {
                 name: "repo-merge-ratio",
                 passed,
-                message: `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), minimum is ${String(settings.minRepoMergeRatio)}%`,
+                message: passed
+                    ? `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), meets minimum of ${String(settings.minRepoMergeRatio)}%`
+                    : `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), below minimum of ${String(settings.minRepoMergeRatio)}%`,
             });
         }
     }
@@ -87,7 +89,9 @@ export async function runUserChecks(
             recordCheck(results, {
                 name: "global-merge-ratio",
                 passed,
-                message: `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), minimum is ${String(settings.minGlobalMergeRatio)}%`,
+                message: passed
+                    ? `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), meets minimum of ${String(settings.minGlobalMergeRatio)}%`
+                    : `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), below minimum of ${String(settings.minGlobalMergeRatio)}%`,
             });
         }
     }

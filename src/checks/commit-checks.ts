@@ -94,7 +94,7 @@ export async function runCommitChecks(
             passed: blocked.size === 0,
             message:
                 blocked.size > 0
-                    ? `Blocked commit author(s) found: ${[...blocked].join(", ")}`
+                    ? `Found ${String(blocked.size)} blocked commit author(s): "${[...blocked].join('", "')}"`
                     : "No blocked commit authors found",
         });
     }

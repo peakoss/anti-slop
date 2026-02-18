@@ -14,7 +14,7 @@ export function runBranchChecks(settings: Settings, context: Context): CheckResu
             recordCheck(results, {
                 name: "target-branch",
                 passed: false,
-                message: `Target branch "${branch}" is not in the allowed list`,
+                message: `Target branch "${branch}" is not allowed`,
             });
         } else if (settings.blockedTargetBranches.some((pattern) => matchBranch(branch, pattern))) {
             recordCheck(results, {
@@ -26,7 +26,7 @@ export function runBranchChecks(settings: Settings, context: Context): CheckResu
             recordCheck(results, {
                 name: "target-branch",
                 passed: true,
-                message: "Target branch is allowed",
+                message: `Target branch "${branch}" is allowed`,
             });
         }
     }
@@ -41,7 +41,7 @@ export function runBranchChecks(settings: Settings, context: Context): CheckResu
             recordCheck(results, {
                 name: "source-branch",
                 passed: false,
-                message: `Source branch "${branch}" is not in the allowed list`,
+                message: `Source branch "${branch}" is not allowed`,
             });
         } else if (settings.blockedSourceBranches.some((pattern) => matchBranch(branch, pattern))) {
             recordCheck(results, {
@@ -53,7 +53,7 @@ export function runBranchChecks(settings: Settings, context: Context): CheckResu
             recordCheck(results, {
                 name: "source-branch",
                 passed: true,
-                message: "Source branch is allowed",
+                message: `Source branch "${branch}" is allowed`,
             });
         }
     }
