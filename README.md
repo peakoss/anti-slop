@@ -1,8 +1,8 @@
 # Anti Slop
 
-A GitHub Action that detects and automatically closes low-quality and AI slop PRs. It ships with **22 check rules** covering PR branches, title, description, file changes, contributor history and more.
+A GitHub Action that detects and automatically closes low-quality and AI slop PRs. It ships with **29 check rules** covering PR branches, title, description, template, commit messages, file changes, user signals and contributor history.
 
-Everything is configurable through **44 options** that you do not have to touch if you don't want to, as we've set sensible defaults.
+Everything is configurable through **52 options** — including checks, exemptions and failure actions — that you do not have to touch if you don't want to, as we've set sensible defaults.
 
 > [!IMPORTANT]
 > Anti Slop is currently **v0** and subject to breaking changes prior to v1.0.0. Pin to a specific version or commit SHA if you need stability.
@@ -12,7 +12,7 @@ Everything is configurable through **44 options** that you do not have to touch 
 Open-source maintainers are drowning in low-quality and AI-generated slop PRs. These PRs undermine real contributions and waste reviewers time. Anti Slop stops these PRs before they reach your review queue.
 
 - **Fast:** The entire action runs in under 15 seconds which means slop PRs are caught and closed before you even notice them.
-- **Battle-tested rules:** All 22 checks are derived from patterns identified across 100+ manually reviewed AI slop PRs submitted to different large open-source projects.
+- **Battle-tested rules:** All 29 checks are derived from patterns identified across 130+ manually reviewed AI slop PRs submitted to different large open-source projects.
 - **Thoughtful defaults:** Defaults are created and adjusted based on hands-on experience maintaining [Coolify](https://github.com/coollabsio/coolify) (50K+ stars, 120+ slop PRs per month).
 - **Configurable sensitivity:** The [`max-failures`](#max-failures) threshold controls how many checks must fail before any actions are taken. The higher the number, the less likely a legitimate contributor is flagged.
 - **Zero-configuration exemptions:** Owners, Members and Collaborators are automatically exempt by default with zero configuration needed.
@@ -42,7 +42,6 @@ jobs:
       - uses: peakoss/anti-slop@v0
         with:
           max-failures: 3
-          blocked-commit-authors: "claude,copilot"
           blocked-terms: |
             PINEAPPLE
 ```
@@ -51,13 +50,13 @@ jobs:
 
 For the execution of this action it must be able to read the contents of pull requests and issues to run checks.
 
-In addition based on additionally configured options (eg. comment, add label, remove label, delete branch, etc.) the action could require more permissions.
+In addition based on additionally configured options (eg. comment, add label, remove label, etc.) the action could require more permissions.
 
 We recommend the following permissions by default:
 
 ```yaml
 permissions:
-  contents: read # contents: write if delete-branch is set to true
+  contents: read
   issues: read
   pull-requests: write
 ```
@@ -111,14 +110,21 @@ jobs:
           require-description: true
           max-description-length: 0
           max-emoji-count: 2
-          require-pr-template: false
+          max-code-references: 5
           require-linked-issue: false
           blocked-terms: ""
           blocked-issue-numbers: ""
 
+          # PR Template Checks
+          require-pr-template: false
+          strict-pr-template-sections: ""
+          optional-pr-template-sections: ""
+          max-additional-pr-template-sections: 0
+
           # Commit Message Checks
+          max-commit-message-length: 500
           require-conventional-commits: false
-          blocked-commit-authors: ""
+          require-commit-author-match: true
 
           # File Checks
           allowed-file-extensions: ""
@@ -129,40 +135,44 @@ jobs:
             LICENSE
             CODE_OF_CONDUCT.md
           require-final-newline: true
-          # User Health Checks
+          # User Checks
+          detect-spam-usernames: true
+          min-account-age: 7
+          max-daily-forks: 7
+          min-profile-completeness: 4
+
+          # Merge Checks
           min-repo-merged-prs: 0
           min-repo-merge-ratio: 0
           min-global-merge-ratio: 30
           global-merge-ratio-exclude-own: false
-          min-account-age: 7
 
           # Exemptions
-          exempt-author-association: "OWNER,MEMBER,COLLABORATOR"
-          exempt-users: ""
+          exempt-draft-prs: false
           exempt-bots: |
             actions-user
             dependabot[bot]
             renovate[bot]
             github-actions[bot]
-          exempt-draft-prs: false
+          exempt-users: ""
+          exempt-author-association: "OWNER,MEMBER,COLLABORATOR"
           exempt-label: "exempt"
           exempt-pr-label: ""
-          exempt-milestones: ""
-          exempt-pr-milestones: ""
           exempt-all-milestones: false
           exempt-all-pr-milestones: false
+          exempt-milestones: ""
+          exempt-pr-milestones: ""
 
           # PR Success Actions
           success-add-pr-labels: ""
 
           # PR Failure Actions
-          close-pr: true
-          lock-pr: false
-          delete-branch: false
-          failure-pr-message: ""
           failure-remove-pr-labels: ""
           failure-remove-all-pr-labels: false
           failure-add-pr-labels: ""
+          failure-pr-message: ""
+          close-pr: true
+          lock-pr: false
 ```
 
 </details>
@@ -173,53 +183,60 @@ The only required input is `github-token` and it is automatically set to the wor
 
 ### Inputs
 
-| Input                                                               | Description                                                                                                                 | Default                                                                   |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| [`github-token`](#github-token)                                     | GitHub token used to authenticate API requests.                                                                             | `${{ github.token }}`                                                     |
-| [`max-failures`](#max-failures)                                     | Number of check failures needed before failure actions are triggered (between 1 and 30).                                    | `3`                                                                       |
-| [`allowed-target-branches`](#allowed-target-branches)               | Newline-separated target branch patterns to allow. Empty allows all branches.                                               | `""`                                                                      |
-| [`blocked-target-branches`](#blocked-target-branches)               | Newline-separated target branch patterns to block.                                                                          | `""`                                                                      |
-| [`allowed-source-branches`](#allowed-source-branches)               | Newline-separated source branch patterns to allow. Empty allows all branches.                                               | `""`                                                                      |
-| [`blocked-source-branches`](#blocked-source-branches)               | Newline-separated source branch patterns to block.                                                                          | `main`, `master`                                                          |
-| [`max-negative-reactions`](#max-negative-reactions)                 | Maximum number of negative reactions (thumbs down + confused) allowed on the PR. 0 disables this check.                     | `0`                                                                       |
-| [`require-maintainer-can-modify`](#require-maintainer-can-modify)   | Require the PR to allow maintainers to push to the source branch.                                                           | `true`                                                                    |
-| [`require-conventional-title`](#require-conventional-title)         | Require PR titles to follow Conventional Commits format (e.g. "feat:", "fix:", "feat(scope):").                             | `false`                                                                   |
-| [`require-description`](#require-description)                       | Require a non-empty PR description.                                                                                         | `true`                                                                    |
-| [`max-description-length`](#max-description-length)                 | Maximum allowed character length for the PR description. 0 disables this check.                                             | `0`                                                                       |
-| [`max-emoji-count`](#max-emoji-count)                               | Maximum number of emojis allowed in the PR title and description. 0 disables this check.                                    | `2`                                                                       |
-| [`require-pr-template`](#require-pr-template)                       | Require the PR description to match the repository PR template.                                                             | `false`                                                                   |
-| [`require-linked-issue`](#require-linked-issue)                     | Require the PR to reference at least one issue.                                                                             | `false`                                                                   |
-| [`blocked-terms`](#blocked-terms)                                   | Newline-separated list of terms blocked from appearing in the PR description.                                               | `""`                                                                      |
-| [`blocked-issue-numbers`](#blocked-issue-numbers)                   | Comma-separated list of issue numbers blocked from being referenced.                                                        | `""`                                                                      |
-| [`require-conventional-commits`](#require-conventional-commits)     | Require all commit messages to follow Conventional Commits format.                                                          | `false`                                                                   |
-| [`blocked-commit-authors`](#blocked-commit-authors)                 | Comma-separated list of blocked commit author usernames.                                                                    | `""`                                                                      |
-| [`allowed-file-extensions`](#allowed-file-extensions)               | Comma-separated list of allowed file extensions (e.g. ".ts,.js") for changed files. Empty allows all.                       | `""`                                                                      |
-| [`allowed-paths`](#allowed-paths)                                   | Newline-separated file or folder paths to allow for changed files. Entries ending with "/" match folders. Empty allows all. | `""`                                                                      |
-| [`blocked-paths`](#blocked-paths)                                   | Newline-separated file or folder paths to block for changed files. Entries ending with "/" match folders.                   | `README.md`, `SECURITY.md`, `LICENSE`, `CODE_OF_CONDUCT.md`               |
-| [`require-final-newline`](#require-final-newline)                   | Require all changed files to end with a newline character.                                                                  | `true`                                                                    |
-| [`min-repo-merged-prs`](#min-repo-merged-prs)                       | Minimum number of merged PRs in this repository required from the author. 0 disables this check.                            | `0`                                                                       |
-| [`min-repo-merge-ratio`](#min-repo-merge-ratio)                     | Minimum merged/closed PR ratio in this repository (1-100%). 0 disables this check.                                          | `0`                                                                       |
-| [`min-global-merge-ratio`](#min-global-merge-ratio)                 | Minimum merged/closed PR ratio across all GitHub repositories (1-100%). 0 disables this check.                              | `30`                                                                      |
-| [`global-merge-ratio-exclude-own`](#global-merge-ratio-exclude-own) | Exclude PRs to the author's own repositories from the global merge ratio calculation.                                       | `false`                                                                   |
-| [`min-account-age`](#min-account-age)                               | Minimum GitHub account age in days (1-365). 0 disables this check.                                                          | `7`                                                                       |
-| [`exempt-author-association`](#exempt-author-association)           | Comma-separated list of GitHub author associations exempt from all checks.                                                  | `OWNER,MEMBER,COLLABORATOR`                                               |
-| [`exempt-users`](#exempt-users)                                     | Comma-separated list of GitHub usernames exempt from all checks.                                                            | `""`                                                                      |
-| [`exempt-bots`](#exempt-bots)                                       | Newline-separated list of bot usernames exempt from all checks.                                                             | `actions-user`, `dependabot[bot]`, `renovate[bot]`, `github-actions[bot]` |
-| [`exempt-draft-prs`](#exempt-draft-prs)                             | Exempt draft PRs from all checks.                                                                                           | `false`                                                                   |
-| [`exempt-label`](#exempt-label)                                     | Label name that exempts PRs from all checks when it is present.                                                             | `exempt`                                                                  |
-| [`exempt-pr-label`](#exempt-pr-label)                               | Label name that exempts PRs from all checks when it is present.                                                             | `""`                                                                      |
-| [`exempt-milestones`](#exempt-milestones)                           | Comma-separated list of milestone titles. PRs assigned to any listed milestone are exempt.                                  | `""`                                                                      |
-| [`exempt-pr-milestones`](#exempt-pr-milestones)                     | Comma-separated list of milestone titles. PRs assigned to any listed milestone are exempt.                                  | `""`                                                                      |
-| [`exempt-all-milestones`](#exempt-all-milestones)                   | Exempt all PRs that are assigned to any milestone.                                                                          | `false`                                                                   |
-| [`exempt-all-pr-milestones`](#exempt-all-pr-milestones)             | Exempt all PRs that are assigned to any milestone.                                                                          | `false`                                                                   |
-| [`success-add-pr-labels`](#success-add-pr-labels)                   | Comma-separated list of labels to add to the PR on success.                                                                 | `""`                                                                      |
-| [`failure-remove-pr-labels`](#failure-remove-pr-labels)             | Comma-separated list of labels to remove from the PR on failure.                                                            | `""`                                                                      |
-| [`failure-remove-all-pr-labels`](#failure-remove-all-pr-labels)     | Remove all labels from the PR on failure.                                                                                   | `false`                                                                   |
-| [`failure-add-pr-labels`](#failure-add-pr-labels)                   | Comma-separated list of labels to add to the PR on failure.                                                                 | `""`                                                                      |
-| [`failure-pr-message`](#failure-pr-message)                         | Comment posted on the PR when the maximum number of failures is reached. Empty posts no comment.                            | `""`                                                                      |
-| [`close-pr`](#close-pr)                                             | Close the PR when the maximum number of failures is reached.                                                                | `true`                                                                    |
-| [`lock-pr`](#lock-pr)                                               | Lock the PR conversation after closing.                                                                                     | `false`                                                                   |
-| [`delete-branch`](#delete-branch)                                   | Delete the source branch after closing the PR.                                                                              | `false`                                                                   |
+| Input                                                                         | Description                                                                                                                                                                                                                                          | Default                                                                   |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [`github-token`](#github-token)                                               | GitHub token used to authenticate API requests.                                                                                                                                                                                                      | `${{ github.token }}`                                                     |
+| [`max-failures`](#max-failures)                                               | Number of check failures needed before failure actions are triggered (between 1 and 29).                                                                                                                                                             | `3`                                                                       |
+| [`allowed-target-branches`](#allowed-target-branches)                         | Newline-separated target branch patterns to allow. Empty allows all branches.                                                                                                                                                                        | `""`                                                                      |
+| [`blocked-target-branches`](#blocked-target-branches)                         | Newline-separated target branch patterns to block.                                                                                                                                                                                                   | `""`                                                                      |
+| [`allowed-source-branches`](#allowed-source-branches)                         | Newline-separated source branch patterns to allow. Empty allows all branches.                                                                                                                                                                        | `""`                                                                      |
+| [`blocked-source-branches`](#blocked-source-branches)                         | Newline-separated source branch patterns to block.                                                                                                                                                                                                   | `main`, `master`                                                          |
+| [`max-negative-reactions`](#max-negative-reactions)                           | Maximum number of negative reactions (thumbs down + confused) allowed on the PR. 0 disables this check.                                                                                                                                              | `0`                                                                       |
+| [`require-maintainer-can-modify`](#require-maintainer-can-modify)             | Require the PR to allow maintainers to push to the source branch.                                                                                                                                                                                    | `true`                                                                    |
+| [`require-conventional-title`](#require-conventional-title)                   | Require PR titles to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').                                                                                                                                                      | `false`                                                                   |
+| [`require-description`](#require-description)                                 | Require a non-empty PR description.                                                                                                                                                                                                                  | `true`                                                                    |
+| [`max-description-length`](#max-description-length)                           | Maximum allowed character length for the PR description. 0 disables this check.                                                                                                                                                                      | `0`                                                                       |
+| [`max-emoji-count`](#max-emoji-count)                                         | Maximum number of emojis allowed in the PR title and description. 0 disables this check.                                                                                                                                                             | `2`                                                                       |
+| [`max-code-references`](#max-code-references)                                 | Maximum number of code references (file paths, function calls, method calls) allowed in the PR description. 0 disables this check.                                                                                                                   | `0`                                                                       |
+| [`require-linked-issue`](#require-linked-issue)                               | Require the PR to reference at least one issue in the PR description.                                                                                                                                                                                | `false`                                                                   |
+| [`blocked-terms`](#blocked-terms)                                             | Newline-separated list of terms blocked from appearing in the PR description.                                                                                                                                                                        | `""`                                                                      |
+| [`blocked-issue-numbers`](#blocked-issue-numbers)                             | Comma-separated list of issue numbers blocked from being referenced in the PR description.                                                                                                                                                           | `""`                                                                      |
+| [`require-pr-template`](#require-pr-template)                                 | Require the PR description to follow the repository PR template structure.                                                                                                                                                                           | `false`                                                                   |
+| [`strict-pr-template-sections`](#strict-pr-template-sections)                 | Comma-separated list of PR template section headings (without the '#' prefix) classified as strict. All checkboxes in strict sections must be present and checked. Only applies when require-pr-template is enabled.                                 | `""`                                                                      |
+| [`optional-pr-template-sections`](#optional-pr-template-sections)             | Comma-separated list of PR template section headings (without the '#' prefix) classified as optional. Optional sections can be entirely removed from the PR description without failing the check. Only applies when require-pr-template is enabled. | `""`                                                                      |
+| [`max-additional-pr-template-sections`](#max-additional-pr-template-sections) | Maximum number of additional sections not in the template that are allowed in the PR description. 0 disables this check.                                                                                                                             | `0`                                                                       |
+| [`max-commit-message-length`](#max-commit-message-length)                     | Maximum allowed character length for individual commit messages. 0 disables this check.                                                                                                                                                              | `500`                                                                     |
+| [`require-conventional-commits`](#require-conventional-commits)               | Require all commit messages to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').                                                                                                                                            | `false`                                                                   |
+| [`require-commit-author-match`](#require-commit-author-match)                 | Require every commit in the PR to be authored by the same GitHub user who opened the PR.                                                                                                                                                             | `true`                                                                    |
+| [`allowed-file-extensions`](#allowed-file-extensions)                         | Comma-separated list of allowed file extensions (e.g. '.ts,.js') for changed files. Empty allows all.                                                                                                                                                | `""`                                                                      |
+| [`allowed-paths`](#allowed-paths)                                             | Newline-separated file or folder paths to allow for changed files. Entries ending with '/' match folders. Empty allows all.                                                                                                                          | `""`                                                                      |
+| [`blocked-paths`](#blocked-paths)                                             | Newline-separated file or folder paths to block for changed files. Entries ending with '/' match folders.                                                                                                                                            | `README.md`, `SECURITY.md`, `LICENSE`, `CODE_OF_CONDUCT.md`               |
+| [`require-final-newline`](#require-final-newline)                             | Require all changed files to end with a newline character.                                                                                                                                                                                           | `true`                                                                    |
+| [`detect-spam-usernames`](#detect-spam-usernames)                             | Detect usernames that match common spam patterns.                                                                                                                                                                                                    | `true`                                                                    |
+| [`min-account-age`](#min-account-age)                                         | Minimum GitHub account age in days (1-365). 0 disables this check.                                                                                                                                                                                   | `7`                                                                       |
+| [`max-daily-forks`](#max-daily-forks)                                         | Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.                                                                                                                                                      | `7`                                                                       |
+| [`min-profile-completeness`](#min-profile-completeness)                       | Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.                                       | `4`                                                                       |
+| [`min-repo-merged-prs`](#min-repo-merged-prs)                                 | Minimum number of merged PRs in this repository required from the author. 0 disables this check.                                                                                                                                                     | `0`                                                                       |
+| [`min-repo-merge-ratio`](#min-repo-merge-ratio)                               | Minimum merged/closed PR ratio in this repository (1-100%). 0 disables this check.                                                                                                                                                                   | `0`                                                                       |
+| [`min-global-merge-ratio`](#min-global-merge-ratio)                           | Minimum merged/closed PR ratio across all GitHub repositories (1-100%). 0 disables this check.                                                                                                                                                       | `30`                                                                      |
+| [`global-merge-ratio-exclude-own`](#global-merge-ratio-exclude-own)           | Exclude PRs to the author's own repositories from the global merge ratio calculation.                                                                                                                                                                | `false`                                                                   |
+| [`exempt-draft-prs`](#exempt-draft-prs)                                       | Exempt draft PRs from all checks.                                                                                                                                                                                                                    | `false`                                                                   |
+| [`exempt-bots`](#exempt-bots)                                                 | Newline-separated list of bot usernames exempt from all checks.                                                                                                                                                                                      | `actions-user`, `dependabot[bot]`, `renovate[bot]`, `github-actions[bot]` |
+| [`exempt-users`](#exempt-users)                                               | Comma-separated list of GitHub usernames exempt from all checks.                                                                                                                                                                                     | `""`                                                                      |
+| [`exempt-author-association`](#exempt-author-association)                     | Comma-separated list of GitHub author associations exempt from all checks.                                                                                                                                                                           | `OWNER,MEMBER,COLLABORATOR`                                               |
+| [`exempt-label`](#exempt-label)                                               | Label name that exempts PRs and Issues from all checks when it is present.                                                                                                                                                                           | `exempt`                                                                  |
+| [`exempt-pr-label`](#exempt-pr-label)                                         | Label name that exempts PRs from all checks when it is present.                                                                                                                                                                                      | `""`                                                                      |
+| [`exempt-all-milestones`](#exempt-all-milestones)                             | Exempt all PRs and Issues that are assigned to any milestone.                                                                                                                                                                                        | `false`                                                                   |
+| [`exempt-all-pr-milestones`](#exempt-all-pr-milestones)                       | Exempt all PRs that are assigned to any milestone.                                                                                                                                                                                                   | `false`                                                                   |
+| [`exempt-milestones`](#exempt-milestones)                                     | Comma-separated list of milestone titles. PRs and Issues assigned to any listed milestone are exempt.                                                                                                                                                | `""`                                                                      |
+| [`exempt-pr-milestones`](#exempt-pr-milestones)                               | Comma-separated list of milestone titles. PRs assigned to any listed milestone are exempt.                                                                                                                                                           | `""`                                                                      |
+| [`success-add-pr-labels`](#success-add-pr-labels)                             | Comma-separated list of labels to add to the PR on success.                                                                                                                                                                                          | `""`                                                                      |
+| [`failure-remove-pr-labels`](#failure-remove-pr-labels)                       | Comma-separated list of labels to remove from the PR on failure.                                                                                                                                                                                     | `""`                                                                      |
+| [`failure-remove-all-pr-labels`](#failure-remove-all-pr-labels)               | Remove all labels from the PR on failure.                                                                                                                                                                                                            | `false`                                                                   |
+| [`failure-add-pr-labels`](#failure-add-pr-labels)                             | Comma-separated list of labels to add to the PR on failure.                                                                                                                                                                                          | `""`                                                                      |
+| [`failure-pr-message`](#failure-pr-message)                                   | Comment posted on the PR when the maximum number of failures is reached. Empty posts no comment.                                                                                                                                                     | `""`                                                                      |
+| [`close-pr`](#close-pr)                                                       | Close the PR when the maximum number of failures is reached.                                                                                                                                                                                         | `true`                                                                    |
+| [`lock-pr`](#lock-pr)                                                         | Lock the PR conversation after closing.                                                                                                                                                                                                              | `false`                                                                   |
 
 ### Outputs
 
@@ -247,7 +264,7 @@ This is the primary knob for controlling false positives. A higher value means m
 - Set to `1` for zero tolerance -> any single check failure triggers actions.
 - Set to `3` (the default) for a balanced approach -> the PR must fail three separate checks before it is closed.
 
-Valid range: `1` to `30`
+Valid range: `1` to `29`
 
 Default: `3`
 
@@ -345,16 +362,15 @@ AI-generated PR descriptions tend to include excessive emojis.
 
 Default: `2`
 
-#### require-pr-template
+#### max-code-references
 
-> [!NOTE]
-> Currently we only check if the PR description contains all PR template headings and is not identical to the template (not filled in).
+Maximum number of code references (file paths, function calls, method calls) allowed in the PR description. If the count exceeds this threshold, the `max-code-references` check fails.
 
-Require the PR description to match the repository's PR template. When enabled, the action fetches the PR template from the repository (`.github/pull_request_template.md` or similar) and checks that the PR description contains its content structure.
+Set to `0` to disable this check entirely.
 
-This is particularly effective against AI tools that generate their own description and PRs created via the API.
+AI-generated PR descriptions often include excessive inline code references to appear thorough.
 
-Default: `false`
+Default: `0` (disabled)
 
 #### require-linked-issue
 
@@ -378,25 +394,63 @@ This can be useful when creating a honeypot for AI. See more in the [honeypot tr
 
 Default: `""` (no issue numbers blocked)
 
+#### require-pr-template
+
+Require the PR description to match the repository's PR template. When enabled, the action fetches the PR template from the repository (`.github/pull_request_template.md` or similar) and checks that the PR description contains its content structure.
+
+This is particularly effective against AI tools that generate their own description and PRs created via the API.
+
+Default: `false`
+
+#### strict-pr-template-sections
+
+Comma-separated list of PR template section headings (without the `#` prefix) classified as strict. If there are checkboxes in strict sections, all checkboxes must be present and checked. If any strict section fails validation, the `strict-pr-template-sections` check fails independently of the `pr-template` check.
+
+This only applies when [`require-pr-template`](#require-pr-template) is enabled.
+
+Default: `""` (no strict sections)
+
+#### optional-pr-template-sections
+
+Comma-separated list of PR template section headings (without the `#` prefix) classified as optional. Optional sections can be entirely removed from the PR description without failing the check.
+
+This is a configuration option for [`require-pr-template`](#require-pr-template) and only applies when that check is enabled.
+
+Default: `""` (no optional sections)
+
+#### max-additional-pr-template-sections
+
+Maximum number of additional sections not present in the template that are allowed in the PR description. If the PR contains more extra sections than this limit, the check fails.
+
+Set to `0` to disable this check entirely.
+
+This is a configuration option for [`require-pr-template`](#require-pr-template) and only applies when that check is enabled.
+
+Default: `0` (disabled)
+
+#### max-commit-message-length
+
+Maximum allowed character length for individual commit messages. If any commit message exceeds this length, the `max-commit-message-length` check fails.
+
+Set to `0` to disable this check entirely.
+
+AI-generated commits often have excessively long or verbose commit messages.
+
+Default: `500`
+
 #### require-conventional-commits
 
 Require all commit messages in the PR to follow the [Conventional Commits](https://www.conventionalcommits.org/) format.
 
 Default: `false`
 
-#### blocked-commit-authors
+#### require-commit-author-match
 
-Comma-separated list of commit author usernames to block.
+Require every commit in the PR to be authored by the same GitHub user who opened the PR. If any commit has a different author, the `require-commit-author-match` check fails.
 
-This is useful for blocking commits authored solely by known AI tools as that is a strong signal for unreviewed commits.
+This helps catch PRs where commits were cherry-picked or copied from other contributors.
 
-Example configuration:
-
-```yaml
-blocked-commit-authors: "claude,copilot"
-```
-
-Default: `""` (no authors blocked by default)
+Default: `true`
 
 #### allowed-file-extensions
 
@@ -435,6 +489,46 @@ Default: `README.md`, `SECURITY.md`, `LICENSE`, `CODE_OF_CONDUCT.md`
 Require all changed files to end with a newline character. Files that do not end with a newline fail the `require-final-newline` check.
 
 Default: `true`
+
+#### detect-spam-usernames
+
+Detect usernames that match spam patterns. Usernames that are all digits, contain 4 or more consecutive digits, or contain an `ai` segment are flagged.
+
+Default: `true`
+
+#### min-account-age
+
+Minimum GitHub account age in days (1–365). If the PR author's account is newer than this many days, the `min-account-age` check fails.
+
+Set to `0` to disable this check entirely.
+
+Freshly created accounts are often throwaway accounts used for automated PR campaigns. The default of `7` days catches the most obvious cases. Increasing this to `30` or `90` provides stronger protection but may affect legitimate new GitHub users.
+
+Valid range: `0` to `365` (days)
+
+Default: `7`
+
+#### max-daily-forks
+
+Maximum number of repositories forked by the user in any 24-hour sliding window. If the user exceeds this count, the `max-daily-forks` check fails.
+
+Set to `0` to disable this check entirely.
+
+Mass-forking is a common pattern for automated PR spam campaigns. A burst of forks in a short time window is a strong signal that the account is running automated tooling.
+
+Default: `7`
+
+#### min-profile-completeness
+
+Minimum number of profile signals (out of 11) the user must have to pass. The check evaluates the following 11 signals: public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. If the user has fewer signals present than the configured minimum, the `min-profile-completeness` check fails.
+
+Set to `0` to disable this check entirely.
+
+Spam and AI-driven accounts tend to have minimal or empty profiles. Requiring a baseline level of profile completeness is an effective heuristic for filtering out throwaway accounts.
+
+Valid range: `0` to `11`
+
+Default: `4`
 
 #### min-repo-merged-prs
 
@@ -483,17 +577,25 @@ This is useful because some users have a high merge ratio only because they merg
 
 Default: `false`
 
-#### min-account-age
+#### exempt-draft-prs
 
-Minimum GitHub account age in days (1–365). If the PR author's account is newer than this many days, the `min-account-age` check fails.
+When set to `true`, draft PRs are exempt from all checks and skip processing entirely.
 
-Set to `0` to disable this check entirely.
+This can be useful if contributors use draft PRs as work-in-progress and you only want to run checks when the PR is marked as ready for review.
 
-Freshly created accounts are often throwaway accounts used for automated PR campaigns. The default of `7` days catches the most obvious cases. Increasing this to `30` or `90` provides stronger protection but may affect legitimate new GitHub users.
+Default: `false`
 
-Valid range: `0` to `365` (days)
+#### exempt-bots
 
-Default: `7`
+Newline-separated list of bot usernames that are exempt from all checks. PRs from any of these bot accounts skip all checks entirely.
+
+Default: `actions-user`, `dependabot[bot]`, `renovate[bot]`, `github-actions[bot]`
+
+#### exempt-users
+
+Comma-separated list of GitHub usernames that are exempt from all checks. PRs from any of these users skip all checks entirely.
+
+Default: `""` (no users exempted)
 
 #### exempt-author-association
 
@@ -504,26 +606,6 @@ The default exempts `OWNER`, `MEMBER` and `COLLABORATOR` author associations whi
 Valid values: `OWNER`, `MEMBER`, `COLLABORATOR`, `CONTRIBUTOR`, `FIRST_TIMER`, `FIRST_TIME_CONTRIBUTOR`, `MANNEQUIN`, `NONE`
 
 Default: `OWNER,MEMBER,COLLABORATOR`
-
-#### exempt-users
-
-Comma-separated list of GitHub usernames that are exempt from all checks. PRs from any of these users skip all checks entirely.
-
-Default: `""` (no users exempted)
-
-#### exempt-bots
-
-Newline-separated list of bot usernames that are exempt from all checks. PRs from any of these bot accounts skip all checks entirely.
-
-Default: `actions-user`, `dependabot[bot]`, `renovate[bot]`, `github-actions[bot]`
-
-#### exempt-draft-prs
-
-When set to `true`, draft PRs are exempt from all checks and skip processing entirely.
-
-This can be useful if contributors use draft PRs as work-in-progress and you only want to run checks when the PR is marked as ready for review.
-
-Default: `false`
 
 #### exempt-label
 
@@ -539,6 +621,18 @@ If both `exempt-label` and `exempt-pr-label` are set, `exempt-pr-label` takes pr
 
 Default: `""` (disabled)
 
+#### exempt-all-milestones
+
+When set to `true`, all PRs and Issues that are assigned to any milestone are exempt from all checks.
+
+Default: `false`
+
+#### exempt-all-pr-milestones
+
+When set to `true`, all PRs that are assigned to any milestone are exempt from all checks. Overrides [`exempt-all-milestones`](#exempt-all-milestones) specifically for PRs.
+
+Default: `false`
+
 #### exempt-milestones
 
 Comma-separated list of milestone titles to exempt from all checks. PRs and Issues assigned to any of these milestones are exempt from all checks.
@@ -552,18 +646,6 @@ Comma-separated list of milestone titles to exempt from all checks. PRs assigned
 If both `exempt-milestones` and `exempt-pr-milestones` are set, `exempt-pr-milestones` takes precedence.
 
 Default: `""` (no milestones exempt)
-
-#### exempt-all-milestones
-
-When set to `true`, all PRs and Issues that are assigned to any milestone are exempt from all checks.
-
-Default: `false`
-
-#### exempt-all-pr-milestones
-
-When set to `true`, all PRs that are assigned to any milestone are exempt from all checks. Overrides [`exempt-all-milestones`](#exempt-all-milestones) specifically for PRs.
-
-Default: `false`
 
 #### success-add-pr-labels
 
@@ -622,17 +704,6 @@ When set to `true`, the PR conversation is locked after closing. This prevents f
 Default: `false`
 
 Required permission: `pull-requests: write`
-
-#### delete-branch
-
-> [!Warning]
-> This requires write permissions for contents so it is not recommended to enable this and we might even remove it in the future.
-
-When set to `true`, the source branch is deleted after the PR is closed. This cleans up branches left behind by slop PRs.
-
-Default: `false`
-
-Required permission: `pull-requests: write` and `contents: write`
 
 ## Advanced Configuration
 
