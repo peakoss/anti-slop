@@ -51,7 +51,7 @@ inputs:
 
   # PR Title Checks
   require-conventional-title:
-    description: 'Require PR titles to follow Conventional Commits format (e.g. "feat:", "fix:", "feat(scope):").'
+    description: Require PR titles to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').
     required: false
     default: "false"
 
@@ -73,7 +73,7 @@ inputs:
     required: false
     default: "false"
   require-linked-issue:
-    description: Require the PR to reference at least one issue.
+    description: Require the PR to reference at least one issue in the PR description.
     required: false
     default: "false"
   blocked-terms:
@@ -81,13 +81,13 @@ inputs:
     required: false
     default: ""
   blocked-issue-numbers:
-    description: Comma-separated list of issue numbers blocked from being referenced.
+    description: Comma-separated list of issue numbers blocked from being referenced in the PR description.
     required: false
     default: ""
 
   # Commit Message Checks
   require-conventional-commits:
-    description: Require all commit messages to follow Conventional Commits format.
+    description: Require all commit messages to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').
     required: false
     default: "false"
   require-commit-author-match:
@@ -101,15 +101,15 @@ inputs:
 
   # File Checks
   allowed-file-extensions:
-    description: 'Comma-separated list of allowed file extensions (e.g. ".ts,.js") for changed files. Empty allows all.'
+    description: Comma-separated list of allowed file extensions (e.g. '.ts,.js') for changed files. Empty allows all.
     required: false
     default: ""
   allowed-paths:
-    description: Newline-separated file or folder paths to allow for changed files. Entries ending with "/" match folders. Empty allows all.
+    description: Newline-separated file or folder paths to allow for changed files. Entries ending with '/' match folders. Empty allows all.
     required: false
     default: ""
   blocked-paths:
-    description: Newline-separated file or folder paths to block for changed files. Entries ending with "/" match folders.
+    description: Newline-separated file or folder paths to block for changed files. Entries ending with '/' match folders.
     required: false
     default: |
       README.md
@@ -191,7 +191,7 @@ inputs:
     required: false
     default: ""
   exempt-author-association:
-    description: "Comma-separated list of GitHub author associations exempt from all checks."
+    description: Comma-separated list of GitHub author associations exempt from all checks.
     required: false
     default: "OWNER,MEMBER,COLLABORATOR"
   # exempt-teams:
@@ -277,7 +277,7 @@ inputs:
   #   required: false
   #   default: "true"
   # close-issue-reason:
-  #   description: 'Reason used when closing the issue (e.g. "not_planned", "completed").'
+  #   description: Reason used when closing the issue (e.g. 'not_planned', 'completed').
   #   required: false
   #   default: "not_planned"
   # lock-issue:
