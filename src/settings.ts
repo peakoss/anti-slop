@@ -69,7 +69,10 @@ export function getSettings(): Settings {
         requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
 
         // User Checks
+        detectSpamUsernames: core.getBooleanInput(Input.DetectSpamUsernames),
         minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
+        maxDailyForks: parseInt(core.getInput(Input.MaxDailyForks)),
+        minProfileCompleteness: parseInt(core.getInput(Input.MinProfileCompleteness)),
 
         // Merge Checks
         minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
@@ -162,6 +165,8 @@ function validateSettings(settings: Settings): void {
     validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 10000);
 
     validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
+    validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 100);
+    validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 11);
 
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
     validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);

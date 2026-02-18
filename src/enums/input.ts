@@ -45,7 +45,10 @@ export enum Input {
     RequireFinalNewline = "require-final-newline",
 
     // User Checks
+    DetectSpamUsernames = "detect-spam-usernames",
     MinAccountAge = "min-account-age",
+    MaxDailyForks = "max-daily-forks",
+    MinProfileCompleteness = "min-profile-completeness",
 
     // Merge Checks
     MinRepoMergedPrs = "min-repo-merged-prs",

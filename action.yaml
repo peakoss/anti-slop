@@ -136,10 +136,22 @@ inputs:
     default: "true"
 
   # User Checks
+  detect-spam-usernames:
+    description: Detect usernames that match common spam patterns.
+    required: false
+    default: "true"
   min-account-age:
     description: Minimum GitHub account age in days (1-365). 0 disables this check.
     required: false
     default: "7"
+  max-daily-forks:
+    description: Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.
+    required: false
+    default: "7"
+  min-profile-completeness:
+    description: Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.
+    required: false
+    default: "4"
 
   # Merge Checks
   min-repo-merged-prs:

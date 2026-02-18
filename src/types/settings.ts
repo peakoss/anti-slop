@@ -44,7 +44,10 @@ export interface Settings {
     requireFinalNewline: boolean;
 
     // User Checks
+    detectSpamUsernames: boolean;
     minAccountAge: number;
+    maxDailyForks: number;
+    minProfileCompleteness: number;
 
     // Merge Checks
     minRepoMergedPrs: number;
