@@ -68,6 +68,10 @@ inputs:
     description: Maximum number of emojis allowed in the PR title and description. 0 disables this check.
     required: false
     default: "2"
+  max-code-references:
+    description: Maximum number of code references (file paths, function calls, method calls) allowed in the PR description. 0 disables this check.
+    required: false
+    default: "5"
   require-linked-issue:
     description: Require the PR to reference at least one issue in the PR description.
     required: false

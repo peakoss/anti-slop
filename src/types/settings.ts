@@ -22,6 +22,7 @@ export interface Settings {
     requireDescription: boolean;
     maxDescriptionLength: number;
     maxEmojiCount: number;
+    maxCodeReferences: number;
     requireLinkedIssue: boolean;
     blockedTerms: string[];
     blockedIssueNumbers: string[];

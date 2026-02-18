@@ -23,6 +23,7 @@ export enum Input {
     RequireDescription = "require-description",
     MaxDescriptionLength = "max-description-length",
     MaxEmojiCount = "max-emoji-count",
+    MaxCodeReferences = "max-code-references",
     RequireLinkedIssue = "require-linked-issue",
     BlockedTerms = "blocked-terms",
     BlockedIssueNumbers = "blocked-issue-numbers",

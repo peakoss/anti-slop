@@ -45,6 +45,7 @@ export function getSettings(): Settings {
         requireDescription: core.getBooleanInput(Input.RequireDescription),
         maxDescriptionLength: parseInt(core.getInput(Input.MaxDescriptionLength)),
         maxEmojiCount: parseInt(core.getInput(Input.MaxEmojiCount)),
+        maxCodeReferences: parseInt(core.getInput(Input.MaxCodeReferences)),
         requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
         blockedTerms: core.getMultilineInput(Input.BlockedTerms),
         blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
@@ -154,6 +155,7 @@ function validateSettings(settings: Settings): void {
     validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
     validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
     validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
+    validateNumber(settings.maxCodeReferences, "max-code-references", 0, 100);
 
     validateNumber(
         settings.maxAdditionalPrTemplateSections,
