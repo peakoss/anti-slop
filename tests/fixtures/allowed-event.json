@@ -4,19 +4,21 @@
     "pull_request": {
         "number": 8022,
         "title": "feat(service): upgrade formbricks to v4",
-        "body": "### Changes\n\n- feat(service): upgrade formbricks to v4 with all the necessary changes\n\n### Issue \n\n- fixes https://github.com/coollabsio/coolify/issues/8015\n\n\n### Category\n\n- [x] Fixing or updating existing one click service\n\n\n### Screenshots or Video (if applicable) \n\nhttps://github.com/user-attachments/assets/b8d21ff3-4109-4807-8ec9-f0262631a91d\n\n\n### AI Usage\n\n- [x] AI is NOT used in the process of creating this PR\n\n\n### Steps to Test\n\n- Step 1 – Deploy formbricks using the compose in this PR\n- Step 2 – wait for 5mins (db migration and startup stuffs)\n- Step 3 – visit the service url\n\n\n### Notes\n\n> For the initial startup formbricks takes 5 minutes so during this time visiting the url will throw 404. I tried deploying it multiple times and this behavior is consistent all the time.\n\n<img width=\"2000\" height=\"1267\" alt=\"image\" src=\"https://github.com/user-attachments/assets/cfaf53de-3eed-4368-9670-b3abdcfe728f\" />\n\n\n\n### Contributor Agreement\n\n> [!IMPORTANT]\n > - [x] I have read and understood the [contributor guidelines](https://github.com/coollabsio/coolify/blob/v4.x/CONTRIBUTING.md). If I have failed to follow any guideline, I understand that this PR may be closed without review.\n > - [x] I have tested the changes thoroughly and am confident that they will work as expected without issues when the maintainer tests them",
+        "body": "### Changes\r\n\r\n- feat(service): upgrade formbricks to v4 with all the necessary changes\r\n\r\n### Issue \r\n\r\n- fixes https://github.com/coollabsio/coolify/issues/8015\r\n\r\n\r\n### Category\r\n\r\n- [x] Fixing or updating existing one click service\r\n\r\n\r\n### Screenshots or Video (if applicable) \r\n\r\nhttps://github.com/user-attachments/assets/b8d21ff3-4109-4807-8ec9-f0262631a91d\r\n\r\n\r\n### AI Usage\r\n\r\n- [x] AI is NOT used in the process of creating this PR\r\n\r\n\r\n### Steps to Test\r\n\r\n- Step 1 – Deploy formbricks using the compose in this PR\r\n- Step 2 – wait for 5mins (db migration and startup stuffs)\r\n- Step 3 – visit the service url\r\n\r\n\r\n### Notes\r\n\r\n> For the initial startup formbricks takes 5 minutes so during this time visiting the url will throw 404. I tried deploying it multiple times and this behavior is consistent all the time.\r\n\r\n<img width=\"2000\" height=\"1267\" alt=\"image\" src=\"https://github.com/user-attachments/assets/cfaf53de-3eed-4368-9670-b3abdcfe728f\" />\r\n\r\n\r\n\r\n### Contributor Agreement\r\n\r\n> [!IMPORTANT]\r\n > - [x] I have read and understood the [contributor guidelines](https://github.com/coollabsio/coolify/blob/v4.x/CONTRIBUTING.md). If I have failed to follow any guideline, I understand that this PR may be closed without review.\r\n > - [x] I have tested the changes thoroughly and am confident that they will work as expected without issues when the maintainer tests them\r\n \r\n",
         "draft": false,
         "html_url": "https://github.com/coollabsio/coolify/pull/8022",
         "user": {
             "login": "ShadowArcanist"
         },
         "head": {
-            "ref": "ShadowArcanist:shadow/fix-formbricks"
+            "ref": "shadow/fix-formbricks",
+            "sha": "893c7cc26987a58d6bb37f3b0b8e33f86e4cd5cf"
         },
         "base": {
             "ref": "next",
             "repo": {
-                "html_url": "https://github.com/coollabsio/coolify"
+                "html_url": "https://github.com/coollabsio/coolify",
+                "default_branch": "v4.x"
             }
         },
         "labels": [],
