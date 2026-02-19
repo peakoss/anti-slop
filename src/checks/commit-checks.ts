@@ -80,19 +80,25 @@ export async function runCommitChecks(
 
     if (settings.requireCommitAuthorMatch) {
         const prAuthor = context.userLogin.toLowerCase();
-        const mismatchedAuthors = new Set(
-            commits
-                .map((commit) => commit.author?.login ?? "")
-                .filter((login) => login !== "" && login.toLowerCase() !== prAuthor),
+        const mismatchedAuthors = commits.filter(
+            (commit) => commit.author?.login?.toLowerCase() !== prAuthor,
         );
 
+        const details = [
+            ...new Set(
+                mismatchedAuthors.map((commit) =>
+                    commit.author ? `"${commit.author.login}"` : '"unknown" (no GitHub account)',
+                ),
+            ),
+        ];
+
+        const passed = mismatchedAuthors.length === 0;
         recordCheck(results, {
             name: "commit-author-match",
-            passed: mismatchedAuthors.size === 0,
-            message:
-                mismatchedAuthors.size > 0
-                    ? `Commit author(s) do not match PR author "${context.userLogin}": ${[...mismatchedAuthors].join(", ")}`
-                    : "All commit authors match the PR author",
+            passed,
+            message: passed
+                ? "All commit authors match the PR author"
+                : `Commit author(s) ${details.join(", ")} do not match PR author "${context.userLogin}"`,
         });
     }
 
