@@ -80,6 +80,8 @@ inputs:
     description: Comma-separated list of issue numbers blocked from being referenced in the PR description.
     required: false
     default: ""
+
+  # PR Template Checks
   require-pr-template:
     description: Require the PR description to follow the repository PR template structure.
     required: false

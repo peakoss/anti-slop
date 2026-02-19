@@ -5,6 +5,7 @@ import { checkExemptions } from "./exemptions.ts";
 import { runBranchChecks } from "./checks/branch-checks.ts";
 import { runTitleChecks } from "./checks/title-checks.ts";
 import { runDescriptionChecks } from "./checks/description-checks.ts";
+import { runTemplateChecks } from "./checks/template-checks.ts";
 import { runFileChecks } from "./checks/file-checks.ts";
 import { runCommitChecks } from "./checks/commit-checks.ts";
 import { runUserChecks } from "./checks/user-checks.ts";
@@ -43,13 +44,17 @@ export async function run(): Promise<void> {
         results.push(...runTitleChecks(settings, context));
         core.endGroup();
 
+        core.startGroup("Description checks");
+        results.push(...runDescriptionChecks(settings, context));
+        core.endGroup();
+
         if (client) {
             core.startGroup("PR quality checks");
             results.push(...(await runQualityChecks(settings, context, client)));
             core.endGroup();
 
-            core.startGroup("Description checks");
-            results.push(...(await runDescriptionChecks(settings, context, client)));
+            core.startGroup("Template checks");
+            results.push(...(await runTemplateChecks(settings, context, client)));
             core.endGroup();
 
             core.startGroup("File checks");

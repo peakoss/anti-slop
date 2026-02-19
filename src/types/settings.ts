@@ -25,6 +25,8 @@ export interface Settings {
     requireLinkedIssue: boolean;
     blockedTerms: string[];
     blockedIssueNumbers: string[];
+
+    // PR Template Checks
     requirePrTemplate: boolean;
     strictPrTemplateSections: string[];
     optionalPrTemplateSections: string[];

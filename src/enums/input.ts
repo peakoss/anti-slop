@@ -26,6 +26,8 @@ export enum Input {
     RequireLinkedIssue = "require-linked-issue",
     BlockedTerms = "blocked-terms",
     BlockedIssueNumbers = "blocked-issue-numbers",
+
+    // PR Template Checks
     RequirePrTemplate = "require-pr-template",
     StrictPrTemplateSections = "strict-pr-template-sections",
     OptionalPrTemplateSections = "optional-pr-template-sections",

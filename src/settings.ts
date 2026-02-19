@@ -48,6 +48,8 @@ export function getSettings(): Settings {
         requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
         blockedTerms: core.getMultilineInput(Input.BlockedTerms),
         blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
+
+        // PR Template Checks
         requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
         strictPrTemplateSections: parseList(core.getInput(Input.StrictPrTemplateSections)),
         optionalPrTemplateSections: parseList(core.getInput(Input.OptionalPrTemplateSections)),
@@ -145,15 +147,18 @@ function validateNumber(value: number, name: string, min: number, max: number): 
 
 function validateSettings(settings: Settings): void {
     validateNumber(settings.maxFailures, "max-failures", 1, 30);
+
     validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
     validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
     validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
+
     validateNumber(
         settings.maxAdditionalPrTemplateSections,
         "max-additional-pr-template-sections",
         0,
         50,
     );
+
     validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 10000);
 
     validateNumber(settings.minAccountAge, "min-account-age", 0, 90);

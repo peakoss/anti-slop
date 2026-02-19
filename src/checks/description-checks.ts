@@ -1,6 +1,5 @@
-import type { CheckResult, Context, Settings, Octokit } from "../types";
+import type { CheckResult, Context, Settings } from "../types";
 import { recordCheck } from "../report.ts";
-import { runTemplateChecks } from "./template-checks.ts";
 
 /**
  * @see https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls#issues-and-pull-requests
@@ -12,11 +11,7 @@ const ISSUE_REF_PATTERNS = [
     /(?:^|[\s(])#(\d+)/gm, // matches #123
 ];
 
-export async function runDescriptionChecks(
-    settings: Settings,
-    context: Context,
-    client: Octokit,
-): Promise<CheckResult[]> {
+export function runDescriptionChecks(settings: Settings, context: Context): CheckResult[] {
     const results: CheckResult[] = [];
 
     const body = context.body;
@@ -94,8 +89,6 @@ export async function runDescriptionChecks(
                 : `Found ${String(found.length)} blocked issue number(s) in the description: "${found.join(", ")}"`,
         });
     }
-
-    results.push(...(await runTemplateChecks(settings, context, client)));
 
     return results;
 }
