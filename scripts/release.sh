@@ -97,6 +97,17 @@ build_action() {
     bun_version=$(bun --version)
     info "Using bun ${BOLD}v${bun_version}${OFF}"
 
+    info "Removing node_modules..."
+    rm -rf "$REPO_ROOT/node_modules"
+    success "Removed node_modules"
+
+    info "Installing dependencies from frozen lockfile..."
+    local install_output
+    install_output=$(bun install --frozen-lockfile 2>&1) || die "bun install failed."
+    local install_time
+    install_time=$(echo "$install_output" | grep -oE '[0-9]+\.[0-9]+m?s' | tail -1)
+    success "Installed dependencies ${DIM}[${install_time}]${OFF}"
+
     info "Building action..."
     bun run build --silent > /dev/null 2>&1 || die "Build failed. Fix errors before releasing."
     success "Built dist/index.mjs"
