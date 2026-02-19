@@ -133,7 +133,13 @@ inputs:
     required: false
     default: "true"
 
-  # User Health Checks
+  # User Checks
+  min-account-age:
+    description: Minimum GitHub account age in days (1-365). 0 disables this check.
+    required: false
+    default: "7"
+
+  # Merge Checks
   min-repo-merged-prs:
     description: Minimum number of merged PRs in this repository required from the author. 0 disables this check.
     required: false
@@ -150,10 +156,6 @@ inputs:
     description: Exclude PRs to the author's own repositories from the global merge ratio calculation.
     required: false
     default: "false"
-  min-account-age:
-    description: Minimum GitHub account age in days (1-365). 0 disables this check.
-    required: false
-    default: "7"
 
   # Filters
   # only-issue-types:

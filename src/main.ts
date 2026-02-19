@@ -8,6 +8,7 @@ import { runDescriptionChecks } from "./checks/description-checks.ts";
 import { runFileChecks } from "./checks/file-checks.ts";
 import { runCommitChecks } from "./checks/commit-checks.ts";
 import { runUserChecks } from "./checks/user-checks.ts";
+import { runMergeChecks } from "./checks/merge-checks.ts";
 import { runQualityChecks } from "./checks/quality-checks.ts";
 import { setOutputs, writeJobSummary } from "./report.ts";
 import { handleFailure, handleSuccess } from "./actions.ts";
@@ -61,6 +62,10 @@ export async function run(): Promise<void> {
 
             core.startGroup("User checks");
             results.push(...(await runUserChecks(settings, context, client)));
+            core.endGroup();
+
+            core.startGroup("Merge checks");
+            results.push(...(await runMergeChecks(settings, context, client)));
             core.endGroup();
         } else {
             core.warning("No valid GitHub token — checks requiring the GitHub API were skipped");

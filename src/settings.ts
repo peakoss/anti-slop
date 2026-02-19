@@ -66,12 +66,14 @@ export function getSettings(): Settings {
         blockedPaths: core.getMultilineInput(Input.BlockedPaths),
         requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
 
-        // User Health Checks
+        // User Checks
+        minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
+
+        // Merge Checks
         minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
         minRepoMergeRatio: parseInt(core.getInput(Input.MinRepoMergeRatio)),
         minGlobalMergeRatio: parseInt(core.getInput(Input.MinGlobalMergeRatio)),
         globalMergeRatioExcludeOwn: core.getBooleanInput(Input.GlobalMergeRatioExcludeOwn),
-        minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
 
         // Filters
         // onlyIssueTypes: parseList(core.getInput(Input.OnlyIssueTypes)),
@@ -153,10 +155,12 @@ function validateSettings(settings: Settings): void {
         50,
     );
     validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 10000);
+
+    validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
+
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
     validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
     validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);
-    validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
 
     for (const association of settings.exemptAuthorAssociation) {
         if (!VALID_AUTHOR_ASSOCIATIONS.includes(association)) {

@@ -42,12 +42,14 @@ export enum Input {
     BlockedPaths = "blocked-paths",
     RequireFinalNewline = "require-final-newline",
 
-    // User Health Checks
+    // User Checks
+    MinAccountAge = "min-account-age",
+
+    // Merge Checks
     MinRepoMergedPrs = "min-repo-merged-prs",
     MinRepoMergeRatio = "min-repo-merge-ratio",
     MinGlobalMergeRatio = "min-global-merge-ratio",
     GlobalMergeRatioExcludeOwn = "global-merge-ratio-exclude-own",
-    MinAccountAge = "min-account-age",
 
     // Filters
     // OnlyIssueTypes = "only-issue-types",

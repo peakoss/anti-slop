@@ -41,12 +41,14 @@ export interface Settings {
     blockedPaths: string[];
     requireFinalNewline: boolean;
 
-    // User Health Checks
+    // User Checks
+    minAccountAge: number;
+
+    // Merge Checks
     minRepoMergedPrs: number;
     minRepoMergeRatio: number;
     minGlobalMergeRatio: number;
     globalMergeRatioExcludeOwn: boolean;
-    minAccountAge: number;
 
     // Filters
     // onlyIssueTypes: string[];
