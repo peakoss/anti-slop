@@ -63,13 +63,13 @@ export function runBranchChecks(settings: Settings, context: Context): CheckResu
 
 function matchBranch(branch: string, pattern: string): boolean {
     if (pattern.includes("*")) {
-        const ph = "\0";
+        const placeholder = "\0";
         const source = pattern
-            .replace(/\*\*/g, ph)
+            .replace(/\*\*/g, placeholder)
             .split("*")
-            .map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+            .map((segment) => segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
             .join("[^/]*") // Regex [^/]* is equivalent to the * glob pattern (matches any character except /)
-            .replace(new RegExp(ph, "g"), ".*"); // Regex .* is equivalent to the ** glob pattern (matches any character)
+            .replace(new RegExp(placeholder, "g"), ".*"); // Regex .* is equivalent to the ** glob pattern (matches any character)
         return new RegExp("^" + source + "$").test(branch);
     }
     return branch === pattern;
