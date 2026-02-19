@@ -15,7 +15,7 @@ inputs:
 
   # General Settings
   max-failures:
-    description: Number of check failures needed before failure actions are triggered (between 1 and 30).
+    description: Number of check failures needed before failure actions are triggered (between 1 and 29).
     required: false
     default: "3"
 

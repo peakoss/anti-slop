@@ -150,7 +150,7 @@ function validateNumber(value: number, name: string, min: number, max: number): 
 }
 
 function validateSettings(settings: Settings): void {
-    validateNumber(settings.maxFailures, "max-failures", 1, 30);
+    validateNumber(settings.maxFailures, "max-failures", 1, 29);
 
     validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
     validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
