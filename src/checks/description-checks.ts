@@ -11,6 +11,12 @@ const ISSUE_REF_PATTERNS = [
     /(?:^|[\s(])#(\d+)/gm, // matches #123
 ];
 
+const INLINE_CODE_PATTERNS = [
+    /(?:[\w@.-]+\/)+[\w.-]+\.\w{1,10}/g, // matches file paths: foo/bar/baz.ts, @scope/pkg/util.ts
+    /\w+(?:->|::)\w+\(\)/g, // matches method calls: $foo->bar(), Foo::bar()
+    /\w{3,}\(\)/g, // matches function calls: fooBar(), test_foo()
+];
+
 export function runDescriptionChecks(settings: Settings, context: Context): CheckResult[] {
     const results: CheckResult[] = [];
 
@@ -64,6 +70,18 @@ export function runDescriptionChecks(settings: Settings, context: Context): Chec
         });
     }
 
+    if (settings.maxCodeReferences > 0) {
+        const count = countCodeReferences(body);
+        const passed = count <= settings.maxCodeReferences;
+        recordCheck(results, {
+            name: "code-references",
+            passed,
+            message: passed
+                ? `Found ${String(count)} code reference(s), within maximum of ${String(settings.maxCodeReferences)}`
+                : `Found ${String(count)} code reference(s), exceeds maximum of ${String(settings.maxCodeReferences)}`,
+        });
+    }
+
     const issueNumbers = extractIssueNumbers(body);
 
     if (settings.requireLinkedIssue) {
@@ -104,4 +122,12 @@ function extractIssueNumbers(text: string): number[] {
         }
     }
     return [...numbers];
+}
+
+function countCodeReferences(text: string): number {
+    let count = 0;
+    for (const pattern of INLINE_CODE_PATTERNS) {
+        count += text.match(pattern)?.length ?? 0;
+    }
+    return count;
 }
