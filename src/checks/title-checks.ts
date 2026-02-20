@@ -16,8 +16,8 @@ export function runTitleChecks(settings: Settings, context: Context): CheckResul
             name: "conventional-title",
             passed,
             message: passed
-                ? `PR title follows conventional commits format with type "${type}"`
-                : `PR title does not follow conventional commits format: "${context.title}"`,
+                ? `PR title "${context.title}" follows conventional commits format`
+                : `PR title "${context.title}" does not follow conventional commits format`,
         });
     }
 

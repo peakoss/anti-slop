@@ -107,15 +107,6 @@ export async function handleFailure(
             });
             core.info(`Locked the PR.`);
         }
-
-        if (settings.deleteBranch) {
-            await client.rest.git.deleteRef({
-                owner,
-                repo,
-                ref: `heads/${context.headBranch}`,
-            });
-            core.info(`Deleted source branch "${context.headBranch}" on the PR.`);
-        }
     } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : "Unknown error";
         core.warning(`Failed to execute failure actions: ${msg}`);

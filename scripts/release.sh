@@ -97,9 +97,23 @@ build_action() {
     bun_version=$(bun --version)
     info "Using bun ${BOLD}v${bun_version}${OFF}"
 
+    info "Removing node_modules..."
+    rm -rf "$REPO_ROOT/node_modules"
+    success "Removed node_modules"
+
+    info "Installing dependencies from frozen lockfile..."
+    local install_output
+    install_output=$(bun install --frozen-lockfile 2>&1) || die "bun install failed."
+    local install_time
+    install_time=$(echo "$install_output" | grep -oE '[0-9]+\.[0-9]+m?s' | tail -1)
+    success "Installed dependencies ${DIM}[${install_time}]${OFF}"
+
     info "Building action..."
-    bun run build --silent > /dev/null 2>&1 || die "Build failed. Fix errors before releasing."
-    success "Built dist/index.mjs"
+    local build_output
+    build_output=$(bun run build 2>&1) || die "Build failed. Fix errors before releasing."
+    local build_time
+    build_time=$(echo "$build_output" | sed 's/\x1b\[[0-9;]*m//g' | grep -oE '[0-9]+m?s' | tail -1)
+    success "Built dist/index.mjs ${DIM}[${build_time}]${OFF}"
 
     if git diff --quiet -- "$REPO_ROOT/dist/"; then
         info "dist/ is already up to date"
@@ -136,7 +150,7 @@ create_tags() {
         git tag "$MAJOR_TAG" --annotate --sign --message "Release $MAJOR_TAG"
         success "Created major tag ${BOLD}$MAJOR_TAG${OFF}"
     else
-        git tag "$MAJOR_TAG" --force --annotate --sign --message "Update $MAJOR_TAG to $NEW_TAG"
+        git tag "$MAJOR_TAG" --force --annotate --sign --message "Update $MAJOR_TAG to $NEW_TAG" > /dev/null 2>&1
         success "Updated major tag ${BOLD}$MAJOR_TAG${OFF} → ${BOLD}$NEW_TAG${OFF}"
     fi
 }

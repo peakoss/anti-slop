@@ -1,0 +1,29 @@
+{
+    "action": "opened",
+    "number": 8438,
+    "pull_request": {
+        "number": 8438,
+        "title": "feat(server): add Debian 13 (Trixie) support for server validation",
+        "body": "/claim #8154\r\n\r\n### Changes\r\n\r\n- **Server OS validation (`app/Models/Server.php`):** Added Debian 13 (Trixie) support by including `trixie` in the list of recognized Debian version codenames. When `/etc/os-release` has an empty or missing `ID` but `VERSION_CODENAME` is a known Debian codename (stretch, buster, bullseye, bookworm, trixie), `ID` is set to `debian` so the server is accepted. Tightened parsing of `/etc/os-release` (skip empty/invalid lines) and made `validateOS()` return the matching SUPPORTED_OS string consistently.\r\n- **InstallPrerequisites:** No change to Debian commands; existing apt flow works for Trixie. Added an explicit branch for Alpine Linux with a clear error message instead of the generic \"Unsupported OS type.\"\r\n- **InstallDocker:** Documented in `getDebianDockerInstallCommand()` that the fallback uses `VERSION_CODENAME` (e.g. trixie) for the Docker APT suite so all Debian versions, including 13, are supported.\r\n- **Tests:** Added `tests/Unit/ServerValidateOsSupportTest.php` asserting that SUPPORTED_OS includes the debian family and that the Debian codename list used in `validateOS()` includes `trixie` and `bookworm`.\r\n\r\n### Issues\r\n\r\n- Addresses the enhancement for additional server support for Debian 13.\r\n\r\n### Category\r\n- [ ] Bug fix\r\n- [x] New feature\r\n- [ ] Adding new one click service\r\n- [ ] Fixing or updating existing one click service\r\n\r\n### Screenshots or Video (if applicable)\r\n\r\nN/A – backend validation only. Optional: screen recording of adding a Debian 13 server and running \"Install Prerequisites\" / Docker install without \"Unsupported OS type\" error.\r\n\r\n### AI Usage\r\n- [ ] AI is used in the process of creating this PR\r\n- [x] AI is NOT used in the process of creating this PR\r\n\r\n### Steps to Test\r\n\r\n- **Step 1** – Run unit tests: `./vendor/bin/pest tests/Unit/ServerValidateOsSupportTest.php`. Expect 2 tests, 4 assertions, all passing.\r\n- **Step 2** – (Optional, requires a Debian 13 server.) Add a new server in Coolify with SSH access to a host running Debian 13 (Trixie). Confirm the server is detected (no \"Server OS type is not supported\" during validation).\r\n- **Step 3** – On that server, run **Install Prerequisites** from the server page. Expect success and \"Prerequisites installed successfully\" (no \"Unsupported OS type for prerequisites installation\").\r\n- **Step 4** – On that server, run Docker installation if not already installed. Expect Docker to install using the Debian path (e.g. `deb [arch=...] https://download.docker.com/linux/debian trixie stable`).\r\n\r\n### Contributor Agreement\r\n\r\n> [!IMPORTANT]\r\n>\r\n> - [x] I have read and understood the [contributor guidelines](https://github.com/coollabsio/coolify/blob/v4.x/CONTRIBUTING.md). If I have failed to follow any guideline, I understand that this PR may be closed without review.\r\n> - [x] I have tested the changes thoroughly and am confident that they will work as expected without issues when the maintainer tests them",
+        "draft": false,
+        "html_url": "https://github.com/coollabsio/coolify/pull/8438",
+        "user": {
+            "login": "matiasmagni"
+        },
+        "head": {
+            "ref": "feature/8154-debian-13-support-clean",
+            "sha": "6e4052f602ec6bf044338c680e591812db754b6d"
+        },
+        "base": {
+            "ref": "v4.x",
+            "repo": {
+                "html_url": "https://github.com/coollabsio/coolify",
+                "default_branch": "v4.x"
+            }
+        },
+        "labels": [],
+        "milestone": null,
+        "author_association": "NONE",
+        "maintainer_can_modify": false
+    }
+}

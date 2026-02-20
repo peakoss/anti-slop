@@ -22,14 +22,21 @@ export interface Settings {
     requireDescription: boolean;
     maxDescriptionLength: number;
     maxEmojiCount: number;
-    requirePrTemplate: boolean;
+    maxCodeReferences: number;
     requireLinkedIssue: boolean;
     blockedTerms: string[];
     blockedIssueNumbers: string[];
 
+    // PR Template Checks
+    requirePrTemplate: boolean;
+    strictPrTemplateSections: string[];
+    optionalPrTemplateSections: string[];
+    maxAdditionalPrTemplateSections: number;
+
     // Commit Message Checks
+    maxCommitMessageLength: number;
     requireConventionalCommits: boolean;
-    blockedCommitAuthors: string[];
+    requireCommitAuthorMatch: boolean;
 
     // File Checks
     allowedFileExtensions: string[];
@@ -37,12 +44,17 @@ export interface Settings {
     blockedPaths: string[];
     requireFinalNewline: boolean;
 
-    // User Health Checks
+    // User Checks
+    detectSpamUsernames: boolean;
+    minAccountAge: number;
+    maxDailyForks: number;
+    minProfileCompleteness: number;
+
+    // Merge Checks
     minRepoMergedPrs: number;
     minRepoMergeRatio: number;
     minGlobalMergeRatio: number;
     globalMergeRatioExcludeOwn: boolean;
-    minAccountAge: number;
 
     // Filters
     // onlyIssueTypes: string[];
@@ -79,7 +91,6 @@ export interface Settings {
     failurePrMessage: string;
     closePr: boolean;
     lockPr: boolean;
-    deleteBranch: boolean;
 
     // Issue Close Actions
     // closeIssue: boolean;

@@ -11,12 +11,14 @@
             "login": "nylyy0325"
         },
         "head": {
-            "ref": "main"
+            "ref": "main",
+            "sha": "bd36d0d1e2c8b2ee028fa81672e8fc79f01e414c"
         },
         "base": {
-            "ref": "main",
+            "ref": "v4.x",
             "repo": {
-                "html_url": "https://github.com/coollabsio/coolify"
+                "html_url": "https://github.com/coollabsio/coolify",
+                "default_branch": "v4.x"
             }
         },
         "labels": [],
