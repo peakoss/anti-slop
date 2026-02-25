@@ -69,6 +69,7 @@ export function getSettings(): Settings {
         allowedPaths: core.getMultilineInput(Input.AllowedPaths),
         blockedPaths: core.getMultilineInput(Input.BlockedPaths),
         requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
+        maxAddedComments: parseInt(core.getInput(Input.MaxAddedComments)),
 
         // User Checks
         detectSpamUsernames: core.getBooleanInput(Input.DetectSpamUsernames),
@@ -166,6 +167,8 @@ function validateSettings(settings: Settings): void {
     );
 
     validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 10000);
+
+    validateNumber(settings.maxAddedComments, "max-added-comments", 0, 500);
 
     validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
     validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 100);

@@ -142,6 +142,10 @@ inputs:
     description: Require all changed files to end with a newline character.
     required: false
     default: "true"
+  max-added-comments:
+    description: Maximum number of added comments in all changed files. 0 disables this check.
+    required: false
+    default: "10"
 
   # User Checks
   detect-spam-usernames:

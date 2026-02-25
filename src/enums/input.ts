@@ -45,6 +45,7 @@ export enum Input {
     AllowedPaths = "allowed-paths",
     BlockedPaths = "blocked-paths",
     RequireFinalNewline = "require-final-newline",
+    MaxAddedComments = "max-added-comments",
 
     // User Checks
     DetectSpamUsernames = "detect-spam-usernames",

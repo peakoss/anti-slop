@@ -44,6 +44,7 @@ export interface Settings {
     allowedPaths: string[];
     blockedPaths: string[];
     requireFinalNewline: boolean;
+    maxAddedComments: number;
 
     // User Checks
     detectSpamUsernames: boolean;
