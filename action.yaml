@@ -17,7 +17,7 @@ inputs:
   max-failures:
     description: Number of check failures needed before failure actions are triggered (between 1 and 29).
     required: false
-    default: "3"
+    default: "4"
 
   # PR Branch Checks
   allowed-target-branches:
@@ -63,7 +63,7 @@ inputs:
   max-description-length:
     description: Maximum allowed character length for the PR description. 0 disables this check.
     required: false
-    default: "0"
+    default: "2500"
   max-emoji-count:
     description: Maximum number of emojis allowed in the PR title and description. 0 disables this check.
     required: false
@@ -151,7 +151,7 @@ inputs:
   min-account-age:
     description: Minimum GitHub account age in days (1-365). 0 disables this check.
     required: false
-    default: "7"
+    default: "30"
   max-daily-forks:
     description: Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.
     required: false
