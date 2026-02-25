@@ -2,14 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.2.0] - Unreleased
+## [v0.2.0] - 2026-02-25
 
-Adds 8 new checks that cover more than 20 quality signals.
+Adds 9 new checks that cover more than 20 quality signals.
 
 ### Breaking Changes
 
-- Remove `blockedCommitAuthors` option. The new `requireCommitAuthorMatch` option is equally powerful while achieving the same thing. It fails when a commit is authored by only an AI or a different user and not the user who opened the PR, without having to know all the author names to block.
 - Remove `deleteBranch` option as it requires `content: write` permissions and does not work on forks
+- Set sensible maximums for all integer input options
 
 ### Added
 
@@ -24,10 +24,14 @@ Adds 8 new checks that cover more than 20 quality signals.
   - `optionalPrTemplateSections` classifies sections that can be entirely removed without failing
   - `maxAdditionalPrTemplateSections` limits extra sections not defined in the template
 - `maxCodeReferences` option to limit the number of code references (file paths, function calls, method calls) in the PR description
+- `maxAddedComments` option to limit the number of comments added in all changed files
 
 ### Changed
 
 - Use `authorAssociation` instead of the search API when `minRepoMergedPrs` is `1` for improved performance
+- `max-failures` default from `3` to `4`
+- `maxDescriptionLength` default from `0` to `2500`
+- `minAccountAge` default from `7` to `30`
 - Improve and streamline check info messages
 
 ### Fixed
@@ -45,6 +49,7 @@ Adds 8 new checks that cover more than 20 quality signals.
 
 ### Maintenance
 
+- `typescript-eslint/consistent-generic-constructors` rule set to `type-annotation` for compatibility with `isolatedDeclarations`
 - Add debug logging to excluded commits
 - Update readme with new and removed options
 - Update total number of checks
