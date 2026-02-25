@@ -18,7 +18,7 @@ const config: Config[] = defineConfig(
             reportUnusedInlineConfigs: "error",
         },
         rules: {
-            "@typescript-eslint/no-floating-promises": "off",
+            "@typescript-eslint/consistent-generic-constructors": ["error", "type-annotation"], // Override default "constructor" to "type-annotation" to make it compatible with isolatedDeclarations.
         },
         languageOptions: {
             globals: { ...globals.node },
