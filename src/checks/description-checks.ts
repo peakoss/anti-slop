@@ -112,7 +112,7 @@ export function runDescriptionChecks(settings: Settings, context: Context): Chec
 }
 
 function extractIssueNumbers(text: string): number[] {
-    const numbers = new Set<number>();
+    const numbers: Set<number> = new Set();
     for (const pattern of ISSUE_REF_PATTERNS) {
         pattern.lastIndex = 0;
         let match: RegExpExecArray | null;
