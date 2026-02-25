@@ -5,9 +5,11 @@ import { checkExemptions } from "./exemptions.ts";
 import { runBranchChecks } from "./checks/branch-checks.ts";
 import { runTitleChecks } from "./checks/title-checks.ts";
 import { runDescriptionChecks } from "./checks/description-checks.ts";
+import { runTemplateChecks } from "./checks/template-checks.ts";
 import { runFileChecks } from "./checks/file-checks.ts";
 import { runCommitChecks } from "./checks/commit-checks.ts";
 import { runUserChecks } from "./checks/user-checks.ts";
+import { runMergeChecks } from "./checks/merge-checks.ts";
 import { runQualityChecks } from "./checks/quality-checks.ts";
 import { setOutputs, writeJobSummary } from "./report.ts";
 import { handleFailure, handleSuccess } from "./actions.ts";
@@ -42,13 +44,17 @@ export async function run(): Promise<void> {
         results.push(...runTitleChecks(settings, context));
         core.endGroup();
 
+        core.startGroup("Description checks");
+        results.push(...runDescriptionChecks(settings, context));
+        core.endGroup();
+
         if (client) {
             core.startGroup("PR quality checks");
             results.push(...(await runQualityChecks(settings, context, client)));
             core.endGroup();
 
-            core.startGroup("Description checks");
-            results.push(...(await runDescriptionChecks(settings, context, client)));
+            core.startGroup("Template checks");
+            results.push(...(await runTemplateChecks(settings, context, client)));
             core.endGroup();
 
             core.startGroup("File checks");
@@ -61,6 +67,10 @@ export async function run(): Promise<void> {
 
             core.startGroup("User checks");
             results.push(...(await runUserChecks(settings, context, client)));
+            core.endGroup();
+
+            core.startGroup("Merge checks");
+            results.push(...(await runMergeChecks(settings, context, client)));
             core.endGroup();
         } else {
             core.warning("No valid GitHub token — checks requiring the GitHub API were skipped");

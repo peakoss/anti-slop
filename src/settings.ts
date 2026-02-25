@@ -45,13 +45,23 @@ export function getSettings(): Settings {
         requireDescription: core.getBooleanInput(Input.RequireDescription),
         maxDescriptionLength: parseInt(core.getInput(Input.MaxDescriptionLength)),
         maxEmojiCount: parseInt(core.getInput(Input.MaxEmojiCount)),
-        requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
+        maxCodeReferences: parseInt(core.getInput(Input.MaxCodeReferences)),
         requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
         blockedTerms: core.getMultilineInput(Input.BlockedTerms),
         blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
 
+        // PR Template Checks
+        requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
+        strictPrTemplateSections: parseList(core.getInput(Input.StrictPrTemplateSections)),
+        optionalPrTemplateSections: parseList(core.getInput(Input.OptionalPrTemplateSections)),
+        maxAdditionalPrTemplateSections: parseInt(
+            core.getInput(Input.MaxAdditionalPrTemplateSections),
+        ),
+
         // Commit Message Checks
+        maxCommitMessageLength: parseInt(core.getInput(Input.MaxCommitMessageLength)),
         requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
+        requireCommitAuthorMatch: core.getBooleanInput(Input.RequireCommitAuthorMatch),
         blockedCommitAuthors: parseList(core.getInput(Input.BlockedCommitAuthors)),
 
         // File Checks
@@ -59,13 +69,19 @@ export function getSettings(): Settings {
         allowedPaths: core.getMultilineInput(Input.AllowedPaths),
         blockedPaths: core.getMultilineInput(Input.BlockedPaths),
         requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
+        maxAddedComments: parseInt(core.getInput(Input.MaxAddedComments)),
 
-        // User Health Checks
+        // User Checks
+        detectSpamUsernames: core.getBooleanInput(Input.DetectSpamUsernames),
+        minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
+        maxDailyForks: parseInt(core.getInput(Input.MaxDailyForks)),
+        minProfileCompleteness: parseInt(core.getInput(Input.MinProfileCompleteness)),
+
+        // Merge Checks
         minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
         minRepoMergeRatio: parseInt(core.getInput(Input.MinRepoMergeRatio)),
         minGlobalMergeRatio: parseInt(core.getInput(Input.MinGlobalMergeRatio)),
         globalMergeRatioExcludeOwn: core.getBooleanInput(Input.GlobalMergeRatioExcludeOwn),
-        minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
 
         // Filters
         // onlyIssueTypes: parseList(core.getInput(Input.OnlyIssueTypes)),
@@ -102,7 +118,6 @@ export function getSettings(): Settings {
         failurePrMessage: core.getInput(Input.FailurePrMessage),
         closePr: core.getBooleanInput(Input.ClosePr),
         lockPr: core.getBooleanInput(Input.LockPr),
-        deleteBranch: core.getBooleanInput(Input.DeleteBranch),
 
         // Issue Close Actions
         // closeIssue: core.getBooleanInput(Input.CloseIssue),
@@ -137,14 +152,31 @@ function validateNumber(value: number, name: string, min: number, max: number): 
 }
 
 function validateSettings(settings: Settings): void {
-    validateNumber(settings.maxFailures, "max-failures", 1, 30);
-    validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
-    validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
-    validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
+    validateNumber(settings.maxFailures, "max-failures", 1, 25);
+
+    validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 200);
+    validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 50000);
+    validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 30);
+    validateNumber(settings.maxCodeReferences, "max-code-references", 0, 40);
+
+    validateNumber(
+        settings.maxAdditionalPrTemplateSections,
+        "max-additional-pr-template-sections",
+        0,
+        20,
+    );
+
+    validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 5000);
+
+    validateNumber(settings.maxAddedComments, "max-added-comments", 0, 500);
+
+    validateNumber(settings.minAccountAge, "min-account-age", 0, 190);
+    validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 50);
+    validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 11);
+
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
     validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
     validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);
-    validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
 
     for (const association of settings.exemptAuthorAssociation) {
         if (!VALID_AUTHOR_ASSOCIATIONS.includes(association)) {

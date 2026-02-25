@@ -23,7 +23,10 @@ export function buildContext(): Context {
         body: pr.body ?? "",
 
         baseBranch: pr.base.ref,
+        defaultBranch: pr.base.repo.default_branch,
+
         headBranch: pr.head.ref,
+        headSha: pr.head.sha,
 
         userLogin: pr.user.login,
         authorAssociation: pr.author_association,

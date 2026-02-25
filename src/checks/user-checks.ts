@@ -1,6 +1,11 @@
-import * as core from "@actions/core";
-import type { CheckResult, Context, Settings, Octokit } from "../types";
+import type { CheckResult, Context, Settings, Octokit, UserProfile } from "../types";
 import { recordCheck } from "../report.ts";
+
+const SPAM_USERNAME_PATTERNS: { pattern: RegExp; reason: string }[] = [
+    { pattern: /^\d+$/, reason: "username is all digits" },
+    { pattern: /\d{4,}/, reason: "username contains 4 or more consecutive digits" },
+    { pattern: /(?:^|-)ai(?:-|$)/i, reason: "username contains 'ai' segment" },
+];
 
 export async function runUserChecks(
     settings: Settings,
@@ -9,112 +14,129 @@ export async function runUserChecks(
 ): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
-    const hasUserChecks =
-        settings.minRepoMergedPrs > 0 ||
-        settings.minRepoMergeRatio > 0 ||
-        settings.minGlobalMergeRatio > 0 ||
-        settings.minAccountAge > 0;
-
-    if (!hasUserChecks) return results;
-
     const user = context.userLogin;
-    const repoFull = `${context.owner}/${context.repo}`;
-    const globalScope = settings.globalMergeRatioExcludeOwn ? `-user:${user}` : "";
+    const needsProfile = settings.minProfileCompleteness > 0 || settings.minAccountAge > 0;
 
-    const [repoMerged, repoClosed, globalMerged, globalClosed, createdAt] = await Promise.all([
-        settings.minRepoMergedPrs > 0 || settings.minRepoMergeRatio > 0
-            ? searchPrCount(client, `is:pr is:merged author:${user} repo:${repoFull}`)
-            : Promise.resolve(0),
-        settings.minRepoMergeRatio > 0
-            ? searchPrCount(client, `is:pr is:unmerged is:closed author:${user} repo:${repoFull}`)
-            : Promise.resolve(0),
-        settings.minGlobalMergeRatio > 0
-            ? searchPrCount(client, `is:pr is:merged author:${user} ${globalScope}`.trim())
-            : Promise.resolve(0),
-        settings.minGlobalMergeRatio > 0
-            ? searchPrCount(
-                  client,
-                  `is:pr is:unmerged is:closed author:${user} ${globalScope}`.trim(),
-              )
-            : Promise.resolve(0),
-        settings.minAccountAge > 0 ? getUserCreatedAt(client, user) : Promise.resolve(""),
+    const [profile, dailyForkCount] = await Promise.all([
+        needsProfile ? getUserProfile(client, user) : Promise.resolve(null),
+        settings.maxDailyForks > 0 ? countDailyForks(client, user) : Promise.resolve(0),
     ]);
 
-    if (settings.minRepoMergedPrs > 0) {
-        const passed = repoMerged >= settings.minRepoMergedPrs;
+    if (settings.detectSpamUsernames) {
+        const matched = SPAM_USERNAME_PATTERNS.filter((entry) => entry.pattern.test(user));
+
+        const passed = matched.length === 0;
         recordCheck(results, {
-            name: "min-merged-prs",
+            name: "detect-spam-usernames",
             passed,
             message: passed
-                ? `User has ${String(repoMerged)} merged PR(s), meets minimum of ${String(settings.minRepoMergedPrs)}`
-                : `User has ${String(repoMerged)} merged PR(s), below minimum of ${String(settings.minRepoMergedPrs)}`,
+                ? `Username "${user}" does not match spam patterns`
+                : `Username "${user}" matches spam patterns: ${matched.map((entry) => entry.reason).join(", ")}`,
         });
     }
 
-    if (settings.minRepoMergeRatio > 0) {
-        const total = repoMerged + repoClosed;
-        const minRatio = settings.minRepoMergeRatio / 100;
+    if (settings.minAccountAge > 0 && profile) {
+        const accountAgeMs = Date.now() - new Date(profile.created_at).getTime();
+        const accountAgeDays = Math.floor(accountAgeMs / (1000 * 60 * 60 * 24));
 
-        if (total === 0) {
-            core.info(
-                "[SKIP] repo-merge-ratio — No merged or closed PRs in this repository so this check is not applicable",
-            );
-        } else {
-            const ratio = repoMerged / total;
-            const mergedPercent = Math.round(ratio * 100);
-            const passed = ratio >= minRatio;
-            recordCheck(results, {
-                name: "repo-merge-ratio",
-                passed,
-                message: `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), minimum is ${String(settings.minRepoMergeRatio)}%`,
-            });
-        }
-    }
-
-    if (settings.minGlobalMergeRatio > 0) {
-        const total = globalMerged + globalClosed;
-        const minRatio = settings.minGlobalMergeRatio / 100;
-        const scope = settings.globalMergeRatioExcludeOwn ? " (excluding own repos)" : "";
-
-        if (total === 0) {
-            core.info(
-                `[SKIP] global-merge-ratio — No merged or closed PRs across GitHub${scope} so this check is not applicable`,
-            );
-        } else {
-            const ratio = globalMerged / total;
-            const mergedPercent = Math.round(ratio * 100);
-            const passed = ratio >= minRatio;
-            recordCheck(results, {
-                name: "global-merge-ratio",
-                passed,
-                message: `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), minimum is ${String(settings.minGlobalMergeRatio)}%`,
-            });
-        }
-    }
-
-    if (settings.minAccountAge > 0) {
-        const diffMs = Date.now() - new Date(createdAt).getTime();
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const passed = diffDays >= settings.minAccountAge;
+        const passed = accountAgeDays >= settings.minAccountAge;
         recordCheck(results, {
             name: "account-age",
             passed,
             message: passed
-                ? `Account is ${String(diffDays)} day(s) old, meets minimum of ${String(settings.minAccountAge)} days`
-                : `Account is ${String(diffDays)} day(s) old, below minimum of ${String(settings.minAccountAge)} days`,
+                ? `Account is ${String(accountAgeDays)} day(s) old, meets minimum of ${String(settings.minAccountAge)} days`
+                : `Account is ${String(accountAgeDays)} day(s) old, below minimum of ${String(settings.minAccountAge)} days`,
+        });
+    }
+
+    if (settings.maxDailyForks > 0) {
+        const passed = dailyForkCount <= settings.maxDailyForks;
+        recordCheck(results, {
+            name: "max-daily-forks",
+            passed,
+            message: passed
+                ? `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, within maximum of ${String(settings.maxDailyForks)}`
+                : `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, exceeds maximum of ${String(settings.maxDailyForks)}`,
+        });
+    }
+
+    if (settings.minProfileCompleteness > 0 && profile) {
+        const fields: { label: string; present: boolean }[] = [
+            { label: "public profile", present: profile.user_view_type === "public" },
+            { label: "name", present: !!profile.name },
+            { label: "company", present: !!profile.company },
+            { label: "blog", present: !!profile.blog },
+            { label: "location", present: !!profile.location },
+            { label: "email", present: !!profile.email },
+            { label: "hireable", present: profile.hireable !== null },
+            { label: "bio", present: !!profile.bio },
+            { label: "twitter", present: !!profile.twitter_username },
+            { label: "followers", present: profile.followers > 0 },
+            { label: "following", present: profile.following > 0 },
+        ];
+
+        const completedCount = fields.filter((field) => field.present).length;
+        const missing = fields.filter((field) => !field.present).map((field) => field.label);
+
+        const passed = completedCount >= settings.minProfileCompleteness;
+        recordCheck(results, {
+            name: "min-profile-completeness",
+            passed,
+            message: passed
+                ? `Profile completeness is ${String(completedCount)}/11, meets minimum of ${String(settings.minProfileCompleteness)}`
+                : `Profile completeness is ${String(completedCount)}/11, below minimum of ${String(settings.minProfileCompleteness)} (missing: ${missing.join(", ")})`,
         });
     }
 
     return results;
 }
 
-async function getUserCreatedAt(client: Octokit, username: string): Promise<string> {
+async function getUserProfile(client: Octokit, username: string): Promise<UserProfile> {
     const { data } = await client.rest.users.getByUsername({ username });
-    return data.created_at;
+    return {
+        user_view_type: data.user_view_type ?? "private",
+        name: data.name,
+        company: data.company,
+        blog: data.blog,
+        location: data.location,
+        email: data.email,
+        hireable: data.hireable,
+        bio: data.bio,
+        twitter_username: data.twitter_username ?? null,
+        followers: data.followers,
+        following: data.following,
+        created_at: data.created_at,
+    };
 }
 
-async function searchPrCount(client: Octokit, query: string): Promise<number> {
-    const { data } = await client.rest.search.issuesAndPullRequests({ q: query, per_page: 1 });
-    core.debug(`searchPrCount — Query: ${query}, Total count: ${String(data.total_count)}`);
-    return data.total_count;
+async function countDailyForks(client: Octokit, username: string): Promise<number> {
+    const repos = await client.paginate(client.rest.repos.listForUser, {
+        username,
+        type: "owner",
+        sort: "created",
+        direction: "desc",
+        per_page: 100,
+    });
+
+    const forkTimestamps = repos
+        .filter((repo) => repo.fork)
+        .map((repo) => new Date(repo.created_at ?? "").getTime())
+        .sort((a, b) => a - b);
+
+    if (forkTimestamps.length === 0) {
+        return 0;
+    }
+
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    let maxForks = 0;
+    let left = 0;
+
+    for (let right = 0; right < forkTimestamps.length; right++) {
+        while ((forkTimestamps[right] ?? 0) - (forkTimestamps[left] ?? 0) > DAY_MS) {
+            left++;
+        }
+        maxForks = Math.max(maxForks, right - left + 1);
+    }
+
+    return maxForks;
 }

@@ -15,9 +15,9 @@ inputs:
 
   # General Settings
   max-failures:
-    description: Number of check failures needed before failure actions are triggered (between 1 and 30).
+    description: Number of check failures needed before failure actions are triggered (between 1 and 25).
     required: false
-    default: "3"
+    default: "4"
 
   # PR Branch Checks
   allowed-target-branches:
@@ -51,7 +51,7 @@ inputs:
 
   # PR Title Checks
   require-conventional-title:
-    description: 'Require PR titles to follow Conventional Commits format (e.g. "feat:", "fix:", "feat(scope):").'
+    description: Require PR titles to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').
     required: false
     default: "false"
 
@@ -63,17 +63,17 @@ inputs:
   max-description-length:
     description: Maximum allowed character length for the PR description. 0 disables this check.
     required: false
-    default: "0"
+    default: "2500"
   max-emoji-count:
     description: Maximum number of emojis allowed in the PR title and description. 0 disables this check.
     required: false
     default: "2"
-  require-pr-template:
-    description: Require the PR description to match the repository PR template.
+  max-code-references:
+    description: Maximum number of code references (file paths, function calls, method calls) allowed in the PR description. 0 disables this check.
     required: false
-    default: "false"
+    default: "5"
   require-linked-issue:
-    description: Require the PR to reference at least one issue.
+    description: Require the PR to reference at least one issue in the PR description.
     required: false
     default: "false"
   blocked-terms:
@@ -81,15 +81,41 @@ inputs:
     required: false
     default: ""
   blocked-issue-numbers:
-    description: Comma-separated list of issue numbers blocked from being referenced.
+    description: Comma-separated list of issue numbers blocked from being referenced in the PR description.
     required: false
     default: ""
 
-  # Commit Message Checks
-  require-conventional-commits:
-    description: Require all commit messages to follow Conventional Commits format.
+  # PR Template Checks
+  require-pr-template:
+    description: Require the PR description to follow the repository PR template structure.
     required: false
     default: "false"
+  strict-pr-template-sections:
+    description: Comma-separated list of PR template section headings (without the '#' prefix) classified as strict. All checkboxes in strict sections must be present and checked. Only applies when require-pr-template is enabled.
+    required: false
+    default: ""
+  optional-pr-template-sections:
+    description: Comma-separated list of PR template section headings (without the '#' prefix) classified as optional. Optional sections can be entirely removed from the PR description without failing the check. Only applies when require-pr-template is enabled.
+    required: false
+    default: ""
+  max-additional-pr-template-sections:
+    description: Maximum number of additional sections not in the template that are allowed in the PR description. 0 disables this check.
+    required: false
+    default: "0"
+
+  # Commit Message Checks
+  max-commit-message-length:
+    description: Maximum allowed character length for individual commit messages. 0 disables this check.
+    required: false
+    default: "500"
+  require-conventional-commits:
+    description: Require all commit messages to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').
+    required: false
+    default: "false"
+  require-commit-author-match:
+    description: Require every commit in the PR to be authored by the same GitHub user who opened the PR.
+    required: false
+    default: "true"
   blocked-commit-authors:
     description: Comma-separated list of blocked commit author usernames.
     required: false
@@ -97,15 +123,15 @@ inputs:
 
   # File Checks
   allowed-file-extensions:
-    description: 'Comma-separated list of allowed file extensions (e.g. ".ts,.js") for changed files. Empty allows all.'
+    description: Comma-separated list of allowed file extensions (e.g. '.ts,.js') for changed files. Empty allows all.
     required: false
     default: ""
   allowed-paths:
-    description: Newline-separated file or folder paths to allow for changed files. Entries ending with "/" match folders. Empty allows all.
+    description: Newline-separated file or folder paths to allow for changed files. Entries ending with '/' match folders. Empty allows all.
     required: false
     default: ""
   blocked-paths:
-    description: Newline-separated file or folder paths to block for changed files. Entries ending with "/" match folders.
+    description: Newline-separated file or folder paths to block for changed files. Entries ending with '/' match folders.
     required: false
     default: |
       README.md
@@ -116,8 +142,30 @@ inputs:
     description: Require all changed files to end with a newline character.
     required: false
     default: "true"
+  max-added-comments:
+    description: Maximum number of added comments in all changed files. 0 disables this check.
+    required: false
+    default: "10"
 
-  # User Health Checks
+  # User Checks
+  detect-spam-usernames:
+    description: Detect usernames that match common spam patterns.
+    required: false
+    default: "true"
+  min-account-age:
+    description: Minimum GitHub account age in days (1-190). 0 disables this check.
+    required: false
+    default: "30"
+  max-daily-forks:
+    description: Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.
+    required: false
+    default: "7"
+  min-profile-completeness:
+    description: Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.
+    required: false
+    default: "4"
+
+  # Merge Checks
   min-repo-merged-prs:
     description: Minimum number of merged PRs in this repository required from the author. 0 disables this check.
     required: false
@@ -134,10 +182,6 @@ inputs:
     description: Exclude PRs to the author's own repositories from the global merge ratio calculation.
     required: false
     default: "false"
-  min-account-age:
-    description: Minimum GitHub account age in days (1-365). 0 disables this check.
-    required: false
-    default: "7"
 
   # Filters
   # only-issue-types:
@@ -187,7 +231,7 @@ inputs:
     required: false
     default: ""
   exempt-author-association:
-    description: "Comma-separated list of GitHub author associations exempt from all checks."
+    description: Comma-separated list of GitHub author associations exempt from all checks.
     required: false
     default: "OWNER,MEMBER,COLLABORATOR"
   # exempt-teams:
@@ -262,10 +306,6 @@ inputs:
     description: Lock the PR conversation after closing.
     required: false
     default: "false"
-  delete-branch:
-    description: Delete the source branch after closing the PR.
-    required: false
-    default: "false"
 
   # Issue Close Actions
   # close-issue:
@@ -273,7 +313,7 @@ inputs:
   #   required: false
   #   default: "true"
   # close-issue-reason:
-  #   description: 'Reason used when closing the issue (e.g. "not_planned", "completed").'
+  #   description: Reason used when closing the issue (e.g. 'not_planned', 'completed').
   #   required: false
   #   default: "not_planned"
   # lock-issue:

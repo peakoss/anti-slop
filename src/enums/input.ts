@@ -23,13 +23,21 @@ export enum Input {
     RequireDescription = "require-description",
     MaxDescriptionLength = "max-description-length",
     MaxEmojiCount = "max-emoji-count",
-    RequirePrTemplate = "require-pr-template",
+    MaxCodeReferences = "max-code-references",
     RequireLinkedIssue = "require-linked-issue",
     BlockedTerms = "blocked-terms",
     BlockedIssueNumbers = "blocked-issue-numbers",
 
+    // PR Template Checks
+    RequirePrTemplate = "require-pr-template",
+    StrictPrTemplateSections = "strict-pr-template-sections",
+    OptionalPrTemplateSections = "optional-pr-template-sections",
+    MaxAdditionalPrTemplateSections = "max-additional-pr-template-sections",
+
     // Commit Message Checks
+    MaxCommitMessageLength = "max-commit-message-length",
     RequireConventionalCommits = "require-conventional-commits",
+    RequireCommitAuthorMatch = "require-commit-author-match",
     BlockedCommitAuthors = "blocked-commit-authors",
 
     // File Checks
@@ -37,13 +45,19 @@ export enum Input {
     AllowedPaths = "allowed-paths",
     BlockedPaths = "blocked-paths",
     RequireFinalNewline = "require-final-newline",
+    MaxAddedComments = "max-added-comments",
 
-    // User Health Checks
+    // User Checks
+    DetectSpamUsernames = "detect-spam-usernames",
+    MinAccountAge = "min-account-age",
+    MaxDailyForks = "max-daily-forks",
+    MinProfileCompleteness = "min-profile-completeness",
+
+    // Merge Checks
     MinRepoMergedPrs = "min-repo-merged-prs",
     MinRepoMergeRatio = "min-repo-merge-ratio",
     MinGlobalMergeRatio = "min-global-merge-ratio",
     GlobalMergeRatioExcludeOwn = "global-merge-ratio-exclude-own",
-    MinAccountAge = "min-account-age",
 
     // Filters
     // OnlyIssueTypes = "only-issue-types",
@@ -80,7 +94,6 @@ export enum Input {
     FailurePrMessage = "failure-pr-message",
     ClosePr = "close-pr",
     LockPr = "lock-pr",
-    DeleteBranch = "delete-branch",
 
     // Issue Close Actions
     // CloseIssue = "close-issue",
