@@ -168,10 +168,10 @@ function validateTemplateSections(
             continue;
         }
 
-        if (isStrict(templateSection.headingText)) {
-            const templateCheckboxes = extractCheckboxes(templateSection.content);
-            const bodyCheckboxes = extractCheckboxes(bodySection.content);
+        const templateCheckboxes = extractCheckboxes(templateSection.content);
+        const bodyCheckboxes = extractCheckboxes(bodySection.content);
 
+        if (isStrict(templateSection.headingText)) {
             for (const templateCheckbox of templateCheckboxes) {
                 const matchingCheckbox = bodyCheckboxes.find(
                     (bodyCheckbox) =>
@@ -187,14 +187,26 @@ function validateTemplateSections(
                     );
                 }
             }
-        } else {
-            const bodyCheckboxes = extractCheckboxes(bodySection.content);
-            if (
-                bodyCheckboxes.length > 0 &&
-                bodyCheckboxes.every((checkbox) => !checkbox.checked)
-            ) {
+        } else if (templateCheckboxes.length > 1) {
+            const matchingCheckboxes = bodyCheckboxes.filter((bodyCheckbox) =>
+                templateCheckboxes.some(
+                    (templateCheckbox) =>
+                        templateCheckbox.text.toLowerCase() === bodyCheckbox.text.toLowerCase(),
+                ),
+            );
+            const checkedCount = matchingCheckboxes.filter((checkbox) => checkbox.checked).length;
+
+            if (matchingCheckboxes.length === 0) {
                 templateIssues.push(
-                    `Section "${templateSection.headingText}" has ${String(bodyCheckboxes.length)} checkbox(es) but none are checked`,
+                    `Section "${templateSection.headingText}" is missing all template checkboxes`,
+                );
+            } else if (checkedCount === 0) {
+                templateIssues.push(
+                    `Section "${templateSection.headingText}" has ${String(matchingCheckboxes.length)} checkbox(es) but none are checked`,
+                );
+            } else if (checkedCount > 1) {
+                templateIssues.push(
+                    `Section "${templateSection.headingText}" has ${String(checkedCount)} checkbox(es) checked, exceeds maximum of 1`,
                 );
             }
         }
