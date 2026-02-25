@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import type { CheckResult, Context, Settings, Octokit } from "../types";
 import { recordCheck } from "../report.ts";
+import { commentPrefixesByExtension } from "../constants/comments.ts";
 
 export async function runFileChecks(
     settings: Settings,
@@ -13,7 +14,8 @@ export async function runFileChecks(
         settings.allowedFileExtensions.length > 0 ||
         settings.allowedPaths.length > 0 ||
         settings.blockedPaths.length > 0 ||
-        settings.requireFinalNewline;
+        settings.requireFinalNewline ||
+        settings.maxAddedComments > 0;
 
     if (!hasFileChecks) return results;
 
@@ -27,6 +29,7 @@ export async function runFileChecks(
     const files = changedFiles.map((file) => ({
         name: file.filename,
         status: file.status,
+        patch: file.patch,
     }));
 
     if (settings.allowedFileExtensions.length > 0) {
@@ -125,6 +128,52 @@ export async function runFileChecks(
             message: passed
                 ? "All changed files end with a newline"
                 : `Found ${String(missing.length)} file(s) missing a final newline: "${missing.join('", "')}"`,
+        });
+    }
+
+    if (settings.maxAddedComments > 0) {
+        let totalComments = 0;
+
+        for (const file of files) {
+            if (file.status === "removed") continue;
+            if (!file.patch) {
+                core.debug(
+                    `No patch data for ${file.name} (binary file or file diff is too large)`,
+                );
+                continue;
+            }
+
+            const ext = file.name.includes(".")
+                ? (file.name.split(".").pop() ?? "").toLowerCase()
+                : "";
+
+            const prefixes = commentPrefixesByExtension.get(ext);
+            if (!prefixes) continue;
+
+            for (const line of file.patch.split("\n")) {
+                if (!line.startsWith("+")) continue;
+                if (
+                    line === "+++ /dev/null" ||
+                    line.startsWith("+++ a/") ||
+                    line.startsWith("+++ b/")
+                )
+                    continue;
+
+                const trimmed = line.slice(1).trim();
+                if (prefixes.some((p) => trimmed.startsWith(p))) {
+                    totalComments++;
+                    core.debug(`Added comment in ${file.name}: ${trimmed}`);
+                }
+            }
+        }
+
+        const passed = totalComments <= settings.maxAddedComments;
+        recordCheck(results, {
+            name: "max-added-comments",
+            passed,
+            message: passed
+                ? `Found ${String(totalComments)} added comment line(s), within the limit of ${String(settings.maxAddedComments)}`
+                : `Found ${String(totalComments)} added comment line(s), exceeding the limit of ${String(settings.maxAddedComments)}`,
         });
     }
 
