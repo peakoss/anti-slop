@@ -152,26 +152,26 @@ function validateNumber(value: number, name: string, min: number, max: number): 
 }
 
 function validateSettings(settings: Settings): void {
-    validateNumber(settings.maxFailures, "max-failures", 1, 29);
+    validateNumber(settings.maxFailures, "max-failures", 1, 25);
 
-    validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
-    validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 100000);
-    validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
-    validateNumber(settings.maxCodeReferences, "max-code-references", 0, 100);
+    validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 200);
+    validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 50000);
+    validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 30);
+    validateNumber(settings.maxCodeReferences, "max-code-references", 0, 40);
 
     validateNumber(
         settings.maxAdditionalPrTemplateSections,
         "max-additional-pr-template-sections",
         0,
-        50,
+        20,
     );
 
-    validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 10000);
+    validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 5000);
 
     validateNumber(settings.maxAddedComments, "max-added-comments", 0, 500);
 
-    validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
-    validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 100);
+    validateNumber(settings.minAccountAge, "min-account-age", 0, 190);
+    validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 50);
     validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 11);
 
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
