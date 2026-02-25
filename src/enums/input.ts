@@ -38,6 +38,7 @@ export enum Input {
     MaxCommitMessageLength = "max-commit-message-length",
     RequireConventionalCommits = "require-conventional-commits",
     RequireCommitAuthorMatch = "require-commit-author-match",
+    BlockedCommitAuthors = "blocked-commit-authors",
 
     // File Checks
     AllowedFileExtensions = "allowed-file-extensions",

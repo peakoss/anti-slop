@@ -37,6 +37,7 @@ export interface Settings {
     maxCommitMessageLength: number;
     requireConventionalCommits: boolean;
     requireCommitAuthorMatch: boolean;
+    blockedCommitAuthors: string[];
 
     // File Checks
     allowedFileExtensions: string[];

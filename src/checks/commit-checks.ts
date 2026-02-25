@@ -19,7 +19,8 @@ export async function runCommitChecks(
     if (
         settings.maxCommitMessageLength === 0 &&
         !settings.requireConventionalCommits &&
-        !settings.requireCommitAuthorMatch
+        !settings.requireCommitAuthorMatch &&
+        settings.blockedCommitAuthors.length === 0
     ) {
         return results;
     }
@@ -99,6 +100,24 @@ export async function runCommitChecks(
             message: passed
                 ? "All commit authors match the PR author"
                 : `Commit author(s) ${details.join(", ")} do not match PR author "${context.userLogin}"`,
+        });
+    }
+
+    if (settings.blockedCommitAuthors.length > 0) {
+        const blockedAuthors = settings.blockedCommitAuthors.map((author) => author.toLowerCase());
+        const blocked = new Set(
+            commits
+                .map((commit) => (commit.author?.login ?? "").toLowerCase())
+                .filter((login) => blockedAuthors.includes(login)),
+        );
+
+        recordCheck(results, {
+            name: "blocked-commit-authors",
+            passed: blocked.size === 0,
+            message:
+                blocked.size > 0
+                    ? `Found ${String(blocked.size)} blocked commit author(s): "${[...blocked].join('", "')}"`
+                    : "No blocked commit authors found",
         });
     }
 
