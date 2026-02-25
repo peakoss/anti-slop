@@ -16469,10 +16469,15 @@ let Input = /* @__PURE__ */ function(Input) {
 	Input["RequireDescription"] = "require-description";
 	Input["MaxDescriptionLength"] = "max-description-length";
 	Input["MaxEmojiCount"] = "max-emoji-count";
-	Input["RequirePrTemplate"] = "require-pr-template";
+	Input["MaxCodeReferences"] = "max-code-references";
 	Input["RequireLinkedIssue"] = "require-linked-issue";
 	Input["BlockedTerms"] = "blocked-terms";
 	Input["BlockedIssueNumbers"] = "blocked-issue-numbers";
+	Input["RequirePrTemplate"] = "require-pr-template";
+	Input["StrictPrTemplateSections"] = "strict-pr-template-sections";
+	Input["OptionalPrTemplateSections"] = "optional-pr-template-sections";
+	Input["MaxAdditionalPrTemplateSections"] = "max-additional-pr-template-sections";
+	Input["MaxCommitMessageLength"] = "max-commit-message-length";
 	Input["RequireConventionalCommits"] = "require-conventional-commits";
 	Input["RequireCommitAuthorMatch"] = "require-commit-author-match";
 	Input["BlockedCommitAuthors"] = "blocked-commit-authors";
@@ -16480,11 +16485,15 @@ let Input = /* @__PURE__ */ function(Input) {
 	Input["AllowedPaths"] = "allowed-paths";
 	Input["BlockedPaths"] = "blocked-paths";
 	Input["RequireFinalNewline"] = "require-final-newline";
+	Input["MaxAddedComments"] = "max-added-comments";
+	Input["DetectSpamUsernames"] = "detect-spam-usernames";
+	Input["MinAccountAge"] = "min-account-age";
+	Input["MaxDailyForks"] = "max-daily-forks";
+	Input["MinProfileCompleteness"] = "min-profile-completeness";
 	Input["MinRepoMergedPrs"] = "min-repo-merged-prs";
 	Input["MinRepoMergeRatio"] = "min-repo-merge-ratio";
 	Input["MinGlobalMergeRatio"] = "min-global-merge-ratio";
 	Input["GlobalMergeRatioExcludeOwn"] = "global-merge-ratio-exclude-own";
-	Input["MinAccountAge"] = "min-account-age";
 	Input["ExemptDraftPrs"] = "exempt-draft-prs";
 	Input["ExemptBots"] = "exempt-bots";
 	Input["ExemptUsers"] = "exempt-users";
@@ -16502,7 +16511,6 @@ let Input = /* @__PURE__ */ function(Input) {
 	Input["FailurePrMessage"] = "failure-pr-message";
 	Input["ClosePr"] = "close-pr";
 	Input["LockPr"] = "lock-pr";
-	Input["DeleteBranch"] = "delete-branch";
 	return Input;
 }({});
 
@@ -16535,10 +16543,15 @@ function getSettings() {
 		requireDescription: getBooleanInput(Input.RequireDescription),
 		maxDescriptionLength: parseInt(getInput(Input.MaxDescriptionLength)),
 		maxEmojiCount: parseInt(getInput(Input.MaxEmojiCount)),
-		requirePrTemplate: getBooleanInput(Input.RequirePrTemplate),
+		maxCodeReferences: parseInt(getInput(Input.MaxCodeReferences)),
 		requireLinkedIssue: getBooleanInput(Input.RequireLinkedIssue),
 		blockedTerms: getMultilineInput(Input.BlockedTerms),
 		blockedIssueNumbers: parseList(getInput(Input.BlockedIssueNumbers)),
+		requirePrTemplate: getBooleanInput(Input.RequirePrTemplate),
+		strictPrTemplateSections: parseList(getInput(Input.StrictPrTemplateSections)),
+		optionalPrTemplateSections: parseList(getInput(Input.OptionalPrTemplateSections)),
+		maxAdditionalPrTemplateSections: parseInt(getInput(Input.MaxAdditionalPrTemplateSections)),
+		maxCommitMessageLength: parseInt(getInput(Input.MaxCommitMessageLength)),
 		requireConventionalCommits: getBooleanInput(Input.RequireConventionalCommits),
 		requireCommitAuthorMatch: getBooleanInput(Input.RequireCommitAuthorMatch),
 		blockedCommitAuthors: parseList(getInput(Input.BlockedCommitAuthors)),
@@ -16546,11 +16559,15 @@ function getSettings() {
 		allowedPaths: getMultilineInput(Input.AllowedPaths),
 		blockedPaths: getMultilineInput(Input.BlockedPaths),
 		requireFinalNewline: getBooleanInput(Input.RequireFinalNewline),
+		maxAddedComments: parseInt(getInput(Input.MaxAddedComments)),
+		detectSpamUsernames: getBooleanInput(Input.DetectSpamUsernames),
+		minAccountAge: parseInt(getInput(Input.MinAccountAge)),
+		maxDailyForks: parseInt(getInput(Input.MaxDailyForks)),
+		minProfileCompleteness: parseInt(getInput(Input.MinProfileCompleteness)),
 		minRepoMergedPrs: parseInt(getInput(Input.MinRepoMergedPrs)),
 		minRepoMergeRatio: parseInt(getInput(Input.MinRepoMergeRatio)),
 		minGlobalMergeRatio: parseInt(getInput(Input.MinGlobalMergeRatio)),
 		globalMergeRatioExcludeOwn: getBooleanInput(Input.GlobalMergeRatioExcludeOwn),
-		minAccountAge: parseInt(getInput(Input.MinAccountAge)),
 		exemptDraftPrs: getBooleanInput(Input.ExemptDraftPrs),
 		exemptBots: getMultilineInput(Input.ExemptBots),
 		exemptUsers: parseList(getInput(Input.ExemptUsers)),
@@ -16567,8 +16584,7 @@ function getSettings() {
 		failureAddPrLabels: parseList(getInput(Input.FailureAddPrLabels)),
 		failurePrMessage: getInput(Input.FailurePrMessage),
 		closePr: getBooleanInput(Input.ClosePr),
-		lockPr: getBooleanInput(Input.LockPr),
-		deleteBranch: getBooleanInput(Input.DeleteBranch)
+		lockPr: getBooleanInput(Input.LockPr)
 	};
 	setSecret(settings.githubToken);
 	validateSettings(settings);
@@ -16580,14 +16596,20 @@ function validateNumber(value, name, min, max) {
 	if (value < min || value > max) throw new Error(`"${name}" must be between ${String(min)} and ${String(max)}, got ${String(value)}`);
 }
 function validateSettings(settings) {
-	validateNumber(settings.maxFailures, "max-failures", 1, 30);
-	validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 500);
-	validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 1e5);
-	validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 50);
+	validateNumber(settings.maxFailures, "max-failures", 1, 25);
+	validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 200);
+	validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 5e4);
+	validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 30);
+	validateNumber(settings.maxCodeReferences, "max-code-references", 0, 40);
+	validateNumber(settings.maxAdditionalPrTemplateSections, "max-additional-pr-template-sections", 0, 20);
+	validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 5e3);
+	validateNumber(settings.maxAddedComments, "max-added-comments", 0, 500);
+	validateNumber(settings.minAccountAge, "min-account-age", 0, 190);
+	validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 50);
+	validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 11);
 	validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
 	validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
 	validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);
-	validateNumber(settings.minAccountAge, "min-account-age", 0, 90);
 	for (const association of settings.exemptAuthorAssociation) if (!VALID_AUTHOR_ASSOCIATIONS.includes(association)) throw new Error(`"exempt-author-association" contains invalid value "${association}". The valid values are: ${VALID_AUTHOR_ASSOCIATIONS.join(", ")}`);
 }
 
@@ -50328,7 +50350,9 @@ function buildContext() {
 		title: pr.title,
 		body: pr.body ?? "",
 		baseBranch: pr.base.ref,
+		defaultBranch: pr.base.repo.default_branch,
 		headBranch: pr.head.ref,
+		headSha: pr.head.sha,
 		userLogin: pr.user.login,
 		authorAssociation: pr.author_association,
 		labels: pr.labels.map((label) => label.name),
@@ -50448,7 +50472,7 @@ function runBranchChecks(settings, context) {
 		if (settings.allowedTargetBranches.length > 0 && !settings.allowedTargetBranches.some((pattern) => matchBranch(branch, pattern))) recordCheck(results, {
 			name: "target-branch",
 			passed: false,
-			message: `Target branch "${branch}" is not in the allowed list`
+			message: `Target branch "${branch}" is not allowed`
 		});
 		else if (settings.blockedTargetBranches.some((pattern) => matchBranch(branch, pattern))) recordCheck(results, {
 			name: "target-branch",
@@ -50458,7 +50482,7 @@ function runBranchChecks(settings, context) {
 		else recordCheck(results, {
 			name: "target-branch",
 			passed: true,
-			message: "Target branch is allowed"
+			message: `Target branch "${branch}" is allowed`
 		});
 	}
 	if (settings.allowedSourceBranches.length > 0 || settings.blockedSourceBranches.length > 0) {
@@ -50466,7 +50490,7 @@ function runBranchChecks(settings, context) {
 		if (settings.allowedSourceBranches.length > 0 && !settings.allowedSourceBranches.some((pattern) => matchBranch(branch, pattern))) recordCheck(results, {
 			name: "source-branch",
 			passed: false,
-			message: `Source branch "${branch}" is not in the allowed list`
+			message: `Source branch "${branch}" is not allowed`
 		});
 		else if (settings.blockedSourceBranches.some((pattern) => matchBranch(branch, pattern))) recordCheck(results, {
 			name: "source-branch",
@@ -50476,15 +50500,15 @@ function runBranchChecks(settings, context) {
 		else recordCheck(results, {
 			name: "source-branch",
 			passed: true,
-			message: "Source branch is allowed"
+			message: `Source branch "${branch}" is allowed`
 		});
 	}
 	return results;
 }
 function matchBranch(branch, pattern) {
 	if (pattern.includes("*")) {
-		const ph = "\0";
-		const source = pattern.replace(/\*\*/g, ph).split("*").map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[^/]*").replace(new RegExp(ph, "g"), ".*");
+		const placeholder = "\0";
+		const source = pattern.replace(/\*\*/g, placeholder).split("*").map((segment) => segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[^/]*").replace(new RegExp(placeholder, "g"), ".*");
 		return new RegExp("^" + source + "$").test(branch);
 	}
 	return branch === pattern;
@@ -50496,12 +50520,11 @@ const CONVENTIONAL_PATTERN$1 = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 function runTitleChecks(settings, context) {
 	const results = [];
 	if (settings.requireConventionalTitle) {
-		const type = CONVENTIONAL_PATTERN$1.exec(context.title)?.[1];
-		const passed = type !== void 0;
+		const passed = CONVENTIONAL_PATTERN$1.exec(context.title)?.[1] !== void 0;
 		recordCheck(results, {
 			name: "conventional-title",
 			passed,
-			message: passed ? `PR title follows conventional commits format with type "${type}"` : `PR title does not follow conventional commits format: "${context.title}"`
+			message: passed ? `PR title "${context.title}" follows conventional commits format` : `PR title "${context.title}" does not follow conventional commits format`
 		});
 	}
 	return results;
@@ -50518,34 +50541,28 @@ const ISSUE_REF_PATTERNS = [
 	/GH-(\d+)/gi,
 	/(?:^|[\s(])#(\d+)/gm
 ];
-/**
-* @see https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository#adding-a-pull-request-template
-*/
-const PR_TEMPLATE_PATHS = [
-	".github/pull_request_template.md",
-	"docs/pull_request_template.md",
-	"pull_request_template.md",
-	".github/PULL_REQUEST_TEMPLATE/pull_request_template.md",
-	"docs/PULL_REQUEST_TEMPLATE/pull_request_template.md",
-	"PULL_REQUEST_TEMPLATE/pull_request_template.md"
+const INLINE_CODE_PATTERNS = [
+	/(?:[\w@.-]+\/)+[\w.-]+\.\w{1,10}/g,
+	/\w+(?:->|::)\w+\(\)/g,
+	/\w{3,}\(\)/g
 ];
-async function runDescriptionChecks(settings, context, client) {
+function runDescriptionChecks(settings, context) {
 	const results = [];
 	const body = context.body;
 	if (settings.requireDescription) {
-		const empty = body.replace(/\s/g, "").length === 0;
+		const passed = !(body.replace(/\s/g, "").length === 0);
 		recordCheck(results, {
 			name: "description-empty",
-			passed: !empty,
-			message: empty ? "PR description is empty" : "PR description is present"
+			passed,
+			message: passed ? "PR description is present" : "PR description is empty"
 		});
 	}
 	if (settings.maxDescriptionLength > 0) {
-		const over = body.length > settings.maxDescriptionLength;
+		const passed = !(body.length > settings.maxDescriptionLength);
 		recordCheck(results, {
 			name: "description-max-length",
-			passed: !over,
-			message: over ? `Description is ${String(body.length)} chars, exceeds allowed maximum of ${String(settings.maxDescriptionLength)}` : `Description is ${String(body.length)} chars, within allowed maximum of ${String(settings.maxDescriptionLength)}`
+			passed,
+			message: passed ? `Description is ${String(body.length)} chars, within maximum of ${String(settings.maxDescriptionLength)}` : `Description is ${String(body.length)} chars, exceeds maximum of ${String(settings.maxDescriptionLength)}`
 		});
 	}
 	if (settings.maxEmojiCount > 0) {
@@ -50554,55 +50571,46 @@ async function runDescriptionChecks(settings, context, client) {
 		recordCheck(results, {
 			name: "emoji-count",
 			passed,
-			message: passed ? `Found ${String(count)} emoji(s), within allowed maximum of ${String(settings.maxEmojiCount)}` : `Found ${String(count)} emoji(s), exceeds allowed maximum of ${String(settings.maxEmojiCount)}`
+			message: passed ? `Found ${String(count)} emoji(s), within maximum of ${String(settings.maxEmojiCount)}` : `Found ${String(count)} emoji(s), exceeds maximum of ${String(settings.maxEmojiCount)}`
 		});
 	}
 	if (settings.blockedTerms.length > 0) {
 		const visibleBody = body.replace(/<!--[\s\S]*?-->/g, "");
 		const found = settings.blockedTerms.filter((term) => visibleBody.includes(term));
+		const passed = found.length === 0;
 		recordCheck(results, {
 			name: "blocked-terms",
-			passed: found.length === 0,
-			message: found.length > 0 ? `Blocked term(s) found: ${found.join(", ")}` : "No blocked terms found"
+			passed,
+			message: passed ? "No blocked terms found in the description" : `Found ${String(found.length)} blocked term(s) in the description: "${found.join("\", \"")}"`
+		});
+	}
+	if (settings.maxCodeReferences > 0) {
+		const count = countCodeReferences(body);
+		const passed = count <= settings.maxCodeReferences;
+		recordCheck(results, {
+			name: "code-references",
+			passed,
+			message: passed ? `Found ${String(count)} code reference(s), within maximum of ${String(settings.maxCodeReferences)}` : `Found ${String(count)} code reference(s), exceeds maximum of ${String(settings.maxCodeReferences)}`
 		});
 	}
 	const issueNumbers = extractIssueNumbers(body);
-	if (settings.requireLinkedIssue) recordCheck(results, {
-		name: "linked-issue",
-		passed: issueNumbers.length > 0,
-		message: issueNumbers.length > 0 ? `Found ${String(issueNumbers.length)} linked issue(s) in the PR description` : "No linked issues found in the PR description"
-	});
+	if (settings.requireLinkedIssue) {
+		const passed = issueNumbers.length > 0;
+		recordCheck(results, {
+			name: "linked-issue",
+			passed,
+			message: passed ? `Found ${String(issueNumbers.length)} linked issue(s) in the PR description` : "No linked issues found in the PR description"
+		});
+	}
 	if (settings.blockedIssueNumbers.length > 0) {
 		const blockedNumbers = settings.blockedIssueNumbers.map((raw) => parseInt(raw));
 		const found = issueNumbers.filter((issueNumber) => blockedNumbers.includes(issueNumber));
+		const passed = found.length === 0;
 		recordCheck(results, {
 			name: "blocked-issue-numbers",
-			passed: found.length === 0,
-			message: found.length > 0 ? `Found blocked issue number(s) in the PR description: ${found.map((issueNumber) => `#${String(issueNumber)}`).join(", ")}` : "No blocked issue numbers found in the PR description"
+			passed,
+			message: passed ? "No blocked issue numbers found in the description" : `Found ${String(found.length)} blocked issue number(s) in the description: "${found.join(", ")}"`
 		});
-	}
-	if (settings.requirePrTemplate) {
-		const template = await fetchPrTemplate(client, context.owner, context.repo);
-		if (template === null) info("[SKIP] require-pr-template — No repository PR template found so this check is not applicable");
-		else {
-			const templateHeadings = template.match(/^#{1,6}\s+.+$/gm);
-			if (!templateHeadings || templateHeadings.length === 0) {
-				const identical = body.trim() === template.trim();
-				recordCheck(results, {
-					name: "pr-template",
-					passed: !identical,
-					message: identical ? "PR description is identical to the template (not filled in)" : "PR description follows the repository PR template structure"
-				});
-			} else {
-				const missing = templateHeadings.filter((heading) => !body.includes(heading));
-				debug(`Missing template headings: ${missing.join(", ")}`);
-				recordCheck(results, {
-					name: "pr-template",
-					passed: missing.length === 0,
-					message: missing.length > 0 ? `PR description is missing repository PR template section(s)` : "PR description follows the repository PR template structure"
-				});
-			}
-		}
 	}
 	return results;
 }
@@ -50618,13 +50626,147 @@ function extractIssueNumbers(text) {
 	}
 	return [...numbers];
 }
+function countCodeReferences(text) {
+	let count = 0;
+	for (const pattern of INLINE_CODE_PATTERNS) count += text.match(pattern)?.length ?? 0;
+	return count;
+}
+
+//#endregion
+//#region src/checks/template-checks.ts
+/**
+* @see https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository#adding-a-pull-request-template
+*/
+const PR_TEMPLATE_PATHS = [
+	".github/pull_request_template.md",
+	"docs/pull_request_template.md",
+	"pull_request_template.md",
+	".github/PULL_REQUEST_TEMPLATE/pull_request_template.md",
+	"docs/PULL_REQUEST_TEMPLATE/pull_request_template.md",
+	"PULL_REQUEST_TEMPLATE/pull_request_template.md"
+];
+const HEADING_REGEX = /^(#{1,6})\s+(.+)$/gm;
+const CHECKBOX_REGEX = /^\s*-\s+\[([ xX])\]\s+(.+)$/gm;
+async function runTemplateChecks(settings, context, client) {
+	const results = [];
+	if (!settings.requirePrTemplate) return results;
+	const template = await fetchPrTemplate(client, context.owner, context.repo);
+	if (template === null) {
+		info("[SKIP] require-pr-template — No repository PR template found so this check is not applicable");
+		return results;
+	}
+	if (context.body.trim() === template.trim()) {
+		recordCheck(results, {
+			name: "pr-template",
+			passed: false,
+			message: "PR description is identical to the template (not filled in)"
+		});
+		return results;
+	}
+	const templateSections = parseSections(template);
+	const bodySections = parseSections(context.body);
+	const { templateIssues, strictIssues } = validateTemplateSections(templateSections, bodySections, settings.strictPrTemplateSections, settings.optionalPrTemplateSections);
+	debug(`Template section issues: ${JSON.stringify(templateIssues)}`);
+	debug(`Strict section issues: ${JSON.stringify(strictIssues)}`);
+	const passed = templateIssues.length === 0;
+	recordCheck(results, {
+		name: "pr-template",
+		passed,
+		message: passed ? "PR description follows the PR template structure" : templateIssues.join("; ")
+	});
+	if (settings.strictPrTemplateSections.length > 0) {
+		const passed = strictIssues.length === 0;
+		recordCheck(results, {
+			name: "strict-pr-template-sections",
+			passed,
+			message: passed ? "All strict PR template sections are valid" : strictIssues.join("; ")
+		});
+	}
+	if (settings.maxAdditionalPrTemplateSections > 0) {
+		const additionalCount = bodySections.filter((bodySection) => !templateSections.some((templateSection) => templateSection.heading.toLowerCase() === bodySection.heading.toLowerCase())).length;
+		const passed = additionalCount <= settings.maxAdditionalPrTemplateSections;
+		recordCheck(results, {
+			name: "max-additional-pr-template-sections",
+			passed,
+			message: passed ? `PR has ${String(additionalCount)} additional section(s), within maximum of ${String(settings.maxAdditionalPrTemplateSections)}` : `PR has ${String(additionalCount)} additional section(s), exceeds maximum of ${String(settings.maxAdditionalPrTemplateSections)}`
+		});
+	}
+	return results;
+}
+function parseSections(text) {
+	HEADING_REGEX.lastIndex = 0;
+	const matches = [];
+	let match;
+	while ((match = HEADING_REGEX.exec(text)) !== null) {
+		const headingText = match[2];
+		if (headingText !== void 0) matches.push({
+			fullLine: match[0],
+			text: headingText.trim(),
+			position: match.index
+		});
+	}
+	return matches.map((current, index) => {
+		const contentStart = current.position + current.fullLine.length;
+		const nextMatch = matches[index + 1];
+		const contentEnd = nextMatch !== void 0 ? nextMatch.position : text.length;
+		return {
+			heading: current.fullLine,
+			headingText: current.text,
+			content: text.slice(contentStart, contentEnd).trim()
+		};
+	});
+}
+function extractCheckboxes(content) {
+	CHECKBOX_REGEX.lastIndex = 0;
+	const checkboxes = [];
+	let match;
+	while ((match = CHECKBOX_REGEX.exec(content)) !== null) {
+		const label = match[2];
+		if (label !== void 0) checkboxes.push({
+			text: label.trim(),
+			checked: match[1] !== " "
+		});
+	}
+	return checkboxes;
+}
+function validateTemplateSections(templateSections, bodySections, strictSectionNames, optionalSectionNames) {
+	const templateIssues = [];
+	const strictIssues = [];
+	const isStrict = (name) => strictSectionNames.some((strict) => strict.toLowerCase() === name.toLowerCase());
+	const isOptional = (name) => optionalSectionNames.some((optional) => optional.toLowerCase() === name.toLowerCase());
+	for (const templateSection of templateSections) {
+		if (isOptional(templateSection.headingText)) continue;
+		const bodySection = bodySections.find((section) => section.heading.toLowerCase() === templateSection.heading.toLowerCase());
+		if (!bodySection) {
+			templateIssues.push(`Missing section: ${templateSection.heading}`);
+			continue;
+		}
+		const templateCheckboxes = extractCheckboxes(templateSection.content);
+		const bodyCheckboxes = extractCheckboxes(bodySection.content);
+		if (isStrict(templateSection.headingText)) for (const templateCheckbox of templateCheckboxes) {
+			const matchingCheckbox = bodyCheckboxes.find((bodyCheckbox) => bodyCheckbox.text.toLowerCase() === templateCheckbox.text.toLowerCase());
+			if (!matchingCheckbox) strictIssues.push(`Strict section "${templateSection.headingText}" is missing checkbox: "${templateCheckbox.text}"`);
+			else if (!matchingCheckbox.checked) strictIssues.push(`Strict section "${templateSection.headingText}" has unchecked checkbox: "${templateCheckbox.text}"`);
+		}
+		else if (templateCheckboxes.length > 1) {
+			const matchingCheckboxes = bodyCheckboxes.filter((bodyCheckbox) => templateCheckboxes.some((templateCheckbox) => templateCheckbox.text.toLowerCase() === bodyCheckbox.text.toLowerCase()));
+			const checkedCount = matchingCheckboxes.filter((checkbox) => checkbox.checked).length;
+			if (matchingCheckboxes.length === 0) templateIssues.push(`Section "${templateSection.headingText}" is missing all template checkboxes`);
+			else if (checkedCount === 0) templateIssues.push(`Section "${templateSection.headingText}" has ${String(matchingCheckboxes.length)} checkbox(es) but none are checked`);
+			else if (checkedCount > 1) templateIssues.push(`Section "${templateSection.headingText}" has ${String(checkedCount)} checkbox(es) checked, exceeds maximum of 1`);
+		}
+	}
+	return {
+		templateIssues,
+		strictIssues
+	};
+}
 async function fetchPrTemplate(client, owner, repo) {
 	for (const path of PR_TEMPLATE_PATHS) try {
 		const { data } = await client.rest.repos.getContent({
 			owner,
 			repo,
-			path,
-			ref: "HEAD"
+			path
 		});
 		if ("content" in data && typeof data.content === "string") return Buffer.from(data.content, "base64").toString("utf-8");
 	} catch {
@@ -50634,10 +50776,115 @@ async function fetchPrTemplate(client, owner, repo) {
 }
 
 //#endregion
+//#region src/constants/comments.ts
+const COMMENT_PREFIXES_BY_LANGUAGE = [
+	[[
+		"c",
+		"cjs",
+		"cpp",
+		"cs",
+		"css",
+		"dart",
+		"go",
+		"h",
+		"hpp",
+		"java",
+		"js",
+		"jsx",
+		"kt",
+		"less",
+		"mjs",
+		"php",
+		"proto",
+		"rs",
+		"scala",
+		"scss",
+		"swift",
+		"ts",
+		"tsx",
+		"zig"
+	], [
+		"//",
+		"/*",
+		"*",
+		"{/*"
+	]],
+	[[
+		"bash",
+		"cmake",
+		"coffee",
+		"cr",
+		"ex",
+		"jl",
+		"nim",
+		"pl",
+		"ps1",
+		"py",
+		"r",
+		"rb",
+		"sh",
+		"tf",
+		"toml",
+		"yaml",
+		"yml",
+		"zsh"
+	], ["#"]],
+	[[
+		"ada",
+		"elm",
+		"hs",
+		"lua",
+		"sql",
+		"vhdl"
+	], ["--"]],
+	[[
+		"htm",
+		"html",
+		"svg",
+		"xml"
+	], ["<!--", "-->"]],
+	[[
+		"astro",
+		"svelte",
+		"vue"
+	], [
+		"//",
+		"/*",
+		"*",
+		"{/*",
+		"<!--",
+		"-->"
+	]],
+	[[
+		"asm",
+		"clj",
+		"cljs",
+		"el",
+		"ini",
+		"lisp",
+		"rkt",
+		"scm"
+	], [";"]],
+	[[
+		"erl",
+		"pro",
+		"sty",
+		"tex"
+	], ["%"]],
+	[[
+		"f",
+		"f90",
+		"f95",
+		"for"
+	], ["!"]]
+];
+const commentPrefixesByExtension = new Map(COMMENT_PREFIXES_BY_LANGUAGE.flatMap(([extensions, prefixes]) => extensions.map((extension) => [extension, prefixes])));
+
+//#endregion
 //#region src/checks/file-checks.ts
 async function runFileChecks(settings, context, client) {
 	const results = [];
-	if (!(settings.allowedFileExtensions.length > 0 || settings.allowedPaths.length > 0 || settings.blockedPaths.length > 0 || settings.requireFinalNewline)) return results;
+	if (!(settings.allowedFileExtensions.length > 0 || settings.allowedPaths.length > 0 || settings.blockedPaths.length > 0 || settings.requireFinalNewline || settings.maxAddedComments > 0)) return results;
 	const files = (await client.paginate(client.rest.pulls.listFiles, {
 		owner: context.owner,
 		repo: context.repo,
@@ -50645,59 +50892,92 @@ async function runFileChecks(settings, context, client) {
 		per_page: 100
 	})).map((file) => ({
 		name: file.filename,
-		status: file.status
+		status: file.status,
+		patch: file.patch
 	}));
 	if (settings.allowedFileExtensions.length > 0) {
 		const allowed = settings.allowedFileExtensions.map((extension) => extension.startsWith(".") ? extension.toLowerCase() : `.${extension.toLowerCase()}`);
-		const passed = files.every((file) => {
+		const disallowed = files.filter((file) => {
 			const filename = file.name.split("/").pop() ?? file.name;
 			const dot = filename.lastIndexOf(".");
-			return dot <= 0 || allowed.includes(filename.slice(dot).toLowerCase());
+			return dot > 0 && !allowed.includes(filename.slice(dot).toLowerCase());
 		});
+		const passed = disallowed.length === 0;
 		recordCheck(results, {
 			name: "file-extensions",
 			passed,
-			message: passed ? "All file extensions are permitted" : "Found file(s) with disallowed extension(s)"
+			message: passed ? "All changed files have allowed extensions" : `Found ${String(disallowed.length)} file(s) with disallowed extensions: "${disallowed.map((file) => file.name).join("\", \"")}"`
 		});
 	}
 	if (settings.allowedPaths.length > 0) {
-		const passed = files.every((file) => settings.allowedPaths.some((pattern) => pattern.endsWith("/") ? file.name.toLowerCase().startsWith(pattern.toLowerCase()) : file.name.toLowerCase() === pattern.toLowerCase()));
+		const disallowed = files.filter((file) => !settings.allowedPaths.some((pattern) => pattern.endsWith("/") ? file.name.toLowerCase().startsWith(pattern.toLowerCase()) : file.name.toLowerCase() === pattern.toLowerCase()));
+		const passed = disallowed.length === 0;
 		recordCheck(results, {
 			name: "allowed-paths",
 			passed,
-			message: passed ? "All changed files are in allowed paths" : "Found changed file(s) outside allowed paths"
+			message: passed ? "All changed files are in allowed paths" : `Found ${String(disallowed.length)} file(s) outside allowed paths: "${disallowed.map((file) => file.name).join("\", \"")}"`
 		});
 	}
 	if (settings.blockedPaths.length > 0) {
-		const passed = !files.some((file) => settings.blockedPaths.some((pattern) => pattern.endsWith("/") ? file.name.toLowerCase().startsWith(pattern.toLowerCase()) : file.name.toLowerCase() === pattern.toLowerCase()));
+		const blocked = files.filter((file) => settings.blockedPaths.some((pattern) => pattern.endsWith("/") ? file.name.toLowerCase().startsWith(pattern.toLowerCase()) : file.name.toLowerCase() === pattern.toLowerCase()));
+		const passed = blocked.length === 0;
 		recordCheck(results, {
 			name: "blocked-paths",
 			passed,
-			message: passed ? "No changes in blocked paths" : "Found changed file(s) in blocked paths"
+			message: passed ? "No changed files found in blocked paths" : `Found ${String(blocked.length)} file(s) in blocked paths: "${blocked.map((file) => file.name).join("\", \"")}"`
 		});
 	}
 	if (settings.requireFinalNewline) {
-		const passed = (await Promise.all(files.filter((file) => file.status !== "removed").slice(0, 30).map(async (file) => {
+		const missing = [];
+		await Promise.all(files.filter((file) => file.status !== "removed").slice(0, 30).map(async (file) => {
 			try {
 				const { data } = await client.rest.repos.getContent({
 					owner: context.owner,
 					repo: context.repo,
 					path: file.name,
-					ref: context.headBranch
+					ref: context.headSha
 				});
 				if ("content" in data && typeof data.content === "string") {
 					const content = Buffer.from(data.content, "base64").toString("utf-8");
-					return content.length === 0 || content.endsWith("\n");
+					if (content.length > 0 && !content.endsWith("\n")) missing.push(file.name);
 				}
-				return true;
 			} catch {
-				return true;
+				warning(`Error checking final newline for file ${file.name}`);
 			}
-		}))).every(Boolean);
+		}));
+		const passed = missing.length === 0;
 		recordCheck(results, {
 			name: "final-newline",
 			passed,
-			message: passed ? "All changed files end with a newline" : "Found file(s) missing a final newline"
+			message: passed ? "All changed files end with a newline" : `Found ${String(missing.length)} file(s) missing a final newline: "${missing.join("\", \"")}"`
+		});
+	}
+	if (settings.maxAddedComments > 0) {
+		let totalComments = 0;
+		for (const file of files) {
+			if (file.status === "removed") continue;
+			if (!file.patch) {
+				debug(`No patch data for ${file.name} (binary file or file diff is too large)`);
+				continue;
+			}
+			const ext = file.name.includes(".") ? (file.name.split(".").pop() ?? "").toLowerCase() : "";
+			const prefixes = commentPrefixesByExtension.get(ext);
+			if (!prefixes) continue;
+			for (const line of file.patch.split("\n")) {
+				if (!line.startsWith("+")) continue;
+				if (line === "+++ /dev/null" || line.startsWith("+++ a/") || line.startsWith("+++ b/")) continue;
+				const trimmed = line.slice(1).trim();
+				if (prefixes.some((p) => trimmed.startsWith(p))) {
+					totalComments++;
+					debug(`Added comment in ${file.name}: ${trimmed}`);
+				}
+			}
+		}
+		const passed = totalComments <= settings.maxAddedComments;
+		recordCheck(results, {
+			name: "max-added-comments",
+			passed,
+			message: passed ? `Found ${String(totalComments)} added comment line(s), within the limit of ${String(settings.maxAddedComments)}` : `Found ${String(totalComments)} added comment line(s), exceeding the limit of ${String(settings.maxAddedComments)}`
 		});
 	}
 	return results;
@@ -50709,13 +50989,33 @@ const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 const TITLE_PATTERN = /\(#\d+\)$/;
 async function runCommitChecks(settings, context, client) {
 	const results = [];
-	if (!settings.requireConventionalCommits && !settings.requireCommitAuthorMatch && settings.blockedCommitAuthors.length === 0) return results;
-	const commits = await client.paginate(client.rest.pulls.listCommits, {
+	if (settings.maxCommitMessageLength === 0 && !settings.requireConventionalCommits && !settings.requireCommitAuthorMatch && settings.blockedCommitAuthors.length === 0) return results;
+	let commits = await client.paginate(client.rest.pulls.listCommits, {
 		owner: context.owner,
 		repo: context.repo,
 		pull_number: context.number,
 		per_page: 100
 	});
+	if (context.baseBranch !== context.defaultBranch) {
+		const { data: comparison } = await client.rest.repos.compareCommitsWithBasehead({
+			owner: context.owner,
+			repo: context.repo,
+			basehead: `${context.baseBranch}...${context.defaultBranch}`
+		});
+		const inheritedShas = new Set(comparison.commits.map((commit) => commit.sha));
+		const excluded = commits.filter((commit) => inheritedShas.has(commit.sha));
+		for (const commit of excluded) debug(`Excluding inherited commit ${commit.sha}: ${commit.commit.message.split("\n")[0] ?? ""}`);
+		commits = commits.filter((commit) => !inheritedShas.has(commit.sha));
+	}
+	if (settings.maxCommitMessageLength > 0) {
+		const oversizedCommits = commits.filter((commit) => commit.commit.message.length > settings.maxCommitMessageLength);
+		const passed = oversizedCommits.length === 0;
+		recordCheck(results, {
+			name: "max-commit-message-length",
+			passed,
+			message: passed ? `All commit messages are within the ${String(settings.maxCommitMessageLength)} character limit` : `${String(oversizedCommits.length)} commit message(s) exceed the ${String(settings.maxCommitMessageLength)} character limit`
+		});
+	}
 	if (settings.requireConventionalCommits) {
 		const passed = commits.map((commit) => commit.commit.message.split("\n")[0] ?? "").filter((subject) => !subject.startsWith("Merge ") && !TITLE_PATTERN.test(subject)).every((subject) => CONVENTIONAL_PATTERN.test(subject));
 		recordCheck(results, {
@@ -50726,11 +51026,13 @@ async function runCommitChecks(settings, context, client) {
 	}
 	if (settings.requireCommitAuthorMatch) {
 		const prAuthor = context.userLogin.toLowerCase();
-		const mismatchedAuthors = new Set(commits.map((commit) => commit.author?.login ?? "").filter((login) => login !== "" && login.toLowerCase() !== prAuthor));
+		const mismatchedAuthors = commits.filter((commit) => commit.author?.login?.toLowerCase() !== prAuthor);
+		const details = [...new Set(mismatchedAuthors.map((commit) => commit.author ? `"${commit.author.login}"` : "\"unknown\" (no GitHub account)"))];
+		const passed = mismatchedAuthors.length === 0;
 		recordCheck(results, {
 			name: "commit-author-match",
-			passed: mismatchedAuthors.size === 0,
-			message: mismatchedAuthors.size > 0 ? `Commit author(s) do not match PR author "${context.userLogin}": ${[...mismatchedAuthors].join(", ")}` : "All commit authors match the PR author"
+			passed,
+			message: passed ? "All commit authors match the PR author" : `Commit author(s) ${details.join(", ")} do not match PR author "${context.userLogin}"`
 		});
 	}
 	if (settings.blockedCommitAuthors.length > 0) {
@@ -50739,7 +51041,7 @@ async function runCommitChecks(settings, context, client) {
 		recordCheck(results, {
 			name: "blocked-commit-authors",
 			passed: blocked.size === 0,
-			message: blocked.size > 0 ? `Blocked commit author(s) found: ${[...blocked].join(", ")}` : "No blocked commit authors found"
+			message: blocked.size > 0 ? `Found ${String(blocked.size)} blocked commit author(s): "${[...blocked].join("\", \"")}"` : "No blocked commit authors found"
 		});
 	}
 	return results;
@@ -50747,20 +51049,170 @@ async function runCommitChecks(settings, context, client) {
 
 //#endregion
 //#region src/checks/user-checks.ts
+const SPAM_USERNAME_PATTERNS = [
+	{
+		pattern: /^\d+$/,
+		reason: "username is all digits"
+	},
+	{
+		pattern: /\d{4,}/,
+		reason: "username contains 4 or more consecutive digits"
+	},
+	{
+		pattern: /(?:^|-)ai(?:-|$)/i,
+		reason: "username contains 'ai' segment"
+	}
+];
 async function runUserChecks(settings, context, client) {
 	const results = [];
-	if (!(settings.minRepoMergedPrs > 0 || settings.minRepoMergeRatio > 0 || settings.minGlobalMergeRatio > 0 || settings.minAccountAge > 0)) return results;
+	const user = context.userLogin;
+	const needsProfile = settings.minProfileCompleteness > 0 || settings.minAccountAge > 0;
+	const [profile, dailyForkCount] = await Promise.all([needsProfile ? getUserProfile(client, user) : Promise.resolve(null), settings.maxDailyForks > 0 ? countDailyForks(client, user) : Promise.resolve(0)]);
+	if (settings.detectSpamUsernames) {
+		const matched = SPAM_USERNAME_PATTERNS.filter((entry) => entry.pattern.test(user));
+		const passed = matched.length === 0;
+		recordCheck(results, {
+			name: "detect-spam-usernames",
+			passed,
+			message: passed ? `Username "${user}" does not match spam patterns` : `Username "${user}" matches spam patterns: ${matched.map((entry) => entry.reason).join(", ")}`
+		});
+	}
+	if (settings.minAccountAge > 0 && profile) {
+		const accountAgeMs = Date.now() - new Date(profile.created_at).getTime();
+		const accountAgeDays = Math.floor(accountAgeMs / (1e3 * 60 * 60 * 24));
+		const passed = accountAgeDays >= settings.minAccountAge;
+		recordCheck(results, {
+			name: "account-age",
+			passed,
+			message: passed ? `Account is ${String(accountAgeDays)} day(s) old, meets minimum of ${String(settings.minAccountAge)} days` : `Account is ${String(accountAgeDays)} day(s) old, below minimum of ${String(settings.minAccountAge)} days`
+		});
+	}
+	if (settings.maxDailyForks > 0) {
+		const passed = dailyForkCount <= settings.maxDailyForks;
+		recordCheck(results, {
+			name: "max-daily-forks",
+			passed,
+			message: passed ? `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, within maximum of ${String(settings.maxDailyForks)}` : `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, exceeds maximum of ${String(settings.maxDailyForks)}`
+		});
+	}
+	if (settings.minProfileCompleteness > 0 && profile) {
+		const fields = [
+			{
+				label: "public profile",
+				present: profile.user_view_type === "public"
+			},
+			{
+				label: "name",
+				present: !!profile.name
+			},
+			{
+				label: "company",
+				present: !!profile.company
+			},
+			{
+				label: "blog",
+				present: !!profile.blog
+			},
+			{
+				label: "location",
+				present: !!profile.location
+			},
+			{
+				label: "email",
+				present: !!profile.email
+			},
+			{
+				label: "hireable",
+				present: profile.hireable !== null
+			},
+			{
+				label: "bio",
+				present: !!profile.bio
+			},
+			{
+				label: "twitter",
+				present: !!profile.twitter_username
+			},
+			{
+				label: "followers",
+				present: profile.followers > 0
+			},
+			{
+				label: "following",
+				present: profile.following > 0
+			}
+		];
+		const completedCount = fields.filter((field) => field.present).length;
+		const missing = fields.filter((field) => !field.present).map((field) => field.label);
+		const passed = completedCount >= settings.minProfileCompleteness;
+		recordCheck(results, {
+			name: "min-profile-completeness",
+			passed,
+			message: passed ? `Profile completeness is ${String(completedCount)}/11, meets minimum of ${String(settings.minProfileCompleteness)}` : `Profile completeness is ${String(completedCount)}/11, below minimum of ${String(settings.minProfileCompleteness)} (missing: ${missing.join(", ")})`
+		});
+	}
+	return results;
+}
+async function getUserProfile(client, username) {
+	const { data } = await client.rest.users.getByUsername({ username });
+	return {
+		user_view_type: data.user_view_type ?? "private",
+		name: data.name,
+		company: data.company,
+		blog: data.blog,
+		location: data.location,
+		email: data.email,
+		hireable: data.hireable,
+		bio: data.bio,
+		twitter_username: data.twitter_username ?? null,
+		followers: data.followers,
+		following: data.following,
+		created_at: data.created_at
+	};
+}
+async function countDailyForks(client, username) {
+	const forkTimestamps = (await client.paginate(client.rest.repos.listForUser, {
+		username,
+		type: "owner",
+		sort: "created",
+		direction: "desc",
+		per_page: 100
+	})).filter((repo) => repo.fork).map((repo) => new Date(repo.created_at ?? "").getTime()).sort((a, b) => a - b);
+	if (forkTimestamps.length === 0) return 0;
+	const DAY_MS = 1440 * 60 * 1e3;
+	let maxForks = 0;
+	let left = 0;
+	for (let right = 0; right < forkTimestamps.length; right++) {
+		while ((forkTimestamps[right] ?? 0) - (forkTimestamps[left] ?? 0) > DAY_MS) left++;
+		maxForks = Math.max(maxForks, right - left + 1);
+	}
+	return maxForks;
+}
+
+//#endregion
+//#region src/checks/merge-checks.ts
+async function runMergeChecks(settings, context, client) {
+	const results = [];
 	const user = context.userLogin;
 	const repoFull = `${context.owner}/${context.repo}`;
 	const globalScope = settings.globalMergeRatioExcludeOwn ? `-user:${user}` : "";
-	const [repoMerged, repoClosed, globalMerged, globalClosed, createdAt] = await Promise.all([
-		settings.minRepoMergedPrs > 0 || settings.minRepoMergeRatio > 0 ? searchPrCount(client, `is:pr is:merged author:${user} repo:${repoFull}`) : Promise.resolve(0),
-		settings.minRepoMergeRatio > 0 ? searchPrCount(client, `is:pr is:unmerged is:closed author:${user} repo:${repoFull}`) : Promise.resolve(0),
-		settings.minGlobalMergeRatio > 0 ? searchPrCount(client, `is:pr is:merged author:${user} ${globalScope}`.trim()) : Promise.resolve(0),
-		settings.minGlobalMergeRatio > 0 ? searchPrCount(client, `is:pr is:unmerged is:closed author:${user} ${globalScope}`.trim()) : Promise.resolve(0),
-		settings.minAccountAge > 0 ? getUserCreatedAt(client, user) : Promise.resolve("")
+	const needsRepoMerged = settings.minRepoMergedPrs > 1 || settings.minRepoMergeRatio > 0;
+	const needsRepoClosed = settings.minRepoMergeRatio > 0;
+	const needsGlobalRatio = settings.minGlobalMergeRatio > 0;
+	const [repoMerged, repoClosed, globalMerged, globalClosed] = await Promise.all([
+		needsRepoMerged ? searchPrCount(client, `is:pr is:merged author:${user} repo:${repoFull}`) : Promise.resolve(0),
+		needsRepoClosed ? searchPrCount(client, `is:pr is:unmerged is:closed author:${user} repo:${repoFull}`) : Promise.resolve(0),
+		needsGlobalRatio ? searchPrCount(client, `is:pr is:merged author:${user} ${globalScope}`.trim()) : Promise.resolve(0),
+		needsGlobalRatio ? searchPrCount(client, `is:pr is:unmerged is:closed author:${user} ${globalScope}`.trim()) : Promise.resolve(0)
 	]);
-	if (settings.minRepoMergedPrs > 0) {
+	if (settings.minRepoMergedPrs > 0) if (settings.minRepoMergedPrs === 1) {
+		const passed = context.authorAssociation === "CONTRIBUTOR";
+		recordCheck(results, {
+			name: "min-merged-prs",
+			passed,
+			message: passed ? `User has author association "${context.authorAssociation}", meets minimum of ${String(settings.minRepoMergedPrs)} merged PR(s)` : `User has author association "${context.authorAssociation}", below minimum of ${String(settings.minRepoMergedPrs)} merged PR(s)`
+		});
+	} else {
 		const passed = repoMerged >= settings.minRepoMergedPrs;
 		recordCheck(results, {
 			name: "min-merged-prs",
@@ -50775,10 +51227,11 @@ async function runUserChecks(settings, context, client) {
 		else {
 			const ratio = repoMerged / total;
 			const mergedPercent = Math.round(ratio * 100);
+			const passed = ratio >= minRatio;
 			recordCheck(results, {
 				name: "repo-merge-ratio",
-				passed: ratio >= minRatio,
-				message: `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), minimum is ${String(settings.minRepoMergeRatio)}%`
+				passed,
+				message: passed ? `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), meets minimum of ${String(settings.minRepoMergeRatio)}%` : `Repo merge ratio is ${String(mergedPercent)}% (${String(repoMerged)}/${String(total)}), below minimum of ${String(settings.minRepoMergeRatio)}%`
 			});
 		}
 	}
@@ -50790,28 +51243,15 @@ async function runUserChecks(settings, context, client) {
 		else {
 			const ratio = globalMerged / total;
 			const mergedPercent = Math.round(ratio * 100);
+			const passed = ratio >= minRatio;
 			recordCheck(results, {
 				name: "global-merge-ratio",
-				passed: ratio >= minRatio,
-				message: `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), minimum is ${String(settings.minGlobalMergeRatio)}%`
+				passed,
+				message: passed ? `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), meets minimum of ${String(settings.minGlobalMergeRatio)}%` : `Global merge ratio${scope} is ${String(mergedPercent)}% (${String(globalMerged)}/${String(total)}), below minimum of ${String(settings.minGlobalMergeRatio)}%`
 			});
 		}
 	}
-	if (settings.minAccountAge > 0) {
-		const diffMs = Date.now() - new Date(createdAt).getTime();
-		const diffDays = Math.floor(diffMs / (1e3 * 60 * 60 * 24));
-		const passed = diffDays >= settings.minAccountAge;
-		recordCheck(results, {
-			name: "account-age",
-			passed,
-			message: passed ? `Account is ${String(diffDays)} day(s) old, meets minimum of ${String(settings.minAccountAge)} days` : `Account is ${String(diffDays)} day(s) old, below minimum of ${String(settings.minAccountAge)} days`
-		});
-	}
 	return results;
-}
-async function getUserCreatedAt(client, username) {
-	const { data } = await client.rest.users.getByUsername({ username });
-	return data.created_at;
 }
 async function searchPrCount(client, query) {
 	const { data } = await client.rest.search.issuesAndPullRequests({
@@ -50831,7 +51271,7 @@ async function runQualityChecks(settings, context, client) {
 		recordCheck(results, {
 			name: "require-maintainer-can-modify",
 			passed,
-			message: passed ? "PR allows maintainers to push to the source (head) branch" : "PR does not allow maintainers to push to the source (head) branch"
+			message: passed ? "PR allows maintainers to push to the source branch" : "PR does not allow maintainers to push to the source branch"
 		});
 	}
 	if (settings.maxNegativeReactions > 0) {
@@ -50846,7 +51286,7 @@ async function runQualityChecks(settings, context, client) {
 		recordCheck(results, {
 			name: "max-negative-reactions",
 			passed,
-			message: passed ? `PR has ${String(negativeCount)} negative reaction(s), within allowed maximum of ${String(settings.maxNegativeReactions)}` : `PR has ${String(negativeCount)} negative reaction(s), exceeds allowed maximum of ${String(settings.maxNegativeReactions)}`
+			message: passed ? `PR has ${String(negativeCount)} negative reaction(s), within maximum of ${String(settings.maxNegativeReactions)}` : `PR has ${String(negativeCount)} negative reaction(s), exceeds maximum of ${String(settings.maxNegativeReactions)}`
 		});
 	}
 	return results;
@@ -50937,14 +51377,6 @@ async function handleFailure(settings, context, client) {
 			});
 			info(`Locked the PR.`);
 		}
-		if (settings.deleteBranch) {
-			await client.rest.git.deleteRef({
-				owner,
-				repo,
-				ref: `heads/${context.headBranch}`
-			});
-			info(`Deleted source branch "${context.headBranch}" on the PR.`);
-		}
 	} catch (error) {
 		const msg = error instanceof Error ? error.message : "Unknown error";
 		warning(`Failed to execute failure actions: ${msg}`);
@@ -50982,12 +51414,15 @@ async function run() {
 		startGroup("Title checks");
 		results.push(...runTitleChecks(settings, context));
 		endGroup();
+		startGroup("Description checks");
+		results.push(...runDescriptionChecks(settings, context));
+		endGroup();
 		if (client) {
 			startGroup("PR quality checks");
 			results.push(...await runQualityChecks(settings, context, client));
 			endGroup();
-			startGroup("Description checks");
-			results.push(...await runDescriptionChecks(settings, context, client));
+			startGroup("Template checks");
+			results.push(...await runTemplateChecks(settings, context, client));
 			endGroup();
 			startGroup("File checks");
 			results.push(...await runFileChecks(settings, context, client));
@@ -50997,6 +51432,9 @@ async function run() {
 			endGroup();
 			startGroup("User checks");
 			results.push(...await runUserChecks(settings, context, client));
+			endGroup();
+			startGroup("Merge checks");
+			results.push(...await runMergeChecks(settings, context, client));
 			endGroup();
 		} else warning("No valid GitHub token — checks requiring the GitHub API were skipped");
 		const failed = setOutputs(results, settings);
