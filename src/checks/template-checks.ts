@@ -16,7 +16,7 @@ const PR_TEMPLATE_PATHS = [
 
 const HEADING_REGEX = /^(#{1,6})\s+(.+)$/gm;
 
-const CHECKBOX_REGEX = /^\s*-\s+\[([ xX])\]\s+(.+)$/gm;
+const CHECKBOX_REGEX = /^\s*(?:>\s*)*-\s+\[([ xX])\]\s+(.+)$/gm;
 
 export async function runTemplateChecks(
     settings: Settings,
