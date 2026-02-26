@@ -17,7 +17,7 @@ export async function getInheritedData(context: Context, client: Octokit): Promi
         core.info(`Inherited commit "${commit.message.split("\n")[0] ?? ""}"`);
     }
     for (const { filename } of data.files ?? []) {
-        core.info(`Inherited file: "${filename}"`);
+        core.info(`Inherited file "${filename}"`);
     }
 
     core.info(
