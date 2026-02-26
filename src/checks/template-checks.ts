@@ -149,6 +149,7 @@ function validateTemplateSections(
 ): { templateIssues: string[]; strictIssues: string[] } {
     const templateIssues: string[] = [];
     const strictIssues: string[] = [];
+    const missingSections: string[] = [];
 
     const isStrict = (name: string): boolean =>
         strictSectionNames.some((strict) => strict.toLowerCase() === name.toLowerCase());
@@ -164,7 +165,7 @@ function validateTemplateSections(
         );
 
         if (!bodySection) {
-            templateIssues.push(`Missing section: ${templateSection.heading}`);
+            missingSections.push(templateSection.headingText);
             continue;
         }
 
@@ -210,6 +211,10 @@ function validateTemplateSections(
                 );
             }
         }
+    }
+
+    if (missingSections.length > 0) {
+        templateIssues.unshift(`Missing section(s): "${missingSections.join('", "')}"`);
     }
 
     return { templateIssues, strictIssues };
