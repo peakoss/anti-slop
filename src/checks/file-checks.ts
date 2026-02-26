@@ -3,6 +3,9 @@ import type { CheckResult, Context, Settings, Octokit } from "../types";
 import { recordCheck } from "../report.ts";
 import { commentPrefixesByExtension } from "../constants/comments.ts";
 
+// Prefixes that indicate a continuation of a block comment, not a new comment.
+const BLOCK_COMMENT_CONTINUATIONS: string[] = ["*", "-->"];
+
 export async function runFileChecks(
     settings: Settings,
     context: Context,
@@ -164,8 +167,13 @@ export async function runFileChecks(
                     continue;
 
                 const trimmed = line.slice(1).trim();
-                if (prefixes.some((p) => trimmed.startsWith(p))) {
-                    totalComments++;
+                if (prefixes.some((prefix) => trimmed.startsWith(prefix))) {
+                    const isContinuation = BLOCK_COMMENT_CONTINUATIONS.some((continuation) =>
+                        trimmed.startsWith(continuation),
+                    );
+                    if (!isContinuation) {
+                        totalComments++;
+                    }
                     core.debug(`Added comment in ${file.name}: ${trimmed}`);
                 }
             }
@@ -176,8 +184,8 @@ export async function runFileChecks(
             name: "max-added-comments",
             passed,
             message: passed
-                ? `Found ${String(totalComments)} added comment line(s), within the limit of ${String(settings.maxAddedComments)}`
-                : `Found ${String(totalComments)} added comment line(s), exceeding the limit of ${String(settings.maxAddedComments)}`,
+                ? `Found ${String(totalComments)} added comment(s), within the limit of ${String(settings.maxAddedComments)}`
+                : `Found ${String(totalComments)} added comment(s), exceeding the limit of ${String(settings.maxAddedComments)}`,
         });
     }
 
