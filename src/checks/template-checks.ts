@@ -166,6 +166,11 @@ function validateTemplateSections(
 
         if (!bodySection) {
             missingSections.push(templateSection.headingText);
+            if (isStrict(templateSection.headingText)) {
+                strictIssues.push(
+                    `Strict section "${templateSection.headingText}" is missing from the PR description`,
+                );
+            }
             continue;
         }
 
