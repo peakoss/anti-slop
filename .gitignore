@@ -1,18 +1,12 @@
-# Environment variable files
 .env
-.env.production
+.env.*
+!.env.example
 
-# Dependency directories
 node_modules
 .npm
 .bun
 
-# Log files
 *.log*
 
-# Cache files
-.eslintcache
-
-# OS files
 .DS_Store
 Thumbs.db
