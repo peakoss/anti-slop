@@ -13,6 +13,7 @@ import { runMergeChecks } from "./checks/merge-checks.ts";
 import { runQualityChecks } from "./checks/quality-checks.ts";
 import { setOutputs, writeJobSummary } from "./report.ts";
 import { handleFailure, handleSuccess } from "./actions.ts";
+import { getInheritedData } from "./inherited.ts";
 import type { CheckResult } from "./types";
 import { createClient } from "./api.ts";
 
@@ -49,6 +50,10 @@ export async function run(): Promise<void> {
         core.endGroup();
 
         if (client) {
+            core.startGroup("Inherited data");
+            const inherited = await getInheritedData(context, client);
+            core.endGroup();
+
             core.startGroup("PR quality checks");
             results.push(...(await runQualityChecks(settings, context, client)));
             core.endGroup();
@@ -58,11 +63,11 @@ export async function run(): Promise<void> {
             core.endGroup();
 
             core.startGroup("File checks");
-            results.push(...(await runFileChecks(settings, context, client)));
+            results.push(...(await runFileChecks(settings, context, client, inherited.files)));
             core.endGroup();
 
             core.startGroup("Commit checks");
-            results.push(...(await runCommitChecks(settings, context, client)));
+            results.push(...(await runCommitChecks(settings, context, client, inherited.shas)));
             core.endGroup();
 
             core.startGroup("User checks");

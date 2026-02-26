@@ -1,4 +1,3 @@
-import * as core from "@actions/core";
 import type { CheckResult, Context, Settings, Octokit } from "../types";
 import { recordCheck } from "../report.ts";
 
@@ -13,6 +12,7 @@ export async function runCommitChecks(
     settings: Settings,
     context: Context,
     client: Octokit,
+    inheritedShas: Set<string>,
 ): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
@@ -25,29 +25,15 @@ export async function runCommitChecks(
         return results;
     }
 
-    let commits = await client.paginate(client.rest.pulls.listCommits, {
+    const allCommits = await client.paginate(client.rest.pulls.listCommits, {
         owner: context.owner,
         repo: context.repo,
         pull_number: context.number,
         per_page: 100,
     });
 
-    // Exclude inherited commits from the repos default branch that the base (target) branch of the PR hasn't caught up to yet.
-    if (context.baseBranch !== context.defaultBranch) {
-        const { data: comparison } = await client.rest.repos.compareCommitsWithBasehead({
-            owner: context.owner,
-            repo: context.repo,
-            basehead: `${context.baseBranch}...${context.defaultBranch}`,
-        });
-        const inheritedShas = new Set(comparison.commits.map((commit) => commit.sha));
-        const excluded = commits.filter((commit) => inheritedShas.has(commit.sha));
-        for (const commit of excluded) {
-            core.debug(
-                `Excluding inherited commit ${commit.sha}: ${commit.commit.message.split("\n")[0] ?? ""}`,
-            );
-        }
-        commits = commits.filter((commit) => !inheritedShas.has(commit.sha));
-    }
+    // Exclude inherited commits from the repo's default branch that the PR target branch hasn't caught up to yet.
+    const commits = allCommits.filter((commit) => !inheritedShas.has(commit.sha));
 
     if (settings.maxCommitMessageLength > 0) {
         const oversizedCommits = commits.filter(
