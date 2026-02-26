@@ -50566,7 +50566,11 @@ function runDescriptionChecks(settings, context) {
 		});
 	}
 	if (settings.maxEmojiCount > 0) {
-		const count = `${context.title} ${body}`.match(/\p{Extended_Pictographic}/gu)?.length ?? 0;
+		const text = `${context.title} ${body}`;
+		const unicodeMatches = text.match(/\p{Extended_Pictographic}/gu) ?? [];
+		const shortcodeMatches = text.match(/(?<!\w):[\w+-]+:(?!\w)/g) ?? [];
+		debug(`Emoji found: unicode=[${unicodeMatches.join(", ")}] shortcodes=[${shortcodeMatches.join(", ")}]`);
+		const count = unicodeMatches.length + shortcodeMatches.length;
 		const passed = count <= settings.maxEmojiCount;
 		recordCheck(results, {
 			name: "emoji-count",
@@ -50646,7 +50650,7 @@ const PR_TEMPLATE_PATHS = [
 	"PULL_REQUEST_TEMPLATE/pull_request_template.md"
 ];
 const HEADING_REGEX = /^(#{1,6})\s+(.+)$/gm;
-const CHECKBOX_REGEX = /^\s*-\s+\[([ xX])\]\s+(.+)$/gm;
+const CHECKBOX_REGEX = /^\s*(?:>\s*)*-\s+\[([ xX])\]\s+(.+)$/gm;
 async function runTemplateChecks(settings, context, client) {
 	const results = [];
 	if (!settings.requirePrTemplate) return results;
@@ -50732,13 +50736,15 @@ function extractCheckboxes(content) {
 function validateTemplateSections(templateSections, bodySections, strictSectionNames, optionalSectionNames) {
 	const templateIssues = [];
 	const strictIssues = [];
+	const missingSections = [];
 	const isStrict = (name) => strictSectionNames.some((strict) => strict.toLowerCase() === name.toLowerCase());
 	const isOptional = (name) => optionalSectionNames.some((optional) => optional.toLowerCase() === name.toLowerCase());
 	for (const templateSection of templateSections) {
 		if (isOptional(templateSection.headingText)) continue;
 		const bodySection = bodySections.find((section) => section.heading.toLowerCase() === templateSection.heading.toLowerCase());
 		if (!bodySection) {
-			templateIssues.push(`Missing section: ${templateSection.heading}`);
+			missingSections.push(templateSection.headingText);
+			if (isStrict(templateSection.headingText)) strictIssues.push(`Strict section "${templateSection.headingText}" is missing from the PR description`);
 			continue;
 		}
 		const templateCheckboxes = extractCheckboxes(templateSection.content);
@@ -50756,6 +50762,7 @@ function validateTemplateSections(templateSections, bodySections, strictSectionN
 			else if (checkedCount > 1) templateIssues.push(`Section "${templateSection.headingText}" has ${String(checkedCount)} checkbox(es) checked, exceeds maximum of 1`);
 		}
 	}
+	if (missingSections.length > 0) templateIssues.unshift(`Missing section(s): "${missingSections.join("\", \"")}"`);
 	return {
 		templateIssues,
 		strictIssues
@@ -50882,7 +50889,8 @@ const commentPrefixesByExtension = new Map(COMMENT_PREFIXES_BY_LANGUAGE.flatMap(
 
 //#endregion
 //#region src/checks/file-checks.ts
-async function runFileChecks(settings, context, client) {
+const BLOCK_COMMENT_CONTINUATIONS = ["*", "-->"];
+async function runFileChecks(settings, context, client, inheritedFiles) {
 	const results = [];
 	if (!(settings.allowedFileExtensions.length > 0 || settings.allowedPaths.length > 0 || settings.blockedPaths.length > 0 || settings.requireFinalNewline || settings.maxAddedComments > 0)) return results;
 	const files = (await client.paginate(client.rest.pulls.listFiles, {
@@ -50890,7 +50898,7 @@ async function runFileChecks(settings, context, client) {
 		repo: context.repo,
 		pull_number: context.number,
 		per_page: 100
-	})).map((file) => ({
+	})).filter((file) => !inheritedFiles.has(file.filename)).map((file) => ({
 		name: file.filename,
 		status: file.status,
 		patch: file.patch
@@ -50967,8 +50975,8 @@ async function runFileChecks(settings, context, client) {
 				if (!line.startsWith("+")) continue;
 				if (line === "+++ /dev/null" || line.startsWith("+++ a/") || line.startsWith("+++ b/")) continue;
 				const trimmed = line.slice(1).trim();
-				if (prefixes.some((p) => trimmed.startsWith(p))) {
-					totalComments++;
+				if (prefixes.some((prefix) => trimmed.startsWith(prefix))) {
+					if (!BLOCK_COMMENT_CONTINUATIONS.some((continuation) => trimmed.startsWith(continuation))) totalComments++;
 					debug(`Added comment in ${file.name}: ${trimmed}`);
 				}
 			}
@@ -50977,7 +50985,7 @@ async function runFileChecks(settings, context, client) {
 		recordCheck(results, {
 			name: "max-added-comments",
 			passed,
-			message: passed ? `Found ${String(totalComments)} added comment line(s), within the limit of ${String(settings.maxAddedComments)}` : `Found ${String(totalComments)} added comment line(s), exceeding the limit of ${String(settings.maxAddedComments)}`
+			message: passed ? `Found ${String(totalComments)} added comment(s), within the limit of ${String(settings.maxAddedComments)}` : `Found ${String(totalComments)} added comment(s), exceeding the limit of ${String(settings.maxAddedComments)}`
 		});
 	}
 	return results;
@@ -50987,26 +50995,15 @@ async function runFileChecks(settings, context, client) {
 //#region src/checks/commit-checks.ts
 const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 const TITLE_PATTERN = /\(#\d+\)$/;
-async function runCommitChecks(settings, context, client) {
+async function runCommitChecks(settings, context, client, inheritedShas) {
 	const results = [];
 	if (settings.maxCommitMessageLength === 0 && !settings.requireConventionalCommits && !settings.requireCommitAuthorMatch && settings.blockedCommitAuthors.length === 0) return results;
-	let commits = await client.paginate(client.rest.pulls.listCommits, {
+	const commits = (await client.paginate(client.rest.pulls.listCommits, {
 		owner: context.owner,
 		repo: context.repo,
 		pull_number: context.number,
 		per_page: 100
-	});
-	if (context.baseBranch !== context.defaultBranch) {
-		const { data: comparison } = await client.rest.repos.compareCommitsWithBasehead({
-			owner: context.owner,
-			repo: context.repo,
-			basehead: `${context.baseBranch}...${context.defaultBranch}`
-		});
-		const inheritedShas = new Set(comparison.commits.map((commit) => commit.sha));
-		const excluded = commits.filter((commit) => inheritedShas.has(commit.sha));
-		for (const commit of excluded) debug(`Excluding inherited commit ${commit.sha}: ${commit.commit.message.split("\n")[0] ?? ""}`);
-		commits = commits.filter((commit) => !inheritedShas.has(commit.sha));
-	}
+	})).filter((commit) => !inheritedShas.has(commit.sha));
 	if (settings.maxCommitMessageLength > 0) {
 		const oversizedCommits = commits.filter((commit) => commit.commit.message.length > settings.maxCommitMessageLength);
 		const passed = oversizedCommits.length === 0;
@@ -51384,6 +51381,29 @@ async function handleFailure(settings, context, client) {
 }
 
 //#endregion
+//#region src/inherited.ts
+async function getInheritedData(context, client) {
+	if (context.baseBranch === context.defaultBranch) return {
+		shas: /* @__PURE__ */ new Set(),
+		files: /* @__PURE__ */ new Set()
+	};
+	const { data } = await client.rest.repos.compareCommitsWithBasehead({
+		owner: context.owner,
+		repo: context.repo,
+		basehead: `${context.baseBranch}...${context.defaultBranch}`
+	});
+	const shas = new Set(data.commits.map((commit) => commit.sha));
+	const files = new Set((data.files ?? []).map((file) => file.filename));
+	for (const { commit } of data.commits) info(`Inherited commit "${commit.message.split("\n")[0] ?? ""}"`);
+	for (const { filename } of data.files ?? []) info(`Inherited file "${filename}"`);
+	info(`Found ${String(shas.size)} inherited commit(s) and ${String(files.size)} inherited file(s)`);
+	return {
+		shas,
+		files
+	};
+}
+
+//#endregion
 //#region src/api.ts
 function createClient(token) {
 	if (!token || token.startsWith("${{")) return null;
@@ -51418,6 +51438,9 @@ async function run() {
 		results.push(...runDescriptionChecks(settings, context));
 		endGroup();
 		if (client) {
+			startGroup("Inherited data");
+			const inherited = await getInheritedData(context, client);
+			endGroup();
 			startGroup("PR quality checks");
 			results.push(...await runQualityChecks(settings, context, client));
 			endGroup();
@@ -51425,10 +51448,10 @@ async function run() {
 			results.push(...await runTemplateChecks(settings, context, client));
 			endGroup();
 			startGroup("File checks");
-			results.push(...await runFileChecks(settings, context, client));
+			results.push(...await runFileChecks(settings, context, client, inherited.files));
 			endGroup();
 			startGroup("Commit checks");
-			results.push(...await runCommitChecks(settings, context, client));
+			results.push(...await runCommitChecks(settings, context, client, inherited.shas));
 			endGroup();
 			startGroup("User checks");
 			results.push(...await runUserChecks(settings, context, client));

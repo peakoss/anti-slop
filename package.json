@@ -1,7 +1,7 @@
 {
     "name": "anti-slop",
     "description": "A GitHub action that detects and automatically closes low-quality and AI slop PRs.",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "author": "peaklabs-dev",
     "type": "module",
     "private": true,
