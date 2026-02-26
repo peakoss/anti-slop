@@ -7,6 +7,7 @@ export async function runFileChecks(
     settings: Settings,
     context: Context,
     client: Octokit,
+    inheritedFiles: Set<string>,
 ): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
@@ -26,11 +27,14 @@ export async function runFileChecks(
         per_page: 100,
     });
 
-    const files = changedFiles.map((file) => ({
-        name: file.filename,
-        status: file.status,
-        patch: file.patch,
-    }));
+    // Exclude inherited files from the repo's default branch that the PR target branch hasn't caught up to yet.
+    const files = changedFiles
+        .filter((file) => !inheritedFiles.has(file.filename))
+        .map((file) => ({
+            name: file.filename,
+            status: file.status,
+            patch: file.patch,
+        }));
 
     if (settings.allowedFileExtensions.length > 0) {
         const allowed = settings.allowedFileExtensions.map((extension) =>
