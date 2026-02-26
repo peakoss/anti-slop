@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import type { CheckResult, Context, Settings } from "../types";
 import { recordCheck } from "../report.ts";
 
@@ -46,7 +47,12 @@ export function runDescriptionChecks(settings: Settings, context: Context): Chec
 
     if (settings.maxEmojiCount > 0) {
         const text = `${context.title} ${body}`;
-        const count = text.match(/\p{Extended_Pictographic}/gu)?.length ?? 0;
+        const unicodeMatches = text.match(/\p{Extended_Pictographic}/gu) ?? [];
+        const shortcodeMatches = text.match(/(?<!\w):[\w+-]+:(?!\w)/g) ?? [];
+        core.debug(
+            `Emoji found: unicode=[${unicodeMatches.join(", ")}] shortcodes=[${shortcodeMatches.join(", ")}]`,
+        );
+        const count = unicodeMatches.length + shortcodeMatches.length;
         const passed = count <= settings.maxEmojiCount;
         recordCheck(results, {
             name: "emoji-count",
