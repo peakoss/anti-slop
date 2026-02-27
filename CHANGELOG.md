@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.2.1] - 2026-02-27
+
+### Fixed
+
+- Inherited files from the default branch incorrectly included in file checks. When the PR targets a branch other than the default (e.g. `next`), files the target branch hasn't caught up to yet were incorrectly also evaluated, causing false positives on file checks.
+- Multiline comments counted as individual comments
+- Shortcode emojis not counted by the emoji check
+- Checkboxes inside blockquotes not detected by the PR template check, which could cause checkbox-based checks to pass when they should not
+- Missing strict sections passes the `strictPrTemplateSections` check
+- Duplicated "Missing section" prefix in the template check info message
+
+### Refactored
+
+- Extract inherited data detection out of the commit checks so both commit and file checks share a single comparison call
+
 ## [v0.2.0] - 2026-02-25
 
 Adds 9 new checks that cover more than 20 quality signals.
