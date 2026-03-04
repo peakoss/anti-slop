@@ -1,20 +1,12 @@
 {
-    "$schema": "https://www.schemastore.org/tsconfig",
-    "include": ["src", "tsdown.config.ts", "eslint.config.ts", "prettier.config.ts"],
-    "exclude": ["tests", "dist", "node_modules"],
+    "$schema": "https://www.schemastore.org/tsconfig.json",
+    "files": ["tsdown.config.ts", "prettier.config.ts", "eslint.config.ts"],
+    "include": ["src/**/*.ts"],
+
     "compilerOptions": {
-        "lib": ["ES2024"],
-        "target": "ES2024",
-        "module": "Preserve",
-        "moduleDetection": "force",
-        "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
-        "verbatimModuleSyntax": true,
-        "noEmit": true,
-        "declaration": true,
-        "strict": true,
-        "allowUnusedLabels": false,
+        // Type Checking
         "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
         "exactOptionalPropertyTypes": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
@@ -23,11 +15,37 @@
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "isolatedModules": true,
-        "isolatedDeclarations": true,
-        "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true,
+        "strict": true,
+
+        // Modules
+        "allowImportingTsExtensions": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "noUncheckedSideEffectImports": true,
         "resolveJsonModule": true,
-        "newLine": "lf"
+        "types": ["node"],
+
+        // Emit
+        "declaration": true,
+        "noEmit": true,
+
+        // Interop Constraints
+        "erasableSyntaxOnly": true,
+        "esModuleInterop": true,
+        "isolatedDeclarations": true,
+        "verbatimModuleSyntax": true,
+
+        // Language
+        "lib": ["ES2024"],
+        "libReplacement": false,
+        "moduleDetection": "force",
+        "target": "ES2024",
+
+        // Projects
+        "incremental": true,
+        "tsBuildInfoFile": "./node_modules/.cache/tsconfig.tsbuildInfo",
+
+        // Completeness
+        "skipLibCheck": true
     }
 }
