@@ -30,10 +30,6 @@ const config: Config[] = defineConfig(
             },
         },
     },
-    {
-        files: ["src/**/*.test.mjs"],
-        ...tseslint.configs.disableTypeChecked,
-    },
 );
 
 export default config;
