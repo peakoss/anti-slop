@@ -50424,6 +50424,7 @@ function setOutputs(results, settings) {
 		setOutput("result", "failed");
 		return true;
 	}
+	setOutput("result", "passed");
 	return false;
 }
 async function writeJobSummary(results, settings) {
