@@ -195,21 +195,21 @@ The only required input is `github-token` and it is automatically set to the wor
 | [`blocked-target-branches`](#blocked-target-branches)                         | Newline-separated target branch patterns to block.                                                                                                                                                                                                   | `""`                                                                      |
 | [`allowed-source-branches`](#allowed-source-branches)                         | Newline-separated source branch patterns to allow. Empty allows all branches.                                                                                                                                                                        | `""`                                                                      |
 | [`blocked-source-branches`](#blocked-source-branches)                         | Newline-separated source branch patterns to block.                                                                                                                                                                                                   | `main`, `master`                                                          |
-| [`max-negative-reactions`](#max-negative-reactions)                           | Maximum number of negative reactions (thumbs down + confused) allowed on the PR. 0 disables this check.                                                                                                                                              | `0`                                                                       |
+| [`max-negative-reactions`](#max-negative-reactions)                           | Maximum number of negative reactions (thumbs down + confused) allowed on the PR (between 0 and 200). 0 disables this check.                                                                                                                          | `0`                                                                       |
 | [`require-maintainer-can-modify`](#require-maintainer-can-modify)             | Require the PR to allow maintainers to push to the source branch.                                                                                                                                                                                    | `true`                                                                    |
 | [`require-conventional-title`](#require-conventional-title)                   | Require PR titles to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').                                                                                                                                                      | `false`                                                                   |
 | [`require-description`](#require-description)                                 | Require a non-empty PR description.                                                                                                                                                                                                                  | `true`                                                                    |
-| [`max-description-length`](#max-description-length)                           | Maximum allowed character length for the PR description. 0 disables this check.                                                                                                                                                                      | `2500`                                                                    |
-| [`max-emoji-count`](#max-emoji-count)                                         | Maximum number of emojis allowed in the PR title and description. 0 disables this check.                                                                                                                                                             | `2`                                                                       |
-| [`max-code-references`](#max-code-references)                                 | Maximum number of code references (file paths, function calls, method calls) allowed in the PR description. 0 disables this check.                                                                                                                   | `5`                                                                       |
+| [`max-description-length`](#max-description-length)                           | Maximum allowed character length for the PR description (between 0 and 50000). 0 disables this check.                                                                                                                                                | `2500`                                                                    |
+| [`max-emoji-count`](#max-emoji-count)                                         | Maximum number of emojis allowed in the PR title and description (between 0 and 30). 0 disables this check.                                                                                                                                          | `2`                                                                       |
+| [`max-code-references`](#max-code-references)                                 | Maximum number of code references (file paths, function calls, method calls) allowed in the PR description (between 0 and 40). 0 disables this check.                                                                                               | `5`                                                                       |
 | [`require-linked-issue`](#require-linked-issue)                               | Require the PR to reference at least one issue in the PR description.                                                                                                                                                                                | `false`                                                                   |
 | [`blocked-terms`](#blocked-terms)                                             | Newline-separated list of terms blocked from appearing in the PR description.                                                                                                                                                                        | `""`                                                                      |
 | [`blocked-issue-numbers`](#blocked-issue-numbers)                             | Comma-separated list of issue numbers blocked from being referenced in the PR description.                                                                                                                                                           | `""`                                                                      |
 | [`require-pr-template`](#require-pr-template)                                 | Require the PR description to follow the repository PR template structure.                                                                                                                                                                           | `false`                                                                   |
 | [`strict-pr-template-sections`](#strict-pr-template-sections)                 | Comma-separated list of PR template section headings (without the '#' prefix) classified as strict. All checkboxes in strict sections must be present and checked. Only applies when require-pr-template is enabled.                                 | `""`                                                                      |
 | [`optional-pr-template-sections`](#optional-pr-template-sections)             | Comma-separated list of PR template section headings (without the '#' prefix) classified as optional. Optional sections can be entirely removed from the PR description without failing the check. Only applies when require-pr-template is enabled. | `""`                                                                      |
-| [`max-additional-pr-template-sections`](#max-additional-pr-template-sections) | Maximum number of additional sections not in the template that are allowed in the PR description. 0 disables this check.                                                                                                                             | `0`                                                                       |
-| [`max-commit-message-length`](#max-commit-message-length)                     | Maximum allowed character length for individual commit messages. 0 disables this check.                                                                                                                                                              | `500`                                                                     |
+| [`max-additional-pr-template-sections`](#max-additional-pr-template-sections) | Maximum number of additional sections not in the template that are allowed in the PR description (between 0 and 20). 0 disables this check.                                                                                                         | `0`                                                                       |
+| [`max-commit-message-length`](#max-commit-message-length)                     | Maximum allowed character length for individual commit messages (between 0 and 5000). 0 disables this check.                                                                                                                                        | `500`                                                                     |
 | [`require-conventional-commits`](#require-conventional-commits)               | Require all commit messages to follow Conventional Commits format (e.g. 'feat:', 'fix:', 'feat(scope):').                                                                                                                                            | `false`                                                                   |
 | [`require-commit-author-match`](#require-commit-author-match)                 | Require every commit in the PR to be authored by the same GitHub user who opened the PR.                                                                                                                                                             | `true`                                                                    |
 | [`blocked-commit-authors`](#blocked-commit-authors)                           | Comma-separated list of blocked commit author usernames.                                                                                                                                                                                             | `""`                                                                      |
@@ -217,14 +217,14 @@ The only required input is `github-token` and it is automatically set to the wor
 | [`allowed-paths`](#allowed-paths)                                             | Newline-separated file or folder paths to allow for changed files. Entries ending with '/' match folders. Empty allows all.                                                                                                                          | `""`                                                                      |
 | [`blocked-paths`](#blocked-paths)                                             | Newline-separated file or folder paths to block for changed files. Entries ending with '/' match folders.                                                                                                                                            | `README.md`, `SECURITY.md`, `LICENSE`, `CODE_OF_CONDUCT.md`               |
 | [`require-final-newline`](#require-final-newline)                             | Require all changed files to end with a newline character.                                                                                                                                                                                           | `true`                                                                    |
-| [`max-added-comments`](#max-added-comments)                                   | Maximum number of added comments in all changed files. 0 disables this check.                                                                                                                                                                        | `10`                                                                      |
+| [`max-added-comments`](#max-added-comments)                                   | Maximum number of added comments in all changed files (between 0 and 500). 0 disables this check.                                                                                                                                                    | `10`                                                                      |
 | [`detect-spam-usernames`](#detect-spam-usernames)                             | Detect usernames that match common spam patterns.                                                                                                                                                                                                    | `true`                                                                    |
-| [`min-account-age`](#min-account-age)                                         | Minimum GitHub account age in days (1-190). 0 disables this check.                                                                                                                                                                                   | `30`                                                                      |
-| [`max-daily-forks`](#max-daily-forks)                                         | Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.                                                                                                                                                      | `7`                                                                       |
-| [`min-profile-completeness`](#min-profile-completeness)                       | Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.                                       | `4`                                                                       |
-| [`min-repo-merged-prs`](#min-repo-merged-prs)                                 | Minimum number of merged PRs in this repository required from the author. 0 disables this check.                                                                                                                                                     | `0`                                                                       |
-| [`min-repo-merge-ratio`](#min-repo-merge-ratio)                               | Minimum merged/closed PR ratio in this repository (1-100%). 0 disables this check.                                                                                                                                                                   | `0`                                                                       |
-| [`min-global-merge-ratio`](#min-global-merge-ratio)                           | Minimum merged/closed PR ratio across all GitHub repositories (1-100%). 0 disables this check.                                                                                                                                                       | `30`                                                                      |
+| [`min-account-age`](#min-account-age)                                         | Minimum GitHub account age in days (between 1 and 190). Set to 0 to disable this check.                                                                                                                                                              | `30`                                                                      |
+| [`max-daily-forks`](#max-daily-forks)                                         | Maximum number of forked repositories by the user in any 24-hour window (between 0 and 50). 0 disables this check.                                                                                                                                  | `7`                                                                       |
+| [`min-profile-completeness`](#min-profile-completeness)                       | Minimum number of profile signals (out of 11) the user must have to pass (between 0 and 11). Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.                 | `4`                                                                       |
+| [`min-repo-merged-prs`](#min-repo-merged-prs)                                 | Minimum number of merged PRs in this repository required from the author (between 0 and 20). 0 disables this check.                                                                                                                                 | `0`                                                                       |
+| [`min-repo-merge-ratio`](#min-repo-merge-ratio)                               | Minimum merged/closed PR ratio in this repository (between 1 and 100%). Set to 0 to disable this check.                                                                                                                                              | `0`                                                                       |
+| [`min-global-merge-ratio`](#min-global-merge-ratio)                           | Minimum merged/closed PR ratio across all GitHub repositories (between 1 and 100%). Set to 0 to disable this check.                                                                                                                                  | `30`                                                                      |
 | [`global-merge-ratio-exclude-own`](#global-merge-ratio-exclude-own)           | Exclude PRs to the author's own repositories from the global merge ratio calculation.                                                                                                                                                                | `false`                                                                   |
 | [`exempt-draft-prs`](#exempt-draft-prs)                                       | Exempt draft PRs from all checks.                                                                                                                                                                                                                    | `false`                                                                   |
 | [`exempt-bots`](#exempt-bots)                                                 | Newline-separated list of bot usernames exempt from all checks.                                                                                                                                                                                      | `actions-user`, `dependabot[bot]`, `renovate[bot]`, `github-actions[bot]` |
@@ -328,6 +328,8 @@ Set to `0` to disable this check entirely.
 
 This can be useful as a community-driven signal: if multiple people have reacted negatively to a PR, it may indicate low quality or AI-generated content.
 
+Valid range: `0` to `200`
+
 Default: `0` (disabled)
 
 ### require-maintainer-can-modify
@@ -356,6 +358,8 @@ Set to `0` to disable this check entirely.
 
 Excessively long descriptions are often a sign of AI-generated content.
 
+Valid range: `0` to `50000`
+
 Default: `2500`
 
 ### max-emoji-count
@@ -366,6 +370,8 @@ Set to `0` to disable this check entirely.
 
 AI-generated PR descriptions tend to include excessive emojis.
 
+Valid range: `0` to `30`
+
 Default: `2`
 
 ### max-code-references
@@ -375,6 +381,8 @@ Maximum number of code references (file paths, function calls, method calls) all
 Set to `0` to disable this check entirely.
 
 AI-generated PR descriptions often include excessive inline code references to appear thorough.
+
+Valid range: `0` to `40`
 
 Default: `5`
 
@@ -434,6 +442,8 @@ Set to `0` to disable this check entirely.
 
 This is a configuration option for [`require-pr-template`](#require-pr-template) and only applies when that check is enabled.
 
+Valid range: `0` to `20`
+
 Default: `0` (disabled)
 
 ### max-commit-message-length
@@ -443,6 +453,8 @@ Maximum allowed character length for individual commit messages. If any commit m
 Set to `0` to disable this check entirely.
 
 AI-generated commits often have excessively long or verbose commit messages.
+
+Valid range: `0` to `5000`
 
 Default: `500`
 
@@ -514,6 +526,8 @@ Set to `0` to disable this check entirely.
 
 AI-generated code tends to add excessive comments explaining obvious logic.
 
+Valid range: `0` to `500`
+
 Default: `10`
 
 ### detect-spam-usernames
@@ -524,13 +538,13 @@ Default: `true`
 
 ### min-account-age
 
-Minimum GitHub account age in days (1–190). If the PR author's account is newer than this many days, the `min-account-age` check fails.
+Minimum GitHub account age in days (1-190). If the PR author's account is newer than this many days, the `min-account-age` check fails.
 
 Set to `0` to disable this check entirely.
 
 Freshly created accounts are often throwaway accounts used for automated PR campaigns. The default of `30` days catches the most obvious cases. Increasing this to `60` or `90` provides stronger protection but may affect legitimate new GitHub users.
 
-Valid range: `0` to `190` (days)
+Valid range: `0` to `190` (days), where `0` disables the check and `1` to `190` is the active enforcement range
 
 Default: `30`
 
@@ -541,6 +555,8 @@ Maximum number of repositories forked by the user in any 24-hour sliding window.
 Set to `0` to disable this check entirely.
 
 Mass-forking is a common pattern for automated PR spam campaigns. A burst of forks in a short time window is a strong signal that the account is running automated tooling.
+
+Valid range: `0` to `50`
 
 Default: `7`
 
@@ -564,23 +580,25 @@ Set to `0` to disable this check entirely.
 
 Setting this to `1` effectively gates your repository to only accept PRs from people who have previously had work merged.
 
+Valid range: `0` to `20`
+
 Default: `0` (disabled)
 
 ### min-repo-merge-ratio
 
-Minimum merged to closed PR ratio in this repository, expressed as a percentage (1–100). If the author's ratio of merged PRs to total closed PRs in this repo falls below this threshold, the `min-repo-merge-ratio` check fails.
+Minimum merged to closed PR ratio in this repository, expressed as a percentage (1-100). If the author's ratio of merged PRs to total closed PRs in this repo falls below this threshold, the `min-repo-merge-ratio` check fails.
 
 Set to `0` to disable this check entirely.
 
 A low merge ratio means the author has had many PRs closed without being merged in your repo, which is a strong signal of mostly low-quality contributions.
 
-Valid range: `0` to `100` (percentage)
+Valid range: `0` to `100` (percentage), where `0` disables the check and `1` to `100` is the active enforcement range
 
 Default: `0` (disabled)
 
 ### min-global-merge-ratio
 
-Minimum merged to closed PR ratio across all public GitHub repositories, expressed as a percentage (1–100). If the author's global ratio of merged PRs to total closed PRs falls below this threshold, the `min-global-merge-ratio` check fails.
+Minimum merged to closed PR ratio across all public GitHub repositories, expressed as a percentage (1-100). If the author's global ratio of merged PRs to total closed PRs falls below this threshold, the `min-global-merge-ratio` check fails.
 
 Set to `0` to disable this check entirely.
 
@@ -588,7 +606,7 @@ This is one of the most effective contributor health checks. An author who has a
 
 The default of `30` means that at least 30% of the author's closed PRs across all repositories must have been merged. Use [`global-merge-ratio-exclude-own`](#global-merge-ratio-exclude-own) to exclude self-merged PRs from this calculation as that could skew the results.
 
-Valid range: `0` to `100` (percentage)
+Valid range: `0` to `100` (percentage), where `0` disables the check and `1` to `100` is the active enforcement range
 
 Default: `30`
 
