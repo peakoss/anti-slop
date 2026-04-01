@@ -36,8 +36,8 @@ export function buildContext(): Context {
 
         isDraft: pr.draft,
         maintainerCanModify: pr.maintainer_can_modify,
-        // changedFiles: pr.changed_files,
-        // additions: pr.additions,
-        // deletions: pr.deletions,
+        changedFiles: pr.changed_files,
+        additions: pr.additions,
+        deletions: pr.deletions,
     };
 }

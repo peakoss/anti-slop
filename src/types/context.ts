@@ -25,7 +25,7 @@ export interface Context {
 
     isDraft: boolean;
     maintainerCanModify: boolean;
-    // changedFiles: number;
-    // additions: number;
-    // deletions: number;
+    changedFiles: number;
+    additions: number;
+    deletions: number;
 }
