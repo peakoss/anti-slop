@@ -3,7 +3,7 @@ import { recordCheck } from "../report.ts";
 
 const SPAM_USERNAME_PATTERNS: { pattern: RegExp; reason: string }[] = [
     { pattern: /^\d+$/, reason: "username is all digits" },
-    { pattern: /\d{4,}/, reason: "username contains 4 or more consecutive digits" },
+    { pattern: /\d{2,}/, reason: "username contains 2 or more consecutive digits" },
     { pattern: /(?:^|-)ai(?:-|$)/i, reason: "username contains 'ai' segment" },
 ];
 
