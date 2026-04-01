@@ -1,16 +1,16 @@
-import type { CheckResult, Context, Settings, Octokit, UserProfile } from "../types";
+import type { CheckResult, Context, Octokit, Settings, UserProfile } from "../types";
 import { recordCheck } from "../report.ts";
 
 const SPAM_USERNAME_PATTERNS: { pattern: RegExp; reason: string }[] = [
-    { pattern: /^\d+$/, reason: "username is all digits" },
-    { pattern: /\d{2,}/, reason: "username contains 2 or more consecutive digits" },
-    { pattern: /(?:^|-)ai(?:-|$)/i, reason: "username contains 'ai' segment" },
+	{ pattern: /^\d+$/, reason: "username is all digits" },
+	{ pattern: /\d{2,}/, reason: "username contains 2 or more consecutive digits" },
+	{ pattern: /(?:^|-)ai(?:-|$)/i, reason: "username contains 'ai' segment" },
 ];
 
 export async function runUserChecks(
-    settings: Settings,
-    context: Context,
-    client: Octokit,
+	settings: Settings,
+	context: Context,
+	client: Octokit,
 ): Promise<{ results: CheckResult[]; isPrivateProfile: boolean }> {
 	const results: CheckResult[] = [];
 
@@ -108,51 +108,51 @@ export async function runUserChecks(
 }
 
 async function getUserProfile(client: Octokit, username: string): Promise<UserProfile> {
-    const { data } = await client.rest.users.getByUsername({ username });
-    return {
-        user_view_type: data.user_view_type ?? "private",
-        name: data.name,
-        company: data.company,
-        blog: data.blog,
-        location: data.location,
-        email: data.email,
-        hireable: data.hireable,
-        bio: data.bio,
-        twitter_username: data.twitter_username ?? null,
-        followers: data.followers,
-        following: data.following,
-        created_at: data.created_at,
-    };
+	const { data } = await client.rest.users.getByUsername({ username });
+	return {
+		user_view_type: data.user_view_type ?? "private",
+		name: data.name,
+		company: data.company,
+		blog: data.blog,
+		location: data.location,
+		email: data.email,
+		hireable: data.hireable,
+		bio: data.bio,
+		twitter_username: data.twitter_username ?? null,
+		followers: data.followers,
+		following: data.following,
+		created_at: data.created_at,
+	};
 }
 
 async function countDailyForks(client: Octokit, username: string): Promise<number> {
-    const repos = await client.paginate(client.rest.repos.listForUser, {
-        username,
-        type: "owner",
-        sort: "created",
-        direction: "desc",
-        per_page: 100,
-    });
+	const repos = await client.paginate(client.rest.repos.listForUser, {
+		username,
+		type: "owner",
+		sort: "created",
+		direction: "desc",
+		per_page: 100,
+	});
 
-    const forkTimestamps = repos
-        .filter((repo) => repo.fork)
-        .map((repo) => new Date(repo.created_at ?? "").getTime())
-        .sort((a, b) => a - b);
+	const forkTimestamps = repos
+		.filter((repo) => repo.fork)
+		.map((repo) => new Date(repo.created_at ?? "").getTime())
+		.sort((a, b) => a - b);
 
-    if (forkTimestamps.length === 0) {
-        return 0;
-    }
+	if (forkTimestamps.length === 0) {
+		return 0;
+	}
 
-    const DAY_MS = 24 * 60 * 60 * 1000;
-    let maxForks = 0;
-    let left = 0;
+	const DAY_MS = 24 * 60 * 60 * 1000;
+	let maxForks = 0;
+	let left = 0;
 
-    for (let right = 0; right < forkTimestamps.length; right++) {
-        while ((forkTimestamps[right] ?? 0) - (forkTimestamps[left] ?? 0) > DAY_MS) {
-            left++;
-        }
-        maxForks = Math.max(maxForks, right - left + 1);
-    }
+	for (let right = 0; right < forkTimestamps.length; right++) {
+		while ((forkTimestamps[right] ?? 0) - (forkTimestamps[left] ?? 0) > DAY_MS) {
+			left++;
+		}
+		maxForks = Math.max(maxForks, right - left + 1);
+	}
 
-    return maxForks;
+	return maxForks;
 }

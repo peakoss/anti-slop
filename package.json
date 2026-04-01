@@ -1,70 +1,70 @@
 {
-    "name": "anti-slop",
-    "description": "A GitHub action that detects and automatically closes low-quality and AI slop PRs.",
-    "version": "0.2.1",
-    "author": "peaklabs-dev",
-    "type": "module",
-    "private": true,
-    "homepage": "https://github.com/peakoss/anti-slop",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/peakoss/anti-slop.git"
-    },
-    "bugs": {
-        "url": "https://github.com/peakoss/anti-slop/issues"
-    },
-    "keywords": [
-        "ai",
-        "ai-slop",
-        "ai-slop-detection",
-        "anti-slop",
-        "anti-spam",
-        "contributor-metrics",
-        "github",
-        "github-action",
-        "pull-request",
-        "pull-requests",
-        "quality",
-        "quality-check",
-        "quality-checker",
-        "quality-checks",
-        "quality-control",
-        "slop-detector",
-        "spam-detection",
-        "spam-filtering",
-        "spam-prevention"
-    ],
-    "license": "AGPL-3.0-only",
-    "engines": {
-        "node": ">=24.0.0"
-    },
-    "dependencies": {
-        "@actions/core": "^3.0.0",
-        "@actions/github": "^9.0.0"
-    },
-    "devDependencies": {
-        "@eslint/js": "^10.0.1",
-        "@github/local-action": "^7.0.1",
-        "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-        "@octokit/webhooks-types": "^7.6.1",
-        "@types/node": "^25.5.0",
-        "eslint": "^10.1.0",
-        "eslint-config-prettier": "^10.1.8",
-        "globals": "^17.4.0",
-        "prettier": "3.8.1",
-        "tsdown": "^0.21.7",
-        "typescript": "^5.9.3",
-        "typescript-eslint": "^8.58.0"
-    },
-    "scripts": {
-        "build": "tsdown",
-        "dev": "tsdown --watch",
-        "format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --write .",
-        "lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --fix --color .",
-        "check": "bunx --bun tsc --noEmit",
-        "test:format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --check .",
-        "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --max-warnings 1 --color .",
-        "test": "local-action . src/main.ts .env",
-        "test:all": "bun run check && bun run test:lint && bun run test:format"
-    }
+	"name": "anti-slop",
+	"description": "A GitHub action that detects and automatically closes low-quality and AI slop PRs.",
+	"version": "0.2.1",
+	"author": "peaklabs-dev",
+	"type": "module",
+	"private": true,
+	"homepage": "https://github.com/peakoss/anti-slop",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/peakoss/anti-slop.git"
+	},
+	"bugs": {
+		"url": "https://github.com/peakoss/anti-slop/issues"
+	},
+	"keywords": [
+		"ai",
+		"ai-slop",
+		"ai-slop-detection",
+		"anti-slop",
+		"anti-spam",
+		"contributor-metrics",
+		"github",
+		"github-action",
+		"pull-request",
+		"pull-requests",
+		"quality",
+		"quality-check",
+		"quality-checker",
+		"quality-checks",
+		"quality-control",
+		"slop-detector",
+		"spam-detection",
+		"spam-filtering",
+		"spam-prevention"
+	],
+	"license": "AGPL-3.0-only",
+	"engines": {
+		"node": ">=24.0.0"
+	},
+	"dependencies": {
+		"@actions/core": "^3.0.0",
+		"@actions/github": "^9.0.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@github/local-action": "^7.0.1",
+		"@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+		"@octokit/webhooks-types": "^7.6.1",
+		"@types/node": "^25.5.0",
+		"eslint": "^10.1.0",
+		"eslint-config-prettier": "^10.1.8",
+		"globals": "^17.4.0",
+		"prettier": "3.8.1",
+		"tsdown": "^0.21.7",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.58.0"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch",
+		"format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --write .",
+		"lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --fix --color .",
+		"check": "bunx --bun tsc --noEmit",
+		"test:format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --check .",
+		"test:lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --max-warnings 1 --color .",
+		"test": "local-action . src/main.ts .env",
+		"test:all": "bun run check && bun run test:lint && bun run test:format"
+	}
 }

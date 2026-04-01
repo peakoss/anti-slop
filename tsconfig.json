@@ -1,51 +1,51 @@
 {
-    "$schema": "https://www.schemastore.org/tsconfig.json",
-    "files": ["tsdown.config.ts", "prettier.config.ts", "eslint.config.ts"],
-    "include": ["src/**/*.ts"],
+	"$schema": "https://www.schemastore.org/tsconfig.json",
+	"files": ["tsdown.config.ts", "prettier.config.ts", "eslint.config.ts"],
+	"include": ["src/**/*.ts"],
 
-    "compilerOptions": {
-        // Type Checking
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "exactOptionalPropertyTypes": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitOverride": true,
-        "noImplicitReturns": true,
-        "noPropertyAccessFromIndexSignature": true,
-        "noUncheckedIndexedAccess": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strict": true,
+	"compilerOptions": {
+		// Type Checking
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"exactOptionalPropertyTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"strict": true,
 
-        // Modules
-        "allowImportingTsExtensions": true,
-        "module": "esnext",
-        "moduleResolution": "bundler",
-        "noUncheckedSideEffectImports": true,
-        "resolveJsonModule": true,
-        "types": ["node"],
+		// Modules
+		"allowImportingTsExtensions": true,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"noUncheckedSideEffectImports": true,
+		"resolveJsonModule": true,
+		"types": ["node"],
 
-        // Emit
-        "declaration": true,
-        "noEmit": true,
+		// Emit
+		"declaration": true,
+		"noEmit": true,
 
-        // Interop Constraints
-        "erasableSyntaxOnly": true,
-        "esModuleInterop": true,
-        "isolatedDeclarations": true,
-        "verbatimModuleSyntax": true,
+		// Interop Constraints
+		"erasableSyntaxOnly": true,
+		"esModuleInterop": true,
+		"isolatedDeclarations": true,
+		"verbatimModuleSyntax": true,
 
-        // Language
-        "lib": ["ES2024"],
-        "libReplacement": false,
-        "moduleDetection": "force",
-        "target": "ES2024",
+		// Language
+		"lib": ["ES2024"],
+		"libReplacement": false,
+		"moduleDetection": "force",
+		"target": "ES2024",
 
-        // Projects
-        "incremental": true,
-        "tsBuildInfoFile": "./node_modules/.cache/tsconfig.tsbuildInfo",
+		// Projects
+		"incremental": true,
+		"tsBuildInfoFile": "./node_modules/.cache/tsconfig.tsbuildInfo",
 
-        // Completeness
-        "skipLibCheck": true
-    }
+		// Completeness
+		"skipLibCheck": true
+	}
 }

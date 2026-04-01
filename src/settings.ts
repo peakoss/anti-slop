@@ -1,197 +1,198 @@
-import { Input } from "./constants/input.ts";
 import type { Settings } from "./types";
 import * as core from "@actions/core";
+import { Input } from "./constants/input.ts";
 
 const VALID_AUTHOR_ASSOCIATIONS = [
-    "COLLABORATOR",
-    "CONTRIBUTOR",
-    "FIRST_TIMER",
-    "FIRST_TIME_CONTRIBUTOR",
-    "MANNEQUIN",
-    "MEMBER",
-    "NONE",
-    "OWNER",
+	"COLLABORATOR",
+	"CONTRIBUTOR",
+	"FIRST_TIMER",
+	"FIRST_TIME_CONTRIBUTOR",
+	"MANNEQUIN",
+	"MEMBER",
+	"NONE",
+	"OWNER",
 ];
 
 function parseList(raw: string): string[] {
-    return raw
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+	return raw
+		.split(",")
+		.map((s) => s.trim())
+		.filter(Boolean);
 }
 
 export function getSettings(): Settings {
-    const settings = {
-        // Repo Auth Token
-        githubToken: core.getInput(Input.GithubToken, { required: true }),
+	const settings = {
+		// Repo Auth Token
+		githubToken: core.getInput(Input.GithubToken, { required: true }),
 
-        // General Settings
-        maxFailures: parseInt(core.getInput(Input.MaxFailures)),
+		// General Settings
+		maxFailures: parseInt(core.getInput(Input.MaxFailures)),
 
-        // PR Branch Checks
-        allowedTargetBranches: core.getMultilineInput(Input.AllowedTargetBranches),
-        blockedTargetBranches: core.getMultilineInput(Input.BlockedTargetBranches),
-        allowedSourceBranches: core.getMultilineInput(Input.AllowedSourceBranches),
-        blockedSourceBranches: core.getMultilineInput(Input.BlockedSourceBranches),
+		// PR Branch Checks
+		allowedTargetBranches: core.getMultilineInput(Input.AllowedTargetBranches),
+		blockedTargetBranches: core.getMultilineInput(Input.BlockedTargetBranches),
+		allowedSourceBranches: core.getMultilineInput(Input.AllowedSourceBranches),
+		blockedSourceBranches: core.getMultilineInput(Input.BlockedSourceBranches),
 
-        // PR Size Checks
-        maxChangedFiles: parseInt(core.getInput(Input.MaxChangedFiles)),
-        maxChangedLines: parseInt(core.getInput(Input.MaxChangedLines)),
+		// PR Size Checks
+		maxChangedFiles: parseInt(core.getInput(Input.MaxChangedFiles)),
+		maxChangedLines: parseInt(core.getInput(Input.MaxChangedLines)),
 
-        // PR Quality Checks
-        maxNegativeReactions: parseInt(core.getInput(Input.MaxNegativeReactions)),
-        requireMaintainerCanModify: core.getBooleanInput(Input.RequireMaintainerCanModify),
+		// PR Quality Checks
+		maxNegativeReactions: parseInt(core.getInput(Input.MaxNegativeReactions)),
+		requireMaintainerCanModify: core.getBooleanInput(Input.RequireMaintainerCanModify),
 
-        // PR Title Checks
-        requireConventionalTitle: core.getBooleanInput(Input.RequireConventionalTitle),
+		// PR Title Checks
+		requireConventionalTitle: core.getBooleanInput(Input.RequireConventionalTitle),
 
-        // PR Description Checks
-        requireDescription: core.getBooleanInput(Input.RequireDescription),
-        maxDescriptionLength: parseInt(core.getInput(Input.MaxDescriptionLength)),
-        maxEmojiCount: parseInt(core.getInput(Input.MaxEmojiCount)),
-        maxCodeReferences: parseInt(core.getInput(Input.MaxCodeReferences)),
-        requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
-        blockedTerms: core.getMultilineInput(Input.BlockedTerms),
-        blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
+		// PR Description Checks
+		requireDescription: core.getBooleanInput(Input.RequireDescription),
+		maxDescriptionLength: parseInt(core.getInput(Input.MaxDescriptionLength)),
+		maxEmojiCount: parseInt(core.getInput(Input.MaxEmojiCount)),
+		maxCodeReferences: parseInt(core.getInput(Input.MaxCodeReferences)),
+		requireLinkedIssue: core.getBooleanInput(Input.RequireLinkedIssue),
+		blockedTerms: core.getMultilineInput(Input.BlockedTerms),
+		blockedIssueNumbers: parseList(core.getInput(Input.BlockedIssueNumbers)),
 
-        // PR Template Checks
-        requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
-        strictPrTemplateSections: parseList(core.getInput(Input.StrictPrTemplateSections)),
-        optionalPrTemplateSections: parseList(core.getInput(Input.OptionalPrTemplateSections)),
-        maxAdditionalPrTemplateSections: parseInt(
-            core.getInput(Input.MaxAdditionalPrTemplateSections),
-        ),
+		// PR Template Checks
+		requirePrTemplate: core.getBooleanInput(Input.RequirePrTemplate),
+		strictPrTemplateSections: parseList(core.getInput(Input.StrictPrTemplateSections)),
+		optionalPrTemplateSections: parseList(core.getInput(Input.OptionalPrTemplateSections)),
+		maxAdditionalPrTemplateSections: parseInt(
+			core.getInput(Input.MaxAdditionalPrTemplateSections),
+		),
 
-        // Commit Message Checks
-        maxCommitMessageLength: parseInt(core.getInput(Input.MaxCommitMessageLength)),
-        requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
-        requireCommitAuthorMatch: core.getBooleanInput(Input.RequireCommitAuthorMatch),
-        blockedCommitAuthors: parseList(core.getInput(Input.BlockedCommitAuthors)),
+		// Commit Message Checks
+		maxCommitMessageLength: parseInt(core.getInput(Input.MaxCommitMessageLength)),
+		requireConventionalCommits: core.getBooleanInput(Input.RequireConventionalCommits),
+		requireCommitAuthorMatch: core.getBooleanInput(Input.RequireCommitAuthorMatch),
+		blockedCommitAuthors: parseList(core.getInput(Input.BlockedCommitAuthors)),
 
-        // File Checks
-        allowedFileExtensions: parseList(core.getInput(Input.AllowedFileExtensions)),
-        allowedPaths: core.getMultilineInput(Input.AllowedPaths),
-        blockedPaths: core.getMultilineInput(Input.BlockedPaths),
-        requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
-        maxAddedComments: parseInt(core.getInput(Input.MaxAddedComments)),
+		// File Checks
+		allowedFileExtensions: parseList(core.getInput(Input.AllowedFileExtensions)),
+		allowedPaths: core.getMultilineInput(Input.AllowedPaths),
+		blockedPaths: core.getMultilineInput(Input.BlockedPaths),
+		requireFinalNewline: core.getBooleanInput(Input.RequireFinalNewline),
+		maxAddedComments: parseInt(core.getInput(Input.MaxAddedComments)),
 
-        // User Checks
-        detectSpamUsernames: core.getBooleanInput(Input.DetectSpamUsernames),
-        minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
-        maxDailyForks: parseInt(core.getInput(Input.MaxDailyForks)),
-        requirePublicProfile: core.getBooleanInput(Input.RequirePublicProfile),
-        minProfileCompleteness: parseInt(core.getInput(Input.MinProfileCompleteness)),
+		// User Checks
+		detectSpamUsernames: core.getBooleanInput(Input.DetectSpamUsernames),
+		minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
+		maxDailyForks: parseInt(core.getInput(Input.MaxDailyForks)),
+		requirePublicProfile: core.getBooleanInput(Input.RequirePublicProfile),
+		minProfileCompleteness: parseInt(core.getInput(Input.MinProfileCompleteness)),
 
-        // Merge Checks
-        minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
-        minRepoMergeRatio: parseInt(core.getInput(Input.MinRepoMergeRatio)),
-        minGlobalMergeRatio: parseInt(core.getInput(Input.MinGlobalMergeRatio)),
-        globalMergeRatioExcludeOwn: core.getBooleanInput(Input.GlobalMergeRatioExcludeOwn),
+		// Merge Checks
+		minRepoMergedPrs: parseInt(core.getInput(Input.MinRepoMergedPrs)),
+		minRepoMergeRatio: parseInt(core.getInput(Input.MinRepoMergeRatio)),
+		minGlobalMergeRatio: parseInt(core.getInput(Input.MinGlobalMergeRatio)),
+		globalMergeRatioExcludeOwn: core.getBooleanInput(Input.GlobalMergeRatioExcludeOwn),
 
-        // Filters
-        // onlyIssueTypes: parseList(core.getInput(Input.OnlyIssueTypes)),
-        // onlyLabels: parseList(core.getInput(Input.OnlyLabels)),
-        // onlyPrLabels: parseList(core.getInput(Input.OnlyPrLabels)),
-        // onlyIssueLabels: parseList(core.getInput(Input.OnlyIssueLabels)),
-        // anyOfLabels: parseList(core.getInput(Input.AnyOfLabels)),
-        // anyOfPrLabels: parseList(core.getInput(Input.AnyOfPrLabels)),
-        // anyOfIssueLabels: parseList(core.getInput(Input.AnyOfIssueLabels)),
+		// Filters
+		// onlyIssueTypes: parseList(core.getInput(Input.OnlyIssueTypes)),
+		// onlyLabels: parseList(core.getInput(Input.OnlyLabels)),
+		// onlyPrLabels: parseList(core.getInput(Input.OnlyPrLabels)),
+		// onlyIssueLabels: parseList(core.getInput(Input.OnlyIssueLabels)),
+		// anyOfLabels: parseList(core.getInput(Input.AnyOfLabels)),
+		// anyOfPrLabels: parseList(core.getInput(Input.AnyOfPrLabels)),
+		// anyOfIssueLabels: parseList(core.getInput(Input.AnyOfIssueLabels)),
 
-        // Exemptions
-        exemptDraftPrs: core.getBooleanInput(Input.ExemptDraftPrs),
-        exemptBots: core.getMultilineInput(Input.ExemptBots),
-        exemptUsers: parseList(core.getInput(Input.ExemptUsers)),
-        exemptAuthorAssociation: parseList(core.getInput(Input.ExemptAuthorAssociation)),
-        // exemptTeams: parseList(core.getInput(Input.ExemptTeams)),
-        exemptLabel: core.getInput(Input.ExemptLabel),
-        exemptPrLabel: core.getInput(Input.ExemptPrLabel),
-        // exemptIssueLabel: core.getInput(Input.ExemptIssueLabel),
-        exemptAllMilestones: core.getBooleanInput(Input.ExemptAllMilestones),
-        exemptAllPrMilestones: core.getBooleanInput(Input.ExemptAllPrMilestones),
-        // exemptAllIssueMilestones: core.getBooleanInput(Input.ExemptAllIssueMilestones),
-        exemptMilestones: parseList(core.getInput(Input.ExemptMilestones)),
-        exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
-        // exemptIssueMilestones: parseList(core.getInput(Input.ExemptIssueMilestones)),
+		// Exemptions
+		exemptDraftPrs: core.getBooleanInput(Input.ExemptDraftPrs),
+		exemptBots: core.getMultilineInput(Input.ExemptBots),
+		exemptUsers: parseList(core.getInput(Input.ExemptUsers)),
+		exemptAuthorAssociation: parseList(core.getInput(Input.ExemptAuthorAssociation)),
+		// exemptTeams: parseList(core.getInput(Input.ExemptTeams)),
+		exemptLabel: core.getInput(Input.ExemptLabel),
+		exemptPrLabel: core.getInput(Input.ExemptPrLabel),
+		// exemptIssueLabel: core.getInput(Input.ExemptIssueLabel),
+		exemptAllMilestones: core.getBooleanInput(Input.ExemptAllMilestones),
+		exemptAllPrMilestones: core.getBooleanInput(Input.ExemptAllPrMilestones),
+		// exemptAllIssueMilestones: core.getBooleanInput(Input.ExemptAllIssueMilestones),
+		exemptMilestones: parseList(core.getInput(Input.ExemptMilestones)),
+		exemptPrMilestones: parseList(core.getInput(Input.ExemptPrMilestones)),
+		// exemptIssueMilestones: parseList(core.getInput(Input.ExemptIssueMilestones)),
 
-        // PR Success Actions
-        successAddPrLabels: parseList(core.getInput(Input.SuccessAddPrLabels)),
+		// PR Success Actions
+		successAddPrLabels: parseList(core.getInput(Input.SuccessAddPrLabels)),
 
-        // PR Failure Actions
-        failureRemovePrLabels: parseList(core.getInput(Input.FailureRemovePrLabels)),
-        failureRemoveAllPrLabels: core.getBooleanInput(Input.FailureRemoveAllPrLabels),
-        failureAddPrLabels: parseList(core.getInput(Input.FailureAddPrLabels)),
-        failurePrMessage: core.getInput(Input.FailurePrMessage),
-        closePr: core.getBooleanInput(Input.ClosePr),
-        lockPr: core.getBooleanInput(Input.LockPr),
+		// PR Failure Actions
+		failureRemovePrLabels: parseList(core.getInput(Input.FailureRemovePrLabels)),
+		failureRemoveAllPrLabels: core.getBooleanInput(Input.FailureRemoveAllPrLabels),
+		failureAddPrLabels: parseList(core.getInput(Input.FailureAddPrLabels)),
+		failurePrMessage: core.getInput(Input.FailurePrMessage),
+		closePr: core.getBooleanInput(Input.ClosePr),
+		lockPr: core.getBooleanInput(Input.LockPr),
 
-        // Issue Close Actions
-        // closeIssue: core.getBooleanInput(Input.CloseIssue),
-        // closeIssueReason: core.getInput(Input.CloseIssueReason),
-        // lockIssue: core.getBooleanInput(Input.LockIssue),
+		// Issue Close Actions
+		// closeIssue: core.getBooleanInput(Input.CloseIssue),
+		// closeIssueReason: core.getInput(Input.CloseIssueReason),
+		// lockIssue: core.getBooleanInput(Input.LockIssue),
 
-        // Issue Failure Actions
-        // failureIssueMessage: core.getInput(Input.FailureIssueMessage),
-        // failureRemoveIssueLabels: parseList(core.getInput(Input.FailureRemoveIssueLabels)),
-        // failureRemoveAllIssueLabels: core.getBooleanInput(Input.FailureRemoveAllIssueLabels),
-        // failureAddIssueLabels: parseList(core.getInput(Input.FailureAddIssueLabels)),
-    };
+		// Issue Failure Actions
+		// failureIssueMessage: core.getInput(Input.FailureIssueMessage),
+		// failureRemoveIssueLabels: parseList(core.getInput(Input.FailureRemoveIssueLabels)),
+		// failureRemoveAllIssueLabels: core.getBooleanInput(Input.FailureRemoveAllIssueLabels),
+		// failureAddIssueLabels: parseList(core.getInput(Input.FailureAddIssueLabels)),
+	};
 
-    core.setSecret(settings.githubToken);
+	core.setSecret(settings.githubToken);
 
-    validateSettings(settings);
+	validateSettings(settings);
 
-    core.debug(`Settings:\n${JSON.stringify(settings, null, 2)}`);
+	core.debug(`Settings:\n${JSON.stringify(settings, null, 2)}`);
 
-    return settings;
+	return settings;
 }
 
 function validateNumber(value: number, name: string, min: number, max: number): void {
-    if (Number.isNaN(value)) {
-        throw new Error(`"${name}" must be a valid number`);
-    }
-    if (value < min || value > max) {
-        throw new Error(
-            `"${name}" must be between ${String(min)} and ${String(max)}, got ${String(value)}`,
-        );
-    }
+	if (Number.isNaN(value)) {
+		throw new Error(`"${name}" must be a valid number`);
+	}
+	if (value < min || value > max) {
+		throw new Error(
+			`"${name}" must be between ${String(min)} and ${String(max)}, got ${String(value)}`,
+		);
+	}
 }
 
 function validateSettings(settings: Settings): void {
-    validateNumber(settings.maxFailures, "max-failures", 1, 25);
+	validateNumber(settings.maxFailures, "max-failures", 1, 25);
 
-    validateNumber(settings.maxChangedFiles, "max-changed-files", 0, 500);
-    validateNumber(settings.maxChangedLines, "max-changed-lines", 0, 100000);
+	validateNumber(settings.maxChangedFiles, "max-changed-files", 0, 500);
+	validateNumber(settings.maxChangedLines, "max-changed-lines", 0, 100000);
 
-    validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 200);
-    validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 50000);
-    validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 30);
-    validateNumber(settings.maxCodeReferences, "max-code-references", 0, 40);
+	validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 200);
 
-    validateNumber(
-        settings.maxAdditionalPrTemplateSections,
-        "max-additional-pr-template-sections",
-        0,
-        20,
-    );
+	validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 50000);
+	validateNumber(settings.maxEmojiCount, "max-emoji-count", 0, 30);
+	validateNumber(settings.maxCodeReferences, "max-code-references", 0, 40);
 
-    validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 5000);
+	validateNumber(
+		settings.maxAdditionalPrTemplateSections,
+		"max-additional-pr-template-sections",
+		0,
+		20,
+	);
 
-    validateNumber(settings.maxAddedComments, "max-added-comments", 0, 500);
+	validateNumber(settings.maxCommitMessageLength, "max-commit-message-length", 0, 5000);
 
-    validateNumber(settings.minAccountAge, "min-account-age", 0, 190);
-    validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 50);
-    validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 10);
+	validateNumber(settings.maxAddedComments, "max-added-comments", 0, 500);
 
-    validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
-    validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
-    validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);
+	validateNumber(settings.minAccountAge, "min-account-age", 0, 190);
+	validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 50);
+	validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 10);
 
-    for (const association of settings.exemptAuthorAssociation) {
-        if (!VALID_AUTHOR_ASSOCIATIONS.includes(association)) {
-            throw new Error(
-                `"exempt-author-association" contains invalid value "${association}". ` +
-                    `The valid values are: ${VALID_AUTHOR_ASSOCIATIONS.join(", ")}`,
-            );
-        }
-    }
+	validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
+	validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);
+	validateNumber(settings.minGlobalMergeRatio, "min-global-merge-ratio", 0, 100);
+
+	for (const association of settings.exemptAuthorAssociation) {
+		if (!VALID_AUTHOR_ASSOCIATIONS.includes(association)) {
+			throw new Error(
+				`"exempt-author-association" contains invalid value "${association}". ` +
+					`The valid values are: ${VALID_AUTHOR_ASSOCIATIONS.join(", ")}`,
+			);
+		}
+	}
 }
