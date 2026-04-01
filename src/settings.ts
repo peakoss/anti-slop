@@ -180,7 +180,7 @@ function validateSettings(settings: Settings): void {
 
     validateNumber(settings.minAccountAge, "min-account-age", 0, 190);
     validateNumber(settings.maxDailyForks, "max-daily-forks", 0, 50);
-    validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 11);
+    validateNumber(settings.minProfileCompleteness, "min-profile-completeness", 0, 10);
 
     validateNumber(settings.minRepoMergedPrs, "min-repo-merged-prs", 0, 20);
     validateNumber(settings.minRepoMergeRatio, "min-repo-merge-ratio", 0, 100);

@@ -175,7 +175,7 @@ inputs:
     required: false
     default: "true"
   min-profile-completeness:
-    description: Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.
+    description: Minimum number of profile signals (out of 10) the user must have to pass. Checks name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.
     required: false
     default: "4"
 

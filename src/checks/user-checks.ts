@@ -12,83 +12,99 @@ export async function runUserChecks(
     context: Context,
     client: Octokit,
 ): Promise<CheckResult[]> {
-    const results: CheckResult[] = [];
+	const results: CheckResult[] = [];
 
-    const user = context.userLogin;
-    const needsProfile = settings.minProfileCompleteness > 0 || settings.minAccountAge > 0;
+	const user = context.userLogin;
 
-    const [profile, dailyForkCount] = await Promise.all([
-        needsProfile ? getUserProfile(client, user) : Promise.resolve(null),
-        settings.maxDailyForks > 0 ? countDailyForks(client, user) : Promise.resolve(0),
-    ]);
+	// Profile is also needed when merge checks are enabled as merge checks cannot be computed for private profiles.
+	const needsProfile =
+		settings.requirePublicProfile ||
+		settings.minProfileCompleteness > 0 ||
+		settings.minAccountAge > 0 ||
+		settings.minRepoMergedPrs > 0 ||
+		settings.minRepoMergeRatio > 0 ||
+		settings.minGlobalMergeRatio > 0;
 
-    if (settings.detectSpamUsernames) {
-        const matched = SPAM_USERNAME_PATTERNS.filter((entry) => entry.pattern.test(user));
+	const [profile, dailyForkCount] = await Promise.all([
+		needsProfile ? getUserProfile(client, user) : Promise.resolve(null),
+		settings.maxDailyForks > 0 ? countDailyForks(client, user) : Promise.resolve(0),
+	]);
 
-        const passed = matched.length === 0;
-        recordCheck(results, {
-            name: "detect-spam-usernames",
-            passed,
-            message: passed
-                ? `Username "${user}" does not match spam patterns`
-                : `Username "${user}" matches spam patterns: ${matched.map((entry) => entry.reason).join(", ")}`,
-        });
-    }
+	if (settings.detectSpamUsernames) {
+		const matched = SPAM_USERNAME_PATTERNS.filter((entry) => entry.pattern.test(user));
 
-    if (settings.minAccountAge > 0 && profile) {
-        const accountAgeMs = Date.now() - new Date(profile.created_at).getTime();
-        const accountAgeDays = Math.floor(accountAgeMs / (1000 * 60 * 60 * 24));
+		const passed = matched.length === 0;
+		recordCheck(results, {
+			name: "detect-spam-usernames",
+			passed,
+			message: passed
+				? `Username "${user}" does not match spam patterns`
+				: `Username "${user}" matches spam patterns: ${matched.map((entry) => entry.reason).join(", ")}`,
+		});
+	}
 
-        const passed = accountAgeDays >= settings.minAccountAge;
-        recordCheck(results, {
-            name: "account-age",
-            passed,
-            message: passed
-                ? `Account is ${String(accountAgeDays)} day(s) old, meets minimum of ${String(settings.minAccountAge)} days`
-                : `Account is ${String(accountAgeDays)} day(s) old, below minimum of ${String(settings.minAccountAge)} days`,
-        });
-    }
+	if (settings.minAccountAge > 0 && profile) {
+		const accountAgeMs = Date.now() - new Date(profile.created_at).getTime();
+		const accountAgeDays = Math.floor(accountAgeMs / (1000 * 60 * 60 * 24));
 
-    if (settings.maxDailyForks > 0) {
-        const passed = dailyForkCount <= settings.maxDailyForks;
-        recordCheck(results, {
-            name: "max-daily-forks",
-            passed,
-            message: passed
-                ? `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, within maximum of ${String(settings.maxDailyForks)}`
-                : `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, exceeds maximum of ${String(settings.maxDailyForks)}`,
-        });
-    }
+		const passed = accountAgeDays >= settings.minAccountAge;
+		recordCheck(results, {
+			name: "account-age",
+			passed,
+			message: passed
+				? `Account is ${String(accountAgeDays)} day(s) old, meets minimum of ${String(settings.minAccountAge)} days`
+				: `Account is ${String(accountAgeDays)} day(s) old, below minimum of ${String(settings.minAccountAge)} days`,
+		});
+	}
 
-    if (settings.minProfileCompleteness > 0 && profile) {
-        const fields: { label: string; present: boolean }[] = [
-            { label: "public profile", present: profile.user_view_type === "public" },
-            { label: "name", present: !!profile.name },
-            { label: "company", present: !!profile.company },
-            { label: "blog", present: !!profile.blog },
-            { label: "location", present: !!profile.location },
-            { label: "email", present: !!profile.email },
-            { label: "hireable", present: profile.hireable !== null },
-            { label: "bio", present: !!profile.bio },
-            { label: "twitter", present: !!profile.twitter_username },
-            { label: "followers", present: profile.followers > 0 },
-            { label: "following", present: profile.following > 0 },
-        ];
+	if (settings.maxDailyForks > 0) {
+		const passed = dailyForkCount <= settings.maxDailyForks;
+		recordCheck(results, {
+			name: "max-daily-forks",
+			passed,
+			message: passed
+				? `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, within maximum of ${String(settings.maxDailyForks)}`
+				: `User created ${String(dailyForkCount)} fork(s) in a 24-hour window, exceeds maximum of ${String(settings.maxDailyForks)}`,
+		});
+	}
 
-        const completedCount = fields.filter((field) => field.present).length;
-        const missing = fields.filter((field) => !field.present).map((field) => field.label);
+	if (settings.requirePublicProfile && profile) {
+		const passed = profile.user_view_type === "public";
+		recordCheck(results, {
+			name: "require-public-profile",
+			passed,
+			message: passed ? "User profile is public" : `User profile is not public")`,
+		});
+	}
 
-        const passed = completedCount >= settings.minProfileCompleteness;
-        recordCheck(results, {
-            name: "min-profile-completeness",
-            passed,
-            message: passed
-                ? `Profile completeness is ${String(completedCount)}/11, meets minimum of ${String(settings.minProfileCompleteness)}`
-                : `Profile completeness is ${String(completedCount)}/11, below minimum of ${String(settings.minProfileCompleteness)} (missing: ${missing.join(", ")})`,
-        });
-    }
+	if (settings.minProfileCompleteness > 0 && profile) {
+		const fields: { label: string; present: boolean }[] = [
+			{ label: "name", present: !!profile.name },
+			{ label: "company", present: !!profile.company },
+			{ label: "blog", present: !!profile.blog },
+			{ label: "location", present: !!profile.location },
+			{ label: "email", present: !!profile.email },
+			{ label: "hireable", present: profile.hireable !== null },
+			{ label: "bio", present: !!profile.bio },
+			{ label: "twitter", present: !!profile.twitter_username },
+			{ label: "followers", present: profile.followers > 0 },
+			{ label: "following", present: profile.following > 0 },
+		];
 
-    return results;
+		const completedCount = fields.filter((field) => field.present).length;
+		const missing = fields.filter((field) => !field.present).map((field) => field.label);
+
+		const passed = completedCount >= settings.minProfileCompleteness;
+		recordCheck(results, {
+			name: "min-profile-completeness",
+			passed,
+			message: passed
+				? `Profile completeness is ${String(completedCount)}/10, meets minimum of ${String(settings.minProfileCompleteness)}`
+				: `Profile completeness is ${String(completedCount)}/10, below minimum of ${String(settings.minProfileCompleteness)} (missing: ${missing.join(", ")})`,
+		});
+	}
+
+	return results;
 }
 
 async function getUserProfile(client: Octokit, username: string): Promise<UserProfile> {
