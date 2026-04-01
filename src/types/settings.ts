@@ -11,6 +11,10 @@ export interface Settings {
     allowedSourceBranches: string[];
     blockedSourceBranches: string[];
 
+    // PR Size Checks
+    maxChangedFiles: number;
+    maxChangedLines: number;
+
     // PR Quality Checks
     maxNegativeReactions: number;
     requireMaintainerCanModify: boolean;

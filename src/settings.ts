@@ -34,6 +34,10 @@ export function getSettings(): Settings {
         allowedSourceBranches: core.getMultilineInput(Input.AllowedSourceBranches),
         blockedSourceBranches: core.getMultilineInput(Input.BlockedSourceBranches),
 
+        // PR Size Checks
+        maxChangedFiles: parseInt(core.getInput(Input.MaxChangedFiles)),
+        maxChangedLines: parseInt(core.getInput(Input.MaxChangedLines)),
+
         // PR Quality Checks
         maxNegativeReactions: parseInt(core.getInput(Input.MaxNegativeReactions)),
         requireMaintainerCanModify: core.getBooleanInput(Input.RequireMaintainerCanModify),
@@ -153,6 +157,9 @@ function validateNumber(value: number, name: string, min: number, max: number): 
 
 function validateSettings(settings: Settings): void {
     validateNumber(settings.maxFailures, "max-failures", 1, 25);
+
+    validateNumber(settings.maxChangedFiles, "max-changed-files", 0, 500);
+    validateNumber(settings.maxChangedLines, "max-changed-lines", 0, 100000);
 
     validateNumber(settings.maxNegativeReactions, "max-negative-reactions", 0, 200);
     validateNumber(settings.maxDescriptionLength, "max-description-length", 0, 50000);

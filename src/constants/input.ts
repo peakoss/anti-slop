@@ -12,6 +12,10 @@ export const Input = {
     AllowedSourceBranches: "allowed-source-branches",
     BlockedSourceBranches: "blocked-source-branches",
 
+    // PR Size Checks
+    MaxChangedFiles: "max-changed-files",
+    MaxChangedLines: "max-changed-lines",
+
     // PR Quality Checks
     MaxNegativeReactions: "max-negative-reactions",
     RequireMaintainerCanModify: "require-maintainer-can-modify",
