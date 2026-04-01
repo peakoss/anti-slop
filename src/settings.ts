@@ -141,7 +141,7 @@ export function getSettings(): Settings {
 }
 
 function validateNumber(value: number, name: string, min: number, max: number): void {
-    if (isNaN(value)) {
+    if (Number.isNaN(value)) {
         throw new Error(`"${name}" must be a valid number`);
     }
     if (value < min || value > max) {
