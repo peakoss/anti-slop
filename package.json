@@ -58,10 +58,10 @@
     "scripts": {
         "build": "tsdown",
         "dev": "tsdown --watch",
-        "format": "bunx --bun prettier . --write",
-        "lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --fix --color .",
-        "test:format": "bunx --bun prettier --check .",
-        "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --concurrency auto --max-warnings 1 --color .",
+        "format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --write .",
+        "lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --fix --color .",
+        "test:format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --check .",
+        "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --max-warnings 1 --color .",
         "test": "local-action . src/main.ts .env"
     }
 }
