@@ -54,6 +54,7 @@ export interface Settings {
     detectSpamUsernames: boolean;
     minAccountAge: number;
     maxDailyForks: number;
+    requirePublicProfile: boolean;
     minProfileCompleteness: number;
 
     // Merge Checks

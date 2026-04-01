@@ -170,6 +170,10 @@ inputs:
     description: Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.
     required: false
     default: "7"
+  require-public-profile:
+    description: Require the PR author to have a public GitHub profile.
+    required: false
+    default: "true"
   min-profile-completeness:
     description: Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.
     required: false

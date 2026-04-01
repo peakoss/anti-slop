@@ -79,6 +79,7 @@ export function getSettings(): Settings {
         detectSpamUsernames: core.getBooleanInput(Input.DetectSpamUsernames),
         minAccountAge: parseInt(core.getInput(Input.MinAccountAge)),
         maxDailyForks: parseInt(core.getInput(Input.MaxDailyForks)),
+        requirePublicProfile: core.getBooleanInput(Input.RequirePublicProfile),
         minProfileCompleteness: parseInt(core.getInput(Input.MinProfileCompleteness)),
 
         // Merge Checks

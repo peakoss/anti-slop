@@ -55,6 +55,7 @@ export const Input = {
     DetectSpamUsernames: "detect-spam-usernames",
     MinAccountAge: "min-account-age",
     MaxDailyForks: "max-daily-forks",
+    RequirePublicProfile: "require-public-profile",
     MinProfileCompleteness: "min-profile-completeness",
 
     // Merge Checks
