@@ -1,4 +1,4 @@
-import { Input } from "./enums/input.ts";
+import { Input } from "./constants/input.ts";
 import type { Settings } from "./types";
 import * as core from "@actions/core";
 
