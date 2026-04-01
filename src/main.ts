@@ -3,6 +3,7 @@ import { getSettings } from "./settings.ts";
 import { buildContext } from "./context.ts";
 import { checkExemptions } from "./exemptions.ts";
 import { runBranchChecks } from "./checks/branch-checks.ts";
+import { runSizeChecks } from "./checks/size-checks.ts";
 import { runTitleChecks } from "./checks/title-checks.ts";
 import { runDescriptionChecks } from "./checks/description-checks.ts";
 import { runTemplateChecks } from "./checks/template-checks.ts";
@@ -39,6 +40,10 @@ export async function run(): Promise<void> {
 
         core.startGroup("Branch checks");
         results.push(...runBranchChecks(settings, context));
+        core.endGroup();
+
+        core.startGroup("Size checks");
+        results.push(...runSizeChecks(settings, context));
         core.endGroup();
 
         core.startGroup("Title checks");
