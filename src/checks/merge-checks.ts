@@ -6,8 +6,14 @@ export async function runMergeChecks(
     settings: Settings,
     context: Context,
     client: Octokit,
+    isPrivateProfile: boolean,
 ): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
+
+    if (isPrivateProfile) {
+        core.info("[SKIP] merge-checks - Merge checks cannot be computed for private profiles");
+        return results;
+    }
 
     const user = context.userLogin;
     const repoFull = `${context.owner}/${context.repo}`;

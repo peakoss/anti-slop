@@ -76,11 +76,14 @@ export async function run(): Promise<void> {
             core.endGroup();
 
             core.startGroup("User checks");
-            results.push(...(await runUserChecks(settings, context, client)));
+            const userChecks = await runUserChecks(settings, context, client);
+            results.push(...userChecks.results);
             core.endGroup();
 
             core.startGroup("Merge checks");
-            results.push(...(await runMergeChecks(settings, context, client)));
+            results.push(
+                ...(await runMergeChecks(settings, context, client, userChecks.isPrivateProfile)),
+            );
             core.endGroup();
         } else {
             core.warning("No valid GitHub token — checks requiring the GitHub API were skipped");

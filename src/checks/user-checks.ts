@@ -11,7 +11,7 @@ export async function runUserChecks(
     settings: Settings,
     context: Context,
     client: Octokit,
-): Promise<CheckResult[]> {
+): Promise<{ results: CheckResult[]; isPrivateProfile: boolean }> {
 	const results: CheckResult[] = [];
 
 	const user = context.userLogin;
@@ -104,7 +104,7 @@ export async function runUserChecks(
 		});
 	}
 
-	return results;
+	return { results, isPrivateProfile: profile?.user_view_type !== "public" };
 }
 
 async function getUserProfile(client: Octokit, username: string): Promise<UserProfile> {
