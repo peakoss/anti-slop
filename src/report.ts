@@ -27,6 +27,8 @@ export function setOutputs(results: CheckResult[], settings: Settings): boolean 
         core.setOutput("result", "failed");
         return true;
     }
+
+    core.setOutput("result", "passed");
     return false;
 }
 
