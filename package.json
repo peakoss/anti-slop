@@ -60,8 +60,10 @@
         "dev": "tsdown --watch",
         "format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --write .",
         "lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --fix --color .",
+        "check": "bunx --bun tsc --noEmit",
         "test:format": "bunx --bun prettier --config prettier.config.ts --cache --cache-strategy metadata --check .",
         "test:lint": "bunx --bun eslint --config eslint.config.ts --cache --cache-location node_modules/.cache/eslint --concurrency auto --max-warnings 1 --color .",
-        "test": "local-action . src/main.ts .env"
+        "test": "local-action . src/main.ts .env",
+        "test:all": "bun run check && bun run test:lint && bun run test:format"
     }
 }
