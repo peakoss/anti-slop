@@ -18,7 +18,10 @@ const config: Config[] = defineConfig(
             reportUnusedInlineConfigs: "error",
         },
         rules: {
-            "@typescript-eslint/consistent-generic-constructors": ["error", "type-annotation"], // Override default "constructor" to "type-annotation" to make it compatible with isolatedDeclarations.
+            // Put generics on the type annotation (`const x: Map<K,V> = new Map()`), not the
+            // constructor (`const x = new Map<K,V>()`). The annotation form is required by
+            // isolatedDeclarations.
+            "@typescript-eslint/consistent-generic-constructors": ["error", "type-annotation"],
         },
         languageOptions: {
             globals: { ...globals.node },
