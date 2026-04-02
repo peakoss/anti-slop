@@ -12,8 +12,8 @@ export function buildContext(): Context {
 	core.debug(`Payload:\n${JSON.stringify(payload, null, 2)}`);
 
 	return {
-		owner: github.context.repo.owner,
-		repo: github.context.repo.repo,
+		owner: payload.repository.owner.login,
+		repo: payload.repository.name,
 
 		repoUrl: pr.base.repo.html_url,
 
