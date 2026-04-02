@@ -45,6 +45,7 @@
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@github/local-action": "^7.0.1",
+        "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
         "@octokit/webhooks-types": "^7.6.1",
         "@types/node": "^25.5.0",
         "eslint": "^10.1.0",
