@@ -169,7 +169,7 @@ inputs:
   max-daily-forks:
     description: Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.
     required: false
-    default: "7"
+    default: "6"
   require-public-profile:
     description: Require the PR author to have a public GitHub profile.
     required: false
