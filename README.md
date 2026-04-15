@@ -357,6 +357,8 @@ Set to `0` to disable this check entirely.
 
 This can be useful as a community-driven signal: if multiple people have reacted negatively to a PR, it may indicate low quality or AI-generated content.
 
+Valid range: `0` to `200`
+
 Default: `0` (disabled)
 
 ### require-maintainer-can-modify
@@ -385,6 +387,8 @@ Set to `0` to disable this check entirely.
 
 Excessively long descriptions are often a sign of AI-generated content.
 
+Valid range: `0` to `50000`
+
 Default: `2500`
 
 ### max-emoji-count
@@ -395,6 +399,8 @@ Set to `0` to disable this check entirely.
 
 AI-generated PR descriptions tend to include excessive emojis.
 
+Valid range: `0` to `30`
+
 Default: `2`
 
 ### max-code-references
@@ -404,6 +410,8 @@ Maximum number of code references (file paths, function/method calls) allowed in
 Set to `0` to disable this check entirely.
 
 AI-generated PR descriptions often include excessive inline code references to appear thorough.
+
+Valid range: `0` to `40`
 
 Default: `5`
 
@@ -463,6 +471,8 @@ Set to `0` to disable this check entirely.
 
 This is a configuration option for [`require-pr-template`](#require-pr-template) and only applies when that check is enabled.
 
+Valid range: `0` to `20`
+
 Default: `0` (disabled)
 
 ### max-commit-message-length
@@ -472,6 +482,8 @@ Maximum character length for individual commit messages. If any commit message e
 Set to `0` to disable this check entirely.
 
 AI-generated commits often have excessively long or verbose commit messages.
+
+Valid range: `0` to `5000`
 
 Default: `500`
 
@@ -543,6 +555,8 @@ Set to `0` to disable this check entirely.
 
 AI-generated code tends to add excessive comments explaining obvious logic.
 
+Valid range: `0` to `500`
+
 Default: `10`
 
 ### detect-spam-usernames
@@ -571,6 +585,8 @@ Set to `0` to disable this check entirely.
 
 Mass-forking is a common pattern for automated PR spam campaigns. A burst of forks in a short time window is a strong signal that the account is running automated tooling.
 
+Valid range: `0` to `50`
+
 Default: `6`
 
 ### require-public-profile
@@ -598,6 +614,8 @@ Minimum previously merged PRs in this repository required from the PR author. If
 Set to `0` to disable this check entirely.
 
 Setting this to `1` effectively gates your repository to only accept PRs from people who have previously had work merged.
+
+Valid range: `0` to `20`
 
 Default: `0` (disabled)
 
