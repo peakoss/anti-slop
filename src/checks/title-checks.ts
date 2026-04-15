@@ -6,20 +6,20 @@ import { recordCheck } from "../report.ts";
 const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 
 export function runTitleChecks(settings: Settings, context: Context): CheckResult[] {
-    const results: CheckResult[] = [];
+	const results: CheckResult[] = [];
 
-    if (settings.requireConventionalTitle) {
-        const match = CONVENTIONAL_PATTERN.exec(context.title);
-        const type = match?.[1];
-        const passed = type !== undefined;
-        recordCheck(results, {
-            name: "conventional-title",
-            passed,
-            message: passed
-                ? `PR title "${context.title}" follows conventional commits format`
-                : `PR title "${context.title}" does not follow conventional commits format`,
-        });
-    }
+	if (settings.requireConventionalTitle) {
+		const match = CONVENTIONAL_PATTERN.exec(context.title);
+		const type = match?.[1];
+		const passed = type !== undefined;
+		recordCheck(results, {
+			name: "conventional-title",
+			passed,
+			message: passed
+				? `PR title "${context.title}" follows conventional commits format`
+				: `PR title "${context.title}" does not follow conventional commits format`,
+		});
+	}
 
-    return results;
+	return results;
 }

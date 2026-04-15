@@ -15,7 +15,7 @@ inputs:
 
   # General Settings
   max-failures:
-    description: Number of check failures needed before failure actions are triggered (between 1 and 25).
+    description: Number of check failures needed before failure actions are triggered.
     required: false
     default: "4"
 
@@ -39,6 +39,16 @@ inputs:
       main
       master
 
+  # PR Size Checks
+  max-changed-files:
+    description: Maximum number of changed files allowed in the PR. 0 disables this check.
+    required: false
+    default: "50"
+  max-changed-lines:
+    description: Maximum number of changed lines (additions + deletions) allowed in the PR. 0 disables this check.
+    required: false
+    default: "10000"
+
   # PR Quality Checks
   max-negative-reactions:
     description: Maximum number of negative reactions (thumbs down + confused) allowed on the PR. 0 disables this check.
@@ -61,7 +71,7 @@ inputs:
     required: false
     default: "true"
   max-description-length:
-    description: Maximum allowed character length for the PR description. 0 disables this check.
+    description: Maximum character length for the PR description. 0 disables this check.
     required: false
     default: "2500"
   max-emoji-count:
@@ -69,7 +79,7 @@ inputs:
     required: false
     default: "2"
   max-code-references:
-    description: Maximum number of code references (file paths, function calls, method calls) allowed in the PR description. 0 disables this check.
+    description: Maximum number of code references (file paths, function/method calls) allowed in the PR description. 0 disables this check.
     required: false
     default: "5"
   require-linked-issue:
@@ -91,11 +101,11 @@ inputs:
     required: false
     default: "false"
   strict-pr-template-sections:
-    description: Comma-separated list of PR template section headings (without the '#' prefix) classified as strict. All checkboxes in strict sections must be present and checked. Only applies when require-pr-template is enabled.
+    description: Comma-separated PR template section headings (without '#') classified as strict. All checkboxes must be present and checked. Only applies when require-pr-template is enabled.
     required: false
     default: ""
   optional-pr-template-sections:
-    description: Comma-separated list of PR template section headings (without the '#' prefix) classified as optional. Optional sections can be entirely removed from the PR description without failing the check. Only applies when require-pr-template is enabled.
+    description: Comma-separated PR template section headings (without '#') classified as optional. Can be removed from the description without failing the check. Only applies when require-pr-template is enabled.
     required: false
     default: ""
   max-additional-pr-template-sections:
@@ -105,7 +115,7 @@ inputs:
 
   # Commit Message Checks
   max-commit-message-length:
-    description: Maximum allowed character length for individual commit messages. 0 disables this check.
+    description: Maximum character length for individual commit messages. 0 disables this check.
     required: false
     default: "500"
   require-conventional-commits:
@@ -153,29 +163,33 @@ inputs:
     required: false
     default: "true"
   min-account-age:
-    description: Minimum GitHub account age in days (1-190). 0 disables this check.
+    description: Minimum GitHub account age in days. 0 disables this check.
     required: false
     default: "30"
   max-daily-forks:
-    description: Maximum number of forked repositories by the user in any 24-hour window. 0 disables this check.
+    description: Maximum number of repositories forked by the user in any 24-hour window. 0 disables this check.
     required: false
-    default: "7"
+    default: "6"
+  require-public-profile:
+    description: Require the PR author to have a public GitHub profile.
+    required: false
+    default: "true"
   min-profile-completeness:
-    description: Minimum number of profile signals (out of 11) the user must have to pass. Checks public profile, name, company, blog, location, email, hireable, bio, twitter, followers and following. 0 disables this check.
+    description: Minimum number of profile signals (name, email, bio, etc.) the user must have to pass. 0 disables this check.
     required: false
     default: "4"
 
   # Merge Checks
   min-repo-merged-prs:
-    description: Minimum number of merged PRs in this repository required from the author. 0 disables this check.
+    description: Minimum number of merged PRs in this repository from the author. 0 disables this check.
     required: false
     default: "0"
   min-repo-merge-ratio:
-    description: Minimum merged/closed PR ratio in this repository (1-100%). 0 disables this check.
+    description: Minimum merge/close PR ratio percentage in this repository. 0 disables this check.
     required: false
     default: "0"
   min-global-merge-ratio:
-    description: Minimum merged/closed PR ratio across all GitHub repositories (1-100%). 0 disables this check.
+    description: Minimum merge/close PR ratio percentage across all repositories. 0 disables this check.
     required: false
     default: "30"
   global-merge-ratio-exclude-own:
@@ -223,6 +237,7 @@ inputs:
     required: false
     default: |
       actions-user
+      autofix-ci[bot]
       dependabot[bot]
       renovate[bot]
       github-actions[bot]

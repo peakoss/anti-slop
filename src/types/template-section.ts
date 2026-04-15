@@ -1,5 +1,5 @@
 export interface TemplateSection {
-    heading: string;
-    headingText: string;
-    content: string;
+	heading: string;
+	headingText: string;
+	content: string;
 }

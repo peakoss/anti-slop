@@ -1,4 +1,4 @@
-import type { CheckResult, Context, Settings, Octokit } from "../types";
+import type { CheckResult, Context, Octokit, Settings } from "../types";
 import { recordCheck } from "../report.ts";
 
 // Matches: type: description, type(scope): description, type(scope)!: description...
@@ -9,103 +9,103 @@ const CONVENTIONAL_PATTERN = /^(\w+)(?:\([^)]+\))?!?:\s.+/;
 const TITLE_PATTERN = /\(#\d+\)$/;
 
 export async function runCommitChecks(
-    settings: Settings,
-    context: Context,
-    client: Octokit,
-    inheritedShas: Set<string>,
+	settings: Settings,
+	context: Context,
+	client: Octokit,
+	inheritedShas: Set<string>,
 ): Promise<CheckResult[]> {
-    const results: CheckResult[] = [];
+	const results: CheckResult[] = [];
 
-    if (
-        settings.maxCommitMessageLength === 0 &&
-        !settings.requireConventionalCommits &&
-        !settings.requireCommitAuthorMatch &&
-        settings.blockedCommitAuthors.length === 0
-    ) {
-        return results;
-    }
+	if (
+		settings.maxCommitMessageLength === 0 &&
+		!settings.requireConventionalCommits &&
+		!settings.requireCommitAuthorMatch &&
+		settings.blockedCommitAuthors.length === 0
+	) {
+		return results;
+	}
 
-    const allCommits = await client.paginate(client.rest.pulls.listCommits, {
-        owner: context.owner,
-        repo: context.repo,
-        pull_number: context.number,
-        per_page: 100,
-    });
+	const allCommits = await client.paginate(client.rest.pulls.listCommits, {
+		owner: context.owner,
+		repo: context.repo,
+		pull_number: context.number,
+		per_page: 100,
+	});
 
-    // Exclude inherited commits from the repo's default branch that the PR target branch hasn't caught up to yet.
-    const commits = allCommits.filter((commit) => !inheritedShas.has(commit.sha));
+	// Exclude inherited commits from the repo's default branch that the PR target branch hasn't caught up to yet.
+	const commits = allCommits.filter((commit) => !inheritedShas.has(commit.sha));
 
-    if (settings.maxCommitMessageLength > 0) {
-        const oversizedCommits = commits.filter(
-            (commit) => commit.commit.message.length > settings.maxCommitMessageLength,
-        );
+	if (settings.maxCommitMessageLength > 0) {
+		const oversizedCommits = commits.filter(
+			(commit) => commit.commit.message.length > settings.maxCommitMessageLength,
+		);
 
-        const passed = oversizedCommits.length === 0;
-        recordCheck(results, {
-            name: "max-commit-message-length",
-            passed,
-            message: passed
-                ? `All commit messages are within the ${String(settings.maxCommitMessageLength)} character limit`
-                : `${String(oversizedCommits.length)} commit message(s) exceed the ${String(settings.maxCommitMessageLength)} character limit`,
-        });
-    }
+		const passed = oversizedCommits.length === 0;
+		recordCheck(results, {
+			name: "max-commit-message-length",
+			passed,
+			message: passed
+				? `All commit messages are within the ${String(settings.maxCommitMessageLength)} character limit`
+				: `${String(oversizedCommits.length)} commit message(s) exceed the ${String(settings.maxCommitMessageLength)} character limit`,
+		});
+	}
 
-    if (settings.requireConventionalCommits) {
-        const subjects = commits
-            .map((commit) => commit.commit.message.split("\n")[0] ?? "")
-            .filter((subject) => !subject.startsWith("Merge ") && !TITLE_PATTERN.test(subject));
+	if (settings.requireConventionalCommits) {
+		const subjects = commits
+			.map((commit) => commit.commit.message.split("\n")[0] ?? "")
+			.filter((subject) => !subject.startsWith("Merge ") && !TITLE_PATTERN.test(subject));
 
-        const passed = subjects.every((subject) => CONVENTIONAL_PATTERN.test(subject));
-        recordCheck(results, {
-            name: "conventional-commits",
-            passed,
-            message: passed
-                ? "All commit messages follow conventional commits format"
-                : "Not all commit messages follow conventional commits format",
-        });
-    }
+		const passed = subjects.every((subject) => CONVENTIONAL_PATTERN.test(subject));
+		recordCheck(results, {
+			name: "conventional-commits",
+			passed,
+			message: passed
+				? "All commit messages follow conventional commits format"
+				: "Not all commit messages follow conventional commits format",
+		});
+	}
 
-    if (settings.requireCommitAuthorMatch) {
-        const prAuthor = context.userLogin.toLowerCase();
-        const mismatchedAuthors = commits.filter(
-            (commit) => commit.author?.login?.toLowerCase() !== prAuthor,
-        );
+	if (settings.requireCommitAuthorMatch) {
+		const prAuthor = context.userLogin.toLowerCase();
+		const mismatchedAuthors = commits.filter(
+			(commit) => commit.author?.login?.toLowerCase() !== prAuthor,
+		);
 
-        const details = [
-            ...new Set(
-                mismatchedAuthors.map((commit) =>
-                    commit.author ? `"${commit.author.login}"` : '"unknown" (no GitHub account)',
-                ),
-            ),
-        ];
+		const details = [
+			...new Set(
+				mismatchedAuthors.map((commit) =>
+					commit.author ? `"${commit.author.login}"` : '"unknown" (no GitHub account)',
+				),
+			),
+		];
 
-        const passed = mismatchedAuthors.length === 0;
-        recordCheck(results, {
-            name: "commit-author-match",
-            passed,
-            message: passed
-                ? "All commit authors match the PR author"
-                : `Commit author(s) ${details.join(", ")} do not match PR author "${context.userLogin}"`,
-        });
-    }
+		const passed = mismatchedAuthors.length === 0;
+		recordCheck(results, {
+			name: "commit-author-match",
+			passed,
+			message: passed
+				? "All commit authors match the PR author"
+				: `Commit author(s) ${details.join(", ")} do not match PR author "${context.userLogin}"`,
+		});
+	}
 
-    if (settings.blockedCommitAuthors.length > 0) {
-        const blockedAuthors = settings.blockedCommitAuthors.map((author) => author.toLowerCase());
-        const blocked = new Set(
-            commits
-                .map((commit) => (commit.author?.login ?? "").toLowerCase())
-                .filter((login) => blockedAuthors.includes(login)),
-        );
+	if (settings.blockedCommitAuthors.length > 0) {
+		const blockedAuthors = settings.blockedCommitAuthors.map((author) => author.toLowerCase());
+		const blocked = new Set(
+			commits
+				.map((commit) => (commit.author?.login ?? "").toLowerCase())
+				.filter((login) => blockedAuthors.includes(login)),
+		);
 
-        recordCheck(results, {
-            name: "blocked-commit-authors",
-            passed: blocked.size === 0,
-            message:
-                blocked.size > 0
-                    ? `Found ${String(blocked.size)} blocked commit author(s): "${[...blocked].join('", "')}"`
-                    : "No blocked commit authors found",
-        });
-    }
+		recordCheck(results, {
+			name: "blocked-commit-authors",
+			passed: blocked.size === 0,
+			message:
+				blocked.size > 0
+					? `Found ${String(blocked.size)} blocked commit author(s): "${[...blocked].join('", "')}"`
+					: "No blocked commit authors found",
+		});
+	}
 
-    return results;
+	return results;
 }

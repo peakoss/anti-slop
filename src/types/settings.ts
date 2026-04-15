@@ -1,107 +1,112 @@
 export interface Settings {
-    // Repo Auth Token
-    githubToken: string;
+	// Repo Auth Token
+	githubToken: string;
 
-    // General Settings
-    maxFailures: number;
+	// General Settings
+	maxFailures: number;
 
-    // PR Branch Checks
-    allowedTargetBranches: string[];
-    blockedTargetBranches: string[];
-    allowedSourceBranches: string[];
-    blockedSourceBranches: string[];
+	// PR Branch Checks
+	allowedTargetBranches: string[];
+	blockedTargetBranches: string[];
+	allowedSourceBranches: string[];
+	blockedSourceBranches: string[];
 
-    // PR Quality Checks
-    maxNegativeReactions: number;
-    requireMaintainerCanModify: boolean;
+	// PR Size Checks
+	maxChangedFiles: number;
+	maxChangedLines: number;
 
-    // PR Title Checks
-    requireConventionalTitle: boolean;
+	// PR Quality Checks
+	maxNegativeReactions: number;
+	requireMaintainerCanModify: boolean;
 
-    // PR Description Checks
-    requireDescription: boolean;
-    maxDescriptionLength: number;
-    maxEmojiCount: number;
-    maxCodeReferences: number;
-    requireLinkedIssue: boolean;
-    blockedTerms: string[];
-    blockedIssueNumbers: string[];
+	// PR Title Checks
+	requireConventionalTitle: boolean;
 
-    // PR Template Checks
-    requirePrTemplate: boolean;
-    strictPrTemplateSections: string[];
-    optionalPrTemplateSections: string[];
-    maxAdditionalPrTemplateSections: number;
+	// PR Description Checks
+	requireDescription: boolean;
+	maxDescriptionLength: number;
+	maxEmojiCount: number;
+	maxCodeReferences: number;
+	requireLinkedIssue: boolean;
+	blockedTerms: string[];
+	blockedIssueNumbers: string[];
 
-    // Commit Message Checks
-    maxCommitMessageLength: number;
-    requireConventionalCommits: boolean;
-    requireCommitAuthorMatch: boolean;
-    blockedCommitAuthors: string[];
+	// PR Template Checks
+	requirePrTemplate: boolean;
+	strictPrTemplateSections: string[];
+	optionalPrTemplateSections: string[];
+	maxAdditionalPrTemplateSections: number;
 
-    // File Checks
-    allowedFileExtensions: string[];
-    allowedPaths: string[];
-    blockedPaths: string[];
-    requireFinalNewline: boolean;
-    maxAddedComments: number;
+	// Commit Message Checks
+	maxCommitMessageLength: number;
+	requireConventionalCommits: boolean;
+	requireCommitAuthorMatch: boolean;
+	blockedCommitAuthors: string[];
 
-    // User Checks
-    detectSpamUsernames: boolean;
-    minAccountAge: number;
-    maxDailyForks: number;
-    minProfileCompleteness: number;
+	// File Checks
+	allowedFileExtensions: string[];
+	allowedPaths: string[];
+	blockedPaths: string[];
+	requireFinalNewline: boolean;
+	maxAddedComments: number;
 
-    // Merge Checks
-    minRepoMergedPrs: number;
-    minRepoMergeRatio: number;
-    minGlobalMergeRatio: number;
-    globalMergeRatioExcludeOwn: boolean;
+	// User Checks
+	detectSpamUsernames: boolean;
+	minAccountAge: number;
+	maxDailyForks: number;
+	requirePublicProfile: boolean;
+	minProfileCompleteness: number;
 
-    // Filters
-    // onlyIssueTypes: string[];
-    // onlyLabels: string[];
-    // onlyPrLabels: string[];
-    // onlyIssueLabels: string[];
-    // anyOfLabels: string[];
-    // anyOfPrLabels: string[];
-    // anyOfIssueLabels: string[];
+	// Merge Checks
+	minRepoMergedPrs: number;
+	minRepoMergeRatio: number;
+	minGlobalMergeRatio: number;
+	globalMergeRatioExcludeOwn: boolean;
 
-    // Exemptions
-    exemptDraftPrs: boolean;
-    exemptBots: string[];
-    exemptUsers: string[];
-    exemptAuthorAssociation: string[];
-    // exemptTeams: string[];
-    exemptLabel: string;
-    exemptPrLabel: string;
-    // exemptIssueLabel: string;
-    exemptAllMilestones: boolean;
-    exemptAllPrMilestones: boolean;
-    // exemptAllIssueMilestones: boolean;
-    exemptMilestones: string[];
-    exemptPrMilestones: string[];
-    // exemptIssueMilestones: string[];
+	// Filters
+	// onlyIssueTypes: string[];
+	// onlyLabels: string[];
+	// onlyPrLabels: string[];
+	// onlyIssueLabels: string[];
+	// anyOfLabels: string[];
+	// anyOfPrLabels: string[];
+	// anyOfIssueLabels: string[];
 
-    // PR Success Actions
-    successAddPrLabels: string[];
+	// Exemptions
+	exemptDraftPrs: boolean;
+	exemptBots: string[];
+	exemptUsers: string[];
+	exemptAuthorAssociation: string[];
+	// exemptTeams: string[];
+	exemptLabel: string;
+	exemptPrLabel: string;
+	// exemptIssueLabel: string;
+	exemptAllMilestones: boolean;
+	exemptAllPrMilestones: boolean;
+	// exemptAllIssueMilestones: boolean;
+	exemptMilestones: string[];
+	exemptPrMilestones: string[];
+	// exemptIssueMilestones: string[];
 
-    // PR Failure Actions
-    failureRemovePrLabels: string[];
-    failureRemoveAllPrLabels: boolean;
-    failureAddPrLabels: string[];
-    failurePrMessage: string;
-    closePr: boolean;
-    lockPr: boolean;
+	// PR Success Actions
+	successAddPrLabels: string[];
 
-    // Issue Close Actions
-    // closeIssue: boolean;
-    // closeIssueReason: string;
-    // lockIssue: boolean;
+	// PR Failure Actions
+	failureRemovePrLabels: string[];
+	failureRemoveAllPrLabels: boolean;
+	failureAddPrLabels: string[];
+	failurePrMessage: string;
+	closePr: boolean;
+	lockPr: boolean;
 
-    // Issue Failure Actions
-    // failureIssueMessage: string;
-    // failureRemoveIssueLabels: string[];
-    // failureRemoveAllIssueLabels: boolean;
-    // failureAddIssueLabels: string[];
+	// Issue Close Actions
+	// closeIssue: boolean;
+	// closeIssueReason: string;
+	// lockIssue: boolean;
+
+	// Issue Failure Actions
+	// failureIssueMessage: string;
+	// failureRemoveIssueLabels: string[];
+	// failureRemoveAllIssueLabels: boolean;
+	// failureAddIssueLabels: string[];
 }

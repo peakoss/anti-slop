@@ -11,8 +11,21 @@ check_prerequisites() {
     command -v git > /dev/null 2>&1 || die "git is not installed. Install it from https://git-scm.com"
     git rev-parse --is-inside-work-tree > /dev/null 2>&1 || die "Not a git repository"
 
-    if ! git diff --quiet || ! git diff --cached --quiet; then
+    local current_branch
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    if [ "$current_branch" != "main" ]; then
+        die "Must be on ${BOLD}main${OFF}${RED} branch (current: ${BOLD}$current_branch${OFF}${RED})${OFF}"
+    fi
+
+    if [ -n "$(git status --porcelain)" ]; then
         die "Working tree is not clean. Commit or stash your changes first."
+    fi
+
+    git fetch origin --quiet 2>/dev/null || die "Could not fetch from remote"
+    local ahead
+    ahead=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
+    if [ "$ahead" -gt 0 ]; then
+        die "Local branch is $ahead commit(s) ahead of origin/main. Push your changes first."
     fi
 
     REPO_ROOT="$(git rev-parse --show-toplevel)"

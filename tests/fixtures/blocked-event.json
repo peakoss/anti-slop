@@ -1,29 +1,36 @@
 {
-    "action": "opened",
-    "number": 8309,
-    "pull_request": {
-        "number": 8309,
-        "title": "Update README and stuff",
-        "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nGenerated with Claude Code 🤖✨\n\nCloses #123",
-        "draft": false,
-        "html_url": "https://github.com/coollabsio/coolify/pull/8309",
-        "user": {
-            "login": "nylyy0325"
-        },
-        "head": {
-            "ref": "main",
-            "sha": "bd36d0d1e2c8b2ee028fa81672e8fc79f01e414c"
-        },
-        "base": {
-            "ref": "v4.x",
-            "repo": {
-                "html_url": "https://github.com/coollabsio/coolify",
-                "default_branch": "v4.x"
-            }
-        },
-        "labels": [],
-        "milestone": null,
-        "author_association": "NONE",
-        "maintainer_can_modify": false
-    }
+	"action": "opened",
+	"repository": {
+		"owner": {
+			"login": "coollabsio"
+		},
+		"name": "coolify"
+	},
+	"pull_request": {
+		"number": 8309,
+		"title": "Update README and stuff",
+		"body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nGenerated with Claude Code\n\nCloses #123",
+		"base": {
+			"ref": "v4.x",
+			"repo": {
+				"html_url": "https://github.com/coollabsio/coolify",
+				"default_branch": "v4.x"
+			}
+		},
+		"head": {
+			"ref": "main",
+			"sha": "bd36d0d1e2c8b2ee028fa81672e8fc79f01e414c"
+		},
+		"user": {
+			"login": "nylyy0325"
+		},
+		"author_association": "NONE",
+		"labels": [],
+		"milestone": null,
+		"draft": false,
+		"maintainer_can_modify": false,
+		"changed_files": 100,
+		"additions": 500,
+		"deletions": 200
+	}
 }
