@@ -53,6 +53,7 @@
 		"globals": "^17.4.0",
 		"prettier": "3.8.1",
 		"tsdown": "^0.21.7",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.58.0"
 	},
