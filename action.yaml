@@ -237,6 +237,7 @@ inputs:
     required: false
     default: |
       actions-user
+      autofix-ci[bot]
       dependabot[bot]
       renovate[bot]
       github-actions[bot]
