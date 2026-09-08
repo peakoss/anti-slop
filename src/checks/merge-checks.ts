@@ -2,6 +2,15 @@ import type { CheckResult, Context, Octokit, Settings } from "../types";
 import * as core from "@actions/core";
 import { recordCheck } from "../report.ts";
 
+// The GitHub search API rejects author queries for accounts that cannot be
+// searched — suspended, flagged, deleted, or otherwise hidden from search — with
+// a 422 whose message contains this phrase. Such accounts can still have a public
+// profile, so the private-profile guard above does not catch them. When it
+// happens the author's merge history cannot be computed, so the merge checks are
+// skipped instead of letting the error fail the whole action.
+const SEARCH_UNPROCESSABLE_STATUS = 422;
+const NON_SEARCHABLE_USER_MESSAGE = "cannot be searched";
+
 export async function runMergeChecks(
 	settings: Settings,
 	context: Context,
@@ -23,23 +32,39 @@ export async function runMergeChecks(
 	const needsRepoClosed = settings.minRepoMergeRatio > 0;
 	const needsGlobalRatio = settings.minGlobalMergeRatio > 0;
 
-	const [repoMerged, repoClosed, globalMerged, globalClosed] = await Promise.all([
-		needsRepoMerged
-			? searchPrCount(client, `is:pr is:merged author:${user} repo:${repoFull}`)
-			: Promise.resolve(0),
-		needsRepoClosed
-			? searchPrCount(client, `is:pr is:unmerged is:closed author:${user} repo:${repoFull}`)
-			: Promise.resolve(0),
-		needsGlobalRatio
-			? searchPrCount(client, `is:pr is:merged author:${user} ${globalScope}`.trim())
-			: Promise.resolve(0),
-		needsGlobalRatio
-			? searchPrCount(
-					client,
-					`is:pr is:unmerged is:closed author:${user} ${globalScope}`.trim(),
-				)
-			: Promise.resolve(0),
-	]);
+	let counts: [number, number, number, number];
+	try {
+		counts = await Promise.all([
+			needsRepoMerged
+				? searchPrCount(client, `is:pr is:merged author:${user} repo:${repoFull}`)
+				: Promise.resolve(0),
+			needsRepoClosed
+				? searchPrCount(
+						client,
+						`is:pr is:unmerged is:closed author:${user} repo:${repoFull}`,
+					)
+				: Promise.resolve(0),
+			needsGlobalRatio
+				? searchPrCount(client, `is:pr is:merged author:${user} ${globalScope}`.trim())
+				: Promise.resolve(0),
+			needsGlobalRatio
+				? searchPrCount(
+						client,
+						`is:pr is:unmerged is:closed author:${user} ${globalScope}`.trim(),
+					)
+				: Promise.resolve(0),
+		]);
+	} catch (error: unknown) {
+		if (isNonSearchableUserError(error)) {
+			core.info(
+				"[SKIP] merge-checks - Merge checks cannot be computed because the contributor cannot be searched (suspended, flagged, or hidden from search)",
+			);
+			return results;
+		}
+		throw error;
+	}
+
+	const [repoMerged, repoClosed, globalMerged, globalClosed] = counts;
 
 	if (settings.minRepoMergedPrs > 0) {
 		if (settings.minRepoMergedPrs === 1) {
@@ -116,4 +141,12 @@ async function searchPrCount(client: Octokit, query: string): Promise<number> {
 	const { data } = await client.rest.search.issuesAndPullRequests({ q: query, per_page: 1 });
 	core.debug(`searchPrCount — Query: ${query}, Total count: ${String(data.total_count)}`);
 	return data.total_count;
+}
+
+function isNonSearchableUserError(error: unknown): boolean {
+	if (!(error instanceof Error) || !error.message.includes(NON_SEARCHABLE_USER_MESSAGE)) {
+		return false;
+	}
+	const status = (error as { status?: unknown }).status;
+	return status === SEARCH_UNPROCESSABLE_STATUS;
 }

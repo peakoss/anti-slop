@@ -23,7 +23,7 @@
 		"moduleResolution": "bundler",
 		"noUncheckedSideEffectImports": true,
 		"resolveJsonModule": true,
-		"types": ["node"],
+		"types": ["node", "bun"],
 
 		// Emit
 		"declaration": true,
