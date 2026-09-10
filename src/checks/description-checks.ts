@@ -18,6 +18,8 @@ const INLINE_CODE_PATTERNS = [
 	/\w{3,}\(\)/g, // matches function calls: fooBar(), test_foo()
 ];
 
+const URL_PATTERN = /https?:\/\/[^\s<]+/gi;
+
 export function runDescriptionChecks(settings: Settings, context: Context): CheckResult[] {
 	const results: CheckResult[] = [];
 
@@ -131,9 +133,10 @@ function extractIssueNumbers(text: string): number[] {
 }
 
 function countCodeReferences(text: string): number {
+	const textWithoutUrls = text.replace(URL_PATTERN, "");
 	let count = 0;
 	for (const pattern of INLINE_CODE_PATTERNS) {
-		count += text.match(pattern)?.length ?? 0;
+		count += textWithoutUrls.match(pattern)?.length ?? 0;
 	}
 	return count;
 }
