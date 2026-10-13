@@ -361,6 +361,8 @@ outputs:
     description: Number of checks that failed.
   passed-checks:
     description: Number of checks that passed.
+  failed-checks-json:
+    description: JSON array of the checks that failed, each with a name and message.
   result:
     description: "Overall result: 'passed', 'failed', or 'skipped'."
 

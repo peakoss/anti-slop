@@ -12,18 +12,23 @@ export function setOutputs(results: CheckResult[], settings: Settings): boolean 
 		core.setOutput("total-checks", 0);
 		core.setOutput("failed-checks", 0);
 		core.setOutput("passed-checks", 0);
+		core.setOutput("failed-checks-json", "[]");
 		core.setOutput("result", "skipped");
 		return false;
 	}
 
-	const failed = results.filter((r) => !r.passed).length;
-	const passed = results.length - failed;
+	const failedChecks = results.filter((r) => !r.passed);
+	const passedChecks = results.filter((r) => r.passed);
 
 	core.setOutput("total-checks", results.length);
-	core.setOutput("failed-checks", failed);
-	core.setOutput("passed-checks", passed);
+	core.setOutput("failed-checks", failedChecks.length);
+	core.setOutput("passed-checks", passedChecks.length);
+	core.setOutput(
+		"failed-checks-json",
+		JSON.stringify(failedChecks.map(({ name, message }) => ({ name, message }))),
+	);
 
-	if (failed >= settings.maxFailures) {
+	if (failedChecks.length >= settings.maxFailures) {
 		core.setOutput("result", "failed");
 		return true;
 	}

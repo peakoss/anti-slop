@@ -19598,15 +19598,20 @@ function setOutputs(results, settings) {
 		setOutput("total-checks", 0);
 		setOutput("failed-checks", 0);
 		setOutput("passed-checks", 0);
+		setOutput("failed-checks-json", "[]");
 		setOutput("result", "skipped");
 		return false;
 	}
-	const failed = results.filter((r) => !r.passed).length;
-	const passed = results.length - failed;
+	const failedChecks = results.filter((r) => !r.passed);
+	const passedChecks = results.filter((r) => r.passed);
 	setOutput("total-checks", results.length);
-	setOutput("failed-checks", failed);
-	setOutput("passed-checks", passed);
-	if (failed >= settings.maxFailures) {
+	setOutput("failed-checks", failedChecks.length);
+	setOutput("passed-checks", passedChecks.length);
+	setOutput("failed-checks-json", JSON.stringify(failedChecks.map(({ name, message }) => ({
+		name,
+		message
+	}))));
+	if (failedChecks.length >= settings.maxFailures) {
 		setOutput("result", "failed");
 		return true;
 	}
